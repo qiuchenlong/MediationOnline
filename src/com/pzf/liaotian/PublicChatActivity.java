@@ -1392,7 +1392,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                         filePath, 0,
                         System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
             }
-            else if (fileType.equals(".amr")) {//语音
+            else if (fileType.equals(".amr") || fileType.equals(".mp3")) {//语音
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
 
                 		userName, currentTime,

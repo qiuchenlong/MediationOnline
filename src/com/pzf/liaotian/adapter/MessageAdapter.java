@@ -441,7 +441,7 @@ public class MessageAdapter extends BaseAdapter {
     	
     	if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getMessage().contains("已发送文件：")) {
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
-        } else {
+        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT){
 			holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
 		}
     	
