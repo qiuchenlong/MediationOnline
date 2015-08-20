@@ -6,6 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import net.bither.util.NativeUtil;
 
@@ -76,23 +81,37 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            @Override
 						public void onTextMessage(String payload) {
 			            	Log.d("chat", "Got echo: " + payload);
-				            String filetype = null;
-				            if (payload.contains(".")) {
-				            	filetype = payload.substring(payload.lastIndexOf("."));
-								Log.d("chat", "Got echo filetype: " + filetype);
-					               
-					            UploadUtil.mUserName = "被诉人";
-					            UploadUtil.mUserID = "100000";
-					            UploadUtil.mFileType = filetype;
-					            UploadUtil.mVoiceLength = 16;
-					               
-					               //如果是私聊则不接受消息，因为只有协调员可以看到
-					            if (UploadUtil.isPrivateChat == 1) {
-									return;
-								}
-					               
-					            UploadUtil.handleMessage(payload);
-				            }
+			            	
+			            	
+			            	// 解析得到一个Map对象  
+			                Map<String, Object> personMap = parseJSONString(payload); 
+			            	Log.d("debug",  
+			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
+			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
+			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
+			                                + "\n" + "data:" + personMap.get("data"));  
+			            	
+//			            	String encodeString = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
+			            	Log.d("debug", decodeString); 
+//				            String filetype = null;
+//				            if (payload.contains(".")) {
+//				            	filetype = payload.substring(payload.lastIndexOf("."));
+//								Log.d("chat", "Got echo filetype: " + filetype);
+//					               
+//					            UploadUtil.mUserName = "被诉人";
+//					            UploadUtil.mUserID = "100000";
+//					            UploadUtil.mFileType = filetype;
+//					            UploadUtil.mVoiceLength = 16;
+//					               
+//					               //如果是私聊则不接受消息，因为只有协调员可以看到
+//					            if (UploadUtil.isPrivateChat == 1) {
+//									return;
+//								}
+//					            
+//					            //处理下载链接
+//					            UploadUtil.handleMessage(payload);
+//				            }
 			            }
 			            
 			            @Override
@@ -198,6 +217,33 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				 "\"" +data + "\"" +
 			  "}";
 	}
+	
+	/** 
+     * JSON解析 
+     *  
+     * @param JSONString 
+     * @return 
+     */  
+    private Map<String, Object> parseJSONString(String JSONString) {  
+        Map<String, Object> resultMap = new HashMap<String, Object>();  
+        try {  
+            // 直接把JSON字符串转化为一个JSONObject对象  
+            JSONObject person = new JSONObject(JSONString);  
+            // 第1个键值对  
+            resultMap.put("username", person.getString("username"));  
+            // 第2个键值对  
+            resultMap.put("userid", person.getString("userid"));  
+            // 第3个键值对  
+            resultMap.put("filetype", person.getString("filetype"));  
+            resultMap.put("isprivatechat", person.getInt("isprivatechat")); 
+            resultMap.put("voicetime", person.getInt("voicetime")); 
+            // 第4个键值对  
+            resultMap.put("data", person.getString("data"));
+        } catch (JSONException e) {  
+            e.printStackTrace();  
+        }  
+        return resultMap;  
+    }  
 }
 
 
