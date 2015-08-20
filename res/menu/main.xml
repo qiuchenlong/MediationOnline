@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_back"
+        android:icon="@drawable/back"
+        android:showAsAction="always"
+        android:title="@string/action_back"/>
+    <item
+        android:id="@+id/action_removefile"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:showAsAction="never"
+        android:title="@string/trash"/>
+    <item
+        android:id="@+id/action_move"
+        android:showAsAction="never"
+        android:title="@string/action_move"/>
+    <item
+        android:id="@+id/action_copy"
+        android:icon="@drawable/copy"
+        android:showAsAction="never"
+        android:title="@android:string/copy"/>
+    <item
+        android:id="@+id/action_cancel"
+        android:showAsAction="never"
+        android:title="@android:string/cancel"/>
+    <item
+        android:id="@+id/action_ok"
+        android:showAsAction="never"
+        android:title="@android:string/ok"/>
+ 
+
+</menu>
