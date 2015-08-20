@@ -63,13 +63,13 @@
 
     <Button
         android:id="@+id/private_chat_back_button"
-        android:layout_width="15dp"
+        android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_margin="12dp"
         android:layout_marginLeft="15dp"
-        android:background="@drawable/btm"
+        android:background="@drawable/btm3"
         android:text="  "
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
