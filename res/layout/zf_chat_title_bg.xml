@@ -68,9 +68,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_margin="12dp"
-        android:layout_marginLeft="15dp"
-        android:background="@drawable/btm3"
-        android:text="  "
+        android:layout_marginLeft="0dp"
+        android:background="@drawable/btm5"
+        android:text="        "
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
