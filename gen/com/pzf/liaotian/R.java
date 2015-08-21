@@ -1129,7 +1129,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int msg_header_content=0x7f0b0089;
         public static final int msg_listView=0x7f0b0070;
         public static final int name=0x7f0b0060;
-        public static final int nametitle_textview=0x7f0b0092;
+        public static final int nametitle=0x7f0b0092;
         public static final int none=0x7f0b001a;
         public static final int notif_pro_bar=0x7f0b0044;
         public static final int notif_pro_bar_layout=0x7f0b0043;

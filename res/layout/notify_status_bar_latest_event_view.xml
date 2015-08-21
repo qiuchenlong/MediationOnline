@@ -3,8 +3,9 @@
     android:id="@+id/status_bar_latest_event_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
     android:background="#ff000000" 
+    >
+    
 
     <ImageView
         android:id="@+id/icon"

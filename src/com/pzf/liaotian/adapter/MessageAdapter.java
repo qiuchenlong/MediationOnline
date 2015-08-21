@@ -79,7 +79,7 @@ public class MessageAdapter extends BaseAdapter {
     private long mPreDate;
 
     private SoundUtil mSoundUtil;
-    
+
     //点击放大缩小图片
     Bitmap bp=null;  
     ImageView imageview;  
@@ -203,15 +203,15 @@ public class MessageAdapter extends BaseAdapter {
         // return convertView;
 
         // ===============
-    	
-    	
+
+
         int type = getItemViewType(position);
         MessageHolderBase holder = null;
         if (null == convertView && null != mInflater) {
             holder = new MessageHolderBase();
-            
-           
-            
+
+
+
             switch (type) {
                 case MESSAGE_TYPE_MINE_TEXT: {
                     convertView = mInflater.inflate(
@@ -271,7 +271,7 @@ public class MessageAdapter extends BaseAdapter {
                     break;
                 }
                 default:
-                     
+
                     break;
             }
         } else {
@@ -291,50 +291,50 @@ public class MessageAdapter extends BaseAdapter {
                 handleAudioMessage((AudioMessageHolder) holder, mItem, parent);
 
             }else if (msgType == MessageItem.MESSAGE_TYPE_FILE) {
-            	handleTextMessage((TextMessageHolder) holder, mItem, parent);
+                handleTextMessage((TextMessageHolder) holder, mItem, parent);
             }
         }
 
         return convertView;
     }
 
-    
-    
+
+
     private void handleTextMessage(final TextMessageHolder holder,
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
-    	
-//        //如果收到.doc文件
-//        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
-//        	 // 文字
-//            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
-//                    .getMessage()));
-//            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
-//		} else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
-//			//如果收到的是调解协议书
-//			holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-//	                .getMessage() + " "));
-//		} else {
-			 // 文字
-	        holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-	                .getMessage() + " "));
-//		}
-        
+
+        //如果收到.doc文件
+        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
+             // 文字
+            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
+                    .getMessage()));
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+        } else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+            //如果收到的是调解协议书
+            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+                    .getMessage() + " "));
+        } else {
+             // 文字
+            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+                    .getMessage() + " "));
+        }
+
         holder.msg.setOnClickListener(new OnClickListener() {
-    		
-    		@Override
-    		public void onClick(View arg0) {
-    			int filetype = mItem.getMsgType();
-    			if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false) {
-    				
-    				Intent intent =new Intent(mContext,ProtocolViewActivity.class);		
-    				mContext.startActivity(intent);
-    			} 
-    			 Log.v("chat", "text message=" + filetype);
-    			 
-    		}
-    	});
-       
+
+            @Override
+            public void onClick(View arg0) {
+                int filetype = mItem.getMsgType();
+                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false) {
+
+                    Intent intent =new Intent(mContext,ProtocolViewActivity.class);        
+                    mContext.startActivity(intent);
+                } 
+                 Log.v("chat", "text message=" + filetype);
+
+            }
+        });
+
     }
 
     /**
@@ -350,14 +350,14 @@ public class MessageAdapter extends BaseAdapter {
         handleBaseMessage(holder, mItem);
 //        if (!mSpUtil.getIsCome()) {
 //          holder.nameTitle.setText(mSpUtil.getNick());
-//		}
-      
+//        }
+
         // 图片文件
         if (mItem.getMessage() != null) {
             // Bitmap bitmap = BitmapFactory.decodeFile(item.getMessage());
             Bitmap bitmap = MessageBitmapCache.getInstance().get(
                     mItem.getMessage());
-            
+
             if (!mItem.isComMeg()) {
                 bitmap = BubbleImageHelper.getInstance(mContext)
                         .getBubbleImageBitmap(bitmap,
@@ -378,28 +378,28 @@ public class MessageAdapter extends BaseAdapter {
             // showTextOrVoiceOrImage(item, holder);
             // }
 
-           
+
             holder.flPickLayout.setVisibility(View.VISIBLE);
         } else {
             holder.flPickLayout.setVisibility(View.GONE);
         }
         holder.rlMessage.setVisibility(View.GONE);
-        
+
        holder.ivphoto.setOnClickListener(new OnClickListener() {
-		
-		@Override
-		public void onClick(View arg0) {
-			Intent intent = new Intent(mContext,ImageShower.class);
-			intent.putExtra("photo_path", mItem.getMessage());
-			mContext.startActivity(intent);
-			
-		}
-	});
-       
+
+        @Override
+        public void onClick(View arg0) {
+            Intent intent = new Intent(mContext,ImageShower.class);
+            intent.putExtra("photo_path", mItem.getMessage());
+            mContext.startActivity(intent);
+
+        }
+    });
+
     }
-    
-    
- 
+
+
+
 
     /**
      * @Description 处理语音消息
@@ -420,45 +420,45 @@ public class MessageAdapter extends BaseAdapter {
         holder.voiceTime.setText(TimeUtil.getVoiceRecorderTime(mItem
                 .getVoiceTime())+"\"");
         final String filePathString = mItem.getMessage();
-        
+
         holder.msg.setOnClickListener(new OnClickListener() {
-        	//TODO
+            //TODO
             @Override
             public void onClick(View v) {
                 if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_RECORD) {
-                	Log.v("com.pzf.liaotian", mItem.getMessage());
-                	Log.v("com.pzf.liaotian", "is=="+mItem.isComMeg());
+                    Log.v("com.pzf.liaotian", mItem.getMessage());
+                    Log.v("com.pzf.liaotian", "is=="+mItem.isComMeg());
                     // 播放语音
                     mSoundUtil.playRecorder(mContext, filePathString,mItem.isComMeg());
-                	
-                	//点击从服务器下载
+
+                    //点击从服务器下载
                 }
             }
         });
     }
 
-	
+
     private void handleBaseMessage(MessageHolderBase holder,
             final MessageItem mItem) {  
-    	//判断是不是悄悄话
-    	if (mItem.getIsPrivateChat() == 1) {
-    		holder.privateChat.setVisibility(View.VISIBLE);
-    	} else {
-			holder.privateChat.setVisibility(View.GONE);
-		}
-    	
-    	if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getMessage().contains("已发送文件：")) {
-        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+        //判断是不是悄悄话
+        if (mItem.getIsPrivateChat() == 1) {
+            holder.privateChat.setVisibility(View.VISIBLE);
+        } else {
+            holder.privateChat.setVisibility(View.GONE);
+        }
+
+        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getMessage().contains("已发送文件：")) {
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
         } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT){
-			holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
-		}
-    	
-    	
-    	
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
+        }
+
+
+
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
-        
+
         if (mItem.getIsHideTime() == 1) {
-			holder.time.setVisibility(View.GONE);
+			holder.time.setVisibility(View.INVISIBLE);
 		} else {
 			holder.time.setVisibility(View.VISIBLE);
 		}
@@ -479,27 +479,33 @@ public class MessageAdapter extends BaseAdapter {
 
     private void fillBaseMessageholder(MessageHolderBase holder,
             View convertView) {
-    	
-    	holder.privateChat = (TextView)convertView.findViewById(R.id.private_chat_textview);
+
+        holder.privateChat = (TextView)convertView.findViewById(R.id.private_chat_textview);
         holder.head = (ImageView) convertView.findViewById(R.id.icon);
+
         holder.time = (TextView) convertView.findViewById(R.id.datetime);
+        
+        
+        
         // holder.msg = (GifTextView) convertView.findViewById(R.id.textView2);
         holder.rlMessage = (RelativeLayout) convertView
                 .findViewById(R.id.relativeLayout1);
-        
+
 //        if (mSpUtil.getIsAdmin() == 1) {
-//			holder.rlMessage.setBackgroundColor(Color)
-//		}
+//            holder.rlMessage.setBackgroundColor(Color)
+//        }
         // holder.ivphoto = (ImageView) convertView
         // .findViewById(R.id.iv_chart_item_photo);
         holder.progressBar = (ProgressBar) convertView
                 .findViewById(R.id.progressBar1);
         // holder.voiceTime = (TextView) convertView
         // .findViewById(R.id.tv_voice_time);
-        holder.name = (TextView) convertView.findViewById(R.id.nametitle_textview);
+        holder.name = (TextView) convertView.findViewById(R.id.nametitle);
+        holder.name.setVisibility(View.VISIBLE);
+        
         holder.flPickLayout = (FrameLayout) convertView
                 .findViewById(R.id.message_layout);
-      
+
     }
 
     private void fillTextMessageHolder(TextMessageHolder holder,
@@ -507,8 +513,8 @@ public class MessageAdapter extends BaseAdapter {
         fillBaseMessageholder(holder, convertView);
         holder.msg = (GifTextView) convertView.findViewById(R.id.textView2);
 //        if (mSpUtil.getIsAdmin() == 1) {
-//			holder.msg.setBackgroundColor(Color.parseColor("#FF99CC"));
-//		}
+//            holder.msg.setBackgroundColor(Color.parseColor("#FF99CC"));
+//        }
     }
 
     private void fillImageMessageHolder(ImageMessageHolder holder,
@@ -527,13 +533,13 @@ public class MessageAdapter extends BaseAdapter {
                 .findViewById(R.id.iv_chart_item_photo);
         holder.msg = (GifTextView) convertView.findViewById(R.id.textView2);
 //        if (mSpUtil.getIsAdmin() == 1) {
-//			holder.msg.setBackgroundColor(Color.parseColor("#FF99CC"));
-//		}
+//            holder.msg.setBackgroundColor(Color.parseColor("#FF99CC"));
+//        }
     }
 
     private static class MessageHolderBase {
-    	TextView privateChat;
-    	TextView name;
+        TextView privateChat;
+        TextView name;
         ImageView head;
         TextView time;
         ImageView imageView;
@@ -608,9 +614,9 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-    	
-    	TextView privateChat;
-    	TextView name;
+
+        TextView privateChat;
+        TextView name;
         ImageView head;
         TextView time;
         GifTextView msg;
@@ -671,7 +677,7 @@ public class MessageAdapter extends BaseAdapter {
                         case MessageItem.MESSAGE_TYPE_RECORD: {
                             return MESSAGE_TYPE_MINE_AUDIO;
                         }
-                        
+
                         case MessageItem.MESSAGE_TYPE_FILE: {
                             return MESSAGE_TYPE_MINE_TEXT;
                         }
