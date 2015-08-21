@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.impl.client.TunnelRefusedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,34 +85,43 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            	
 			            	
 			            	// 解析得到一个Map对象  
-			                Map<String, Object> personMap = parseJSONString(payload); 
-			            	Log.d("debug",  
-			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
-			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
-			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
-			                                + "\n" + "data:" + personMap.get("data"));  
+//			                Map<String, Object> personMap = parseJSONString(payload); 
+//			            	Log.d("debug",  
+//			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
+//			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
+//			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
+//			                                + "\n" + "data:" + personMap.get("data"));  
+//			            	
+//			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
+//			            	Log.d("debug", decodeString); 
 			            	
-//			            	String encodeString = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
-			            	Log.d("debug", decodeString); 
-//				            String filetype = null;
-//				            if (payload.contains(".")) {
-//				            	filetype = payload.substring(payload.lastIndexOf("."));
-//								Log.d("chat", "Got echo filetype: " + filetype);
-//					               
-//					            UploadUtil.mUserName = "被诉人";
-//					            UploadUtil.mUserID = "100000";
-//					            UploadUtil.mFileType = filetype;
-//					            UploadUtil.mVoiceLength = 16;
-//					               
-//					               //如果是私聊则不接受消息，因为只有协调员可以看到
-//					            if (UploadUtil.isPrivateChat == 1) {
-//									return;
-//								}
-//					            
-//					            //处理下载链接
-//					            UploadUtil.handleMessage(payload);
-//				            }
+			            	
+			            	
+				            String filetype = null;
+				            if (payload.contains(".")) {
+				            	filetype = payload.substring(payload.lastIndexOf("."));
+								Log.d("chat", "Got echo filetype: " + filetype);
+					               
+					            UploadUtil.mUserName = "调解员";
+					            UploadUtil.mUserID = "100000";
+					            UploadUtil.mFileType = filetype;
+					            UploadUtil.mVoiceLength = 16;
+					            UploadUtil.agreement = 1;
+					            mSpUtil.setIsAdmin(1);
+					               //如果是私聊则不接受消息，因为只有协调员可以看到
+					            if (UploadUtil.isPrivateChat == 1) {
+									return;
+								}
+					            
+					            //如果发送的是调解协议书
+					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
+									PublicChatActivity main = new PublicChatActivity();
+									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID, "", "", 0, UploadUtil.agreement);
+								}
+					            
+					            //处理下载链接
+					            UploadUtil.handleMessage(payload);
+				            }
 			            }
 			            
 			            @Override
@@ -155,8 +165,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
          
          byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
                     
-        
-         
+                
          String fileName = file.toString();
          String suffixName = null;
          if (fileName.contains(".")) {
@@ -182,16 +191,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
             //需要发送的信息：姓名、用户ID、文件类型、是否是悄悄话、音频长度
             String encodeString = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
             String user_info = getUserJsonInfo(".jpg",encodeString);
-//            byte[] in_all = byteMerger(user_info.getBytes(),);
-           
             SingletonHolder.websocket.sendTextMessage(user_info);
 		   } else {
 			   String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
 			   String user_info = getUserJsonInfo(suffixName,encodeString);
-//            byte[] in_all = byteMerger(user_info.getBytes(), in_b);
-          
 			   SingletonHolder.websocket.sendTextMessage(user_info);
-//            mConnection.sendBinaryMessage(in_all);
 		   }
 		           
         try {

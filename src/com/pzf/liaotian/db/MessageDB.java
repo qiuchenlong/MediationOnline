@@ -31,7 +31,7 @@ public class MessageDB {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
 
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER)");
 
         int isCome = 0;
         if (entity.isComMeg()) {// 如果是收到的消息，保存在数据库的值为1
@@ -40,11 +40,11 @@ public class MessageDB {
         db.execSQL(
                 "insert into _"
                         + "localMessage"
-                        + " (messagetype,name,img,date,isCome,message,isNew,voiceTime,isprivatechat,ishidetime) values(?,?,?,?,?,?,?,?,?,?)",
+                        + " (messagetype,name,img,date,isCome,message,isNew,voiceTime,isprivatechat,ishidetime,agreement) values(?,?,?,?,?,?,?,?,?,?,?)",
                 new Object[] { entity.getMsgType(), entity.getName(),
                         entity.getHeadImg(), entity.getDate(), isCome,
                         entity.getMessage(), entity.getIsNew(),
-                        entity.getVoiceTime(),entity.getIsPrivateChat(),entity.getIsHideTime() });
+                        entity.getVoiceTime(),entity.getIsPrivateChat(),entity.getIsHideTime(),entity.getAgreement() });
     }
 
     public List<MessageItem> getMsg(String id, int pager) {
@@ -52,7 +52,7 @@ public class MessageDB {
         int num = 10 * (pager + 1);// 本来是准备做滚动到顶端自动加载数据
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER)");
         Cursor c = db.rawQuery("SELECT * from _" + "localMessage"
                 + " ORDER BY _id DESC LIMIT " + num, null);
         while (c.moveToNext()) {
@@ -66,12 +66,13 @@ public class MessageDB {
             int voiceTime = c.getInt(c.getColumnIndex("voiceTime"));
             int isprivatechat =c.getInt(c.getColumnIndex("isprivatechat"));
             int ishidetime =c.getInt(c.getColumnIndex("ishidetime"));
+            int agreement =c.getInt(c.getColumnIndex("agreement"));
             boolean isComMsg = false;
             if (isCome == 1) {
                 isComMsg = true;
             }
             MessageItem entity = new MessageItem(msgType, name, date, message,
-                    img, isComMsg, isNew, voiceTime,isprivatechat,ishidetime);
+                    img, isComMsg, isNew, voiceTime,isprivatechat,ishidetime,agreement);
             list.add(entity);
         }
         c.close();
@@ -82,7 +83,7 @@ public class MessageDB {
     public int getNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER)");
         Cursor c = db.rawQuery("SELECT isNew from _" + "localMessage" + " where isNew=1",
                 null);
         int count = c.getCount();
@@ -94,7 +95,7 @@ public class MessageDB {
     public void clearNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER)");
         db.execSQL("update _" + "localMessage" + " set isNew=0 where isNew=1");
     }
 

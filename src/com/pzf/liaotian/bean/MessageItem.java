@@ -33,6 +33,8 @@ public class MessageItem extends BaseData{
     private int voiceTime;
     private int isPrivateChat;
     private int isHideTime;
+    private int agreement;
+    
     public MessageItem() {
         // TODO Auto-generated constructor stub
     }
@@ -57,9 +59,13 @@ public class MessageItem extends BaseData{
      *            录音的时间 如果没有为0
      * @param isPrivateChat 
      * 			  私聊 0不是 1是
+     * param isHideTime 
+     * 			  如果需要隐藏发送消息的时间 置1
+     * @param agreement 
+     * 			  如果是协议书 为1
      */
     public MessageItem(int msgType, String name, long date, String message,
-            int headImg, boolean isComMeg, int isNew, int voiceTime,int isprivatechat,int isHideTime) {
+            int headImg, boolean isComMeg, int isNew, int voiceTime,int isprivatechat,int isHideTime,int agreement) {
         super();
         this.msgType = msgType;
         this.name = name;
@@ -71,8 +77,17 @@ public class MessageItem extends BaseData{
         this.voiceTime = voiceTime;
         this.isPrivateChat = isprivatechat;
         this.isHideTime = isHideTime;
+        this.agreement = agreement;
     }
 
+    public int getAgreement() {
+    	return agreement;
+    }
+    
+    public void setAgreement(int agreement) {
+    	this.agreement = agreement;
+    }
+    
     public int getIsHideTime() {
     	return isHideTime;
     }

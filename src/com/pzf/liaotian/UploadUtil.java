@@ -88,6 +88,7 @@ public class UploadUtil {
 	 public static String mFilePath;
 	 public static int mVoiceLength;
 	 public static Boolean isCome;
+	 public static int agreement;
 	 
 	 public static int isPrivateChat;
 	 	
@@ -134,13 +135,13 @@ public class UploadUtil {
 	        protected void onPostExecute(byte[] result) {
 	            // TODO Auto-generated method stub
 	            super.onPostExecute(result);
-	            mFilePath = saveBitmap(result);
+	            mFilePath = saveFile(result);
 	            
 	            PublicChatActivity main = new PublicChatActivity();
 	            main.mApplication = PushApplication.getInstance();
 	            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
 	            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
-	            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength);
+	            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement);
 	        }
 
 	    }
@@ -149,7 +150,7 @@ public class UploadUtil {
 	
 	 
 	    /** 保存方法 */
-	    public static String saveBitmap(byte[] data) {
+	    public static String saveFile(byte[] data) {
 	     Log.e(TAG, "保存文件");
 	     
 	     String type = "";
@@ -160,6 +161,9 @@ public class UploadUtil {
 			subPath = "/voice";
 		} else if (mFileType.equals(".txt")) {
 			subPath = "/word";
+		} else if (mFileType.contains(".doc")) {
+			subPath = "/world";
+			mFileType = ".doc";
 		} else {
 			subPath = "/other";
 		}

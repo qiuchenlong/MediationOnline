@@ -304,24 +304,34 @@ public class MessageAdapter extends BaseAdapter {
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
     	
-        // 文字
-        holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-                .getMessage() + " "));
-        
-        
-        
-        holder.msg.setEnabled(true);
+       
+        //如果收到.doc文件
+        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
+        	 // 文字
+            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
+                    .getMessage()));
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+//		} else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+//			//如果收到的是调解协议书
+//			holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+//			holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+//	                .getMessage() + " "));
+		} else {
+			 // 文字
+	        holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+	                .getMessage() + " "));
+		}
         
         holder.msg.setOnClickListener(new OnClickListener() {
     		
     		@Override
     		public void onClick(View arg0) {
     			int filetype = mItem.getMsgType();
-    			if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE) {
+    			if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false) {
     				
     				Intent intent =new Intent(mContext,ProtocolViewActivity.class);		
     				mContext.startActivity(intent);
-    			}  
+    			} 
     			 Log.v("chat", "text message=" + filetype);
     			 
     		}

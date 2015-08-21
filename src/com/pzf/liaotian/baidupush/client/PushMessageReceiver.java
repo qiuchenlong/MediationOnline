@@ -196,7 +196,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
                     item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
                             msg.getNick(), System.currentTimeMillis(),
                             msg.getMessage(), headId, true, 1,
-                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0);
+                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0,0);
                     recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                             userId, headId, msg.getNick(), msg.getMessage(), 0,
                             System.currentTimeMillis(), msg.getVoiceTime(),mSpUtil.getIsPrivateChat());
@@ -205,7 +205,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
                     item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
                             msg.getNick(), System.currentTimeMillis(),
                             msg.getMessage(), headId, true, 1,
-                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0);
+                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0,0);
                     recentItem = new RecentItem(
                             MessageItem.MESSAGE_TYPE_RECORD, userId, headId,
                             msg.getNick(), msg.getMessage(), 0,
@@ -214,7 +214,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
                     item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                             msg.getNick(), System.currentTimeMillis(),
                             msg.getMessage(), headId, true, 1,
-                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0);
+                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0,0);
                     recentItem = new RecentItem(
                             MessageItem.MESSAGE_TYPE_IMG, userId, headId,
                             msg.getNick(), msg.getMessage(), 0,
@@ -223,7 +223,7 @@ public class PushMessageReceiver extends BroadcastReceiver {
                     item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
                             msg.getNick(), System.currentTimeMillis(),
                             msg.getMessage(), headId, true, 1,
-                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0);
+                            msg.getVoiceTime(),mSpUtil.getIsPrivateChat(),0,0);
                     recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_FILE,
                             userId, headId, msg.getNick(), msg.getMessage(), 0,
                             System.currentTimeMillis(), msg.getVoiceTime(),mSpUtil.getIsPrivateChat());
