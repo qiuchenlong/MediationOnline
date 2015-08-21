@@ -1449,7 +1449,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        "调解协议书-待确认", 0, false, 1,
+                        "调解协议书-待确认", 0, true, 1,
                          voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement);
 
                  recentItem = new RecentItem(

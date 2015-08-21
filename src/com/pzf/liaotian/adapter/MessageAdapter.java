@@ -304,23 +304,21 @@ public class MessageAdapter extends BaseAdapter {
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
     	
-       
-        //如果收到.doc文件
-        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
-        	 // 文字
-            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
-                    .getMessage()));
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+//        //如果收到.doc文件
+//        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
+//        	 // 文字
+//            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
+//                    .getMessage()));
+//            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
 //		} else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
 //			//如果收到的是调解协议书
-//			holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
 //			holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 //	                .getMessage() + " "));
-		} else {
+//		} else {
 			 // 文字
 	        holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 	                .getMessage() + " "));
-		}
+//		}
         
         holder.msg.setOnClickListener(new OnClickListener() {
     		
@@ -456,7 +454,7 @@ public class MessageAdapter extends BaseAdapter {
 		}
     	
     	holder.name.setText(mItem.getName());
-//    	holder.name.setVisibility(View.VISIBLE);
+    	holder.name.setVisibility(View.VISIBLE);
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);
