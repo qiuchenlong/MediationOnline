@@ -1317,8 +1317,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	long currentTime = System.currentTimeMillis();
     	int isHide = isHideTimeLabel(currentTime);
     	
+    	String name = mSpUtil.getNick();
         MessageItem item = new MessageItem(
-                MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
+                MessageItem.MESSAGE_TYPE_TEXT, name,
                 currentTime, msg, mSpUtil.getHeadIcon(),
                 false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
 
