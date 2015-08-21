@@ -453,15 +453,18 @@ public class MessageAdapter extends BaseAdapter {
 			holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
 		}
     	
-    	holder.name.setText(mItem.getName());
-    	holder.name.setVisibility(View.VISIBLE);
+    	
+    	
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
+        
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);
 		} else {
 			holder.time.setVisibility(View.VISIBLE);
 		}
         
+        holder.name.setText(mItem.getName());
+        holder.name.setVisibility(View.VISIBLE);
         holder.head.setBackgroundResource(PushApplication.heads[mItem
                 .getHeadImg()]);
         holder.head.setEnabled(false);
