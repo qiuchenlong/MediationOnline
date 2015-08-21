@@ -309,7 +309,8 @@ public class MessageAdapter extends BaseAdapter {
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
                     .getMessage()));
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
+            holder.name.setText("  系统");
         }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
         	 // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString("已发送文件："+mItem
@@ -321,7 +322,11 @@ public class MessageAdapter extends BaseAdapter {
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
-        } else {
+        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
+			//对方收到的text
+        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
+		}
+        else {
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));

@@ -159,8 +159,9 @@ public class UploadUtil {
 			subPath = "/photo";
 		} else if(mFileType.equals(".amr")){
 			subPath = "/voice";
-		} else if (mFileType.equals(".txt")) {
+		} else if (mFileType.contains(".txt")) {
 			subPath = "/word";
+			mFileType = ".txt";
 		} else if (mFileType.contains(".doc")) {
 			subPath = "/world";
 			mFileType = ".doc";

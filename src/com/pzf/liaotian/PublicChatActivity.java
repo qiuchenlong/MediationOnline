@@ -1378,6 +1378,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             if (mSpUtil == null) {
 				mSpUtil = PushApplication.getInstance().getSpUtil();
 			}
+            mSpUtil.setIsCome(true);
 
             long currentTime = System.currentTimeMillis();
         	int isHide = isHideTimeLabel(currentTime);
@@ -1426,7 +1427,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                         userName, currentTime,
-                        str, 1, true, 0,
+                        str, 1, true, 1,
                         0,mSpUtil.getIsPrivateChat(),isHide,0);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
@@ -1438,7 +1439,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        filePath, 0, false, 0,
+                        filePath, 0, true, 0,
                          voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
 
                  recentItem = new RecentItem(

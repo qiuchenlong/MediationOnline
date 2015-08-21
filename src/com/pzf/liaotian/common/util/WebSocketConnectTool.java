@@ -106,7 +106,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            UploadUtil.mUserID = "100000";
 					            UploadUtil.mFileType = filetype;
 					            UploadUtil.mVoiceLength = 16;
-					            UploadUtil.agreement = 1;
+					            UploadUtil.agreement = 0;
 					            mSpUtil.setIsAdmin(1);
 					               //如果是私聊则不接受消息，因为只有协调员可以看到
 					            if (UploadUtil.isPrivateChat == 1) {
