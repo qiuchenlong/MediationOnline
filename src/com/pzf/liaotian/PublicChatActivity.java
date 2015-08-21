@@ -1360,7 +1360,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mRecentDB.saveRecent(recentItem);
     }
     
-    public void receiveMessageFormServer(String userName,String userID,String fileType,String filePath,int voiceLength,int agreement) {
+    public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement) {
 
 //            String userId = msgItem.getUser_id();
 //            if (!userId.equals(mSpUtil.getUserId()))// 如果不是当前正在聊天对象的消息，不处理
@@ -1387,30 +1387,30 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             if (fileType.equals(".jpg") || fileType.equals(".png")) {
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                         userName, currentTime,
-                        filePath,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0);
+                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
                         userID, 1, userName,
-                        filePath, 0,
+                        Path, 0,
                         System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
             }
             else if (fileType.equals(".amr") || fileType.equals(".mp3")) {//语音
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
 
                 		userName, currentTime,
-                       filePath, 1, true, 0,
+                		Path, 1, true, 0,
                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
 
                 recentItem = new RecentItem(
                         MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
-                       userName, filePath, 0,
+                       userName, Path, 0,
                         System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
              }
              else if (fileType.equals(".txt")) {//文本
             	 //直接将文本内容存到数据库
             	 String str = ""; 
             	 try {  
-                     File urlFile = new File(filePath);  
+                     File urlFile = new File(Path);  
                      InputStreamReader isr = new InputStreamReader(new FileInputStream(urlFile), "gbk");  
                      BufferedReader br = new BufferedReader(isr);    
                          
@@ -1439,24 +1439,24 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        filePath, 0, true, 0,
+                 		Path, 0, true, 0,
                          voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, filePath, 0,
+                        userName, Path, 0,
                          System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
             }
              else if (agreement == 1) {//待确认-调解协议书
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        "调解协议书-待确认", 0, true, 1,
+                        Path, 0, true, 1,
                          voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, filePath, 0,
+                        userName, Path, 0,
                          System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
             }
             

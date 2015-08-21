@@ -34,7 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pzf.liaotian.MainViewActivity;
-import com.pzf.liaotian.ProtocolViewActivity;
+import com.pzf.liaotian.WebViewActivity;
 import com.pzf.liaotian.PublicChatActivity;
 import com.pzf.liaotian.R;
 import com.pzf.liaotian.album.takephoto.BubbleImageHelper;
@@ -320,8 +320,7 @@ public class MessageAdapter extends BaseAdapter {
         else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
             //如果收到的是调解协议书
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
-            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-                    .getMessage() + " "));
+            holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
         } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
 			//对方收到的text
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
@@ -337,9 +336,11 @@ public class MessageAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
                 int filetype = mItem.getMsgType();
+                //如果是协议书，点击后会跳转到相应的url
                 if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
-
-                    Intent intent =new Intent(mContext,ProtocolViewActivity.class);        
+                
+                    Intent intent =new Intent(mContext,WebViewActivity.class);  
+                    intent.putExtra("URL_PATH", mItem.getMessage());
                     mContext.startActivity(intent);
                 } 
                  Log.v("chat", "text message=" + filetype);

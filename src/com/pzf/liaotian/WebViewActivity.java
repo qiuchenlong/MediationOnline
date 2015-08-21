@@ -1,5 +1,6 @@
 package com.pzf.liaotian;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,7 +17,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-public class ProtocolViewActivity extends Activity{
+public class WebViewActivity extends Activity{
 
 	private WebView myWebView = null;
 	private Button backButton;
@@ -30,7 +31,9 @@ public class ProtocolViewActivity extends Activity{
 
         // 打开网页
         myWebView = (WebView) findViewById(R.id.protocol_confirm_webview);
-        myWebView.loadUrl("http://www.baidu.com/");// 百度链接
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("URL_PATH");
+        myWebView.loadUrl(path);// 百度链接
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);

@@ -67,7 +67,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	mSpUtil = PushApplication.getInstance().getSpUtil();
     	
     	final String wsuri = mSpUtil.getServerIP();
-    	
+    	final File _file = file;
         if (!SingletonHolder.websocket.isConnected()) {
 			
 	    	  try {
@@ -77,6 +77,9 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            public void onOpen() {
 			               Log.d("chat", "Status: Connected to " + wsuri);	
 			               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",进入聊天室",true);
+			               if (_file != null) {
+								sendMessage(_file);	
+							}
 			       	    }
 			            
 			            @Override
@@ -106,8 +109,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            UploadUtil.mUserID = "100000";
 					            UploadUtil.mFileType = filetype;
 					            UploadUtil.mVoiceLength = 16;
-					            UploadUtil.agreement = 0;
+					            UploadUtil.agreement = 1;
 					            mSpUtil.setIsAdmin(1);
+					            
+					            String path = "http://www.baidu.com";
 					               //如果是私聊则不接受消息，因为只有协调员可以看到
 					            if (UploadUtil.isPrivateChat == 1) {
 									return;
@@ -116,7 +121,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            //如果发送的是调解协议书
 					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
 									PublicChatActivity main = new PublicChatActivity();
-									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID, "", "", 0, UploadUtil.agreement);
+									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
 								} else {
 									 //处理下载链接
 						            UploadUtil.handleMessage(payload);
@@ -127,7 +132,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            @Override
 			            public void onClose(int code, String reason) {
 			               Log.d("chat", "Connection lost.");
-			               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",退出聊天室",true);	
+			               if (_file != null) {
+			            	  PublicChatActivity.sendTextMessage("网络连接错误，消息发送失败",true);
+						} else {
+							 PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",退出聊天室",true);	
+						}
 			            }
 			         });
 			      } catch (WebSocketException e) {
