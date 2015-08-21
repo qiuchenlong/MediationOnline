@@ -1009,7 +1009,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             case FILE_PATH:
             	String path = data.getStringExtra("FilePath");
             	Log.v("chat", path);
-            	String msg = "已发送文件：" + path.substring(path.lastIndexOf('/')+1);
+            	String msg = path.substring(path.lastIndexOf('/')+1);
 
             	long currentTime = System.currentTimeMillis();
             	int isHide = isHideTimeLabel(currentTime);
@@ -1026,6 +1026,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                  if (mLlAffix.isShown()) {
                      mLlAffix.setVisibility(View.GONE);
                  }
+                 mSpUtil.setIsCome(false);
                  new SendMsgAsyncTask(null, null,path).send();// push发送消息到服务器
                 
             	break;

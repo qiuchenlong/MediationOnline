@@ -106,21 +106,21 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            UploadUtil.mUserID = "100000";
 					            UploadUtil.mFileType = filetype;
 					            UploadUtil.mVoiceLength = 16;
-					            UploadUtil.agreement = 0;
-					            mSpUtil.setIsAdmin(0);
+					            UploadUtil.agreement = 1;
+					            mSpUtil.setIsAdmin(1);
 					               //如果是私聊则不接受消息，因为只有协调员可以看到
 					            if (UploadUtil.isPrivateChat == 1) {
 									return;
 								}
 					            
 					            //如果发送的是调解协议书
-//					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
-//									PublicChatActivity main = new PublicChatActivity();
-//									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID, "", "", 0, UploadUtil.agreement);
-//								} else {
+					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
+									PublicChatActivity main = new PublicChatActivity();
+									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID, "", "", 0, UploadUtil.agreement);
+								} else {
 									 //处理下载链接
 						            UploadUtil.handleMessage(payload);
-//								}					            
+								}					            
 				            }
 			            }
 			            

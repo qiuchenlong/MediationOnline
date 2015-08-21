@@ -305,13 +305,20 @@ public class MessageAdapter extends BaseAdapter {
         handleBaseMessage(holder, mItem);
 
         //如果收到.doc文件
-        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")){
+        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
                     .getMessage()));
             holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
-        } else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+        }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
+        	 // 文字
+            holder.msg.insertGif(convertNormalStringToSpannableString("已发送文件："+mItem
+                    .getMessage()));
+            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+        }
+        else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
             //如果收到的是调解协议书
+        	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
         } else {
@@ -325,7 +332,7 @@ public class MessageAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
                 int filetype = mItem.getMsgType();
-                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false) {
+                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
 
                     Intent intent =new Intent(mContext,ProtocolViewActivity.class);        
                     mContext.startActivity(intent);
