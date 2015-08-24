@@ -335,18 +335,16 @@ public class MessageAdapter extends BaseAdapter {
         
         if (mItem.getDate() == 0) {
 			holder.time.setVisibility(View.VISIBLE);
-			holder.head.setVisibility(View.GONE);
-			holder.name.setVisibility(View.GONE);
-			holder.rlMessage.setVisibility(View.GONE);
-			holder.progressBar.setVisibility(View.GONE);
-			holder.flPickLayout.setVisibility(View.GONE);
+			
 			holder.time.setText("公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
 			holder.time.setTextColor(Color.rgb(254, 20, 99));
 			holder.time.setTextSize(13);
 			holder.time.setPadding(12, 12, 12, 12);
 			holder.time.bringToFront();
 			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
-			
+//			holder.flLayout.setVisibility(View.GONE);
+		} else {
+//			holder.flLayout.setVisibility(View.VISIBLE);
 		}
 
         holder.msg.setOnClickListener(new OnClickListener() {
@@ -532,6 +530,7 @@ public class MessageAdapter extends BaseAdapter {
         
         holder.flPickLayout = (FrameLayout) convertView
                 .findViewById(R.id.message_layout);
+//        holder.flLayout = (FrameLayout) convertView.findViewById(R.id.linearLayout1);
 
     }
 
@@ -573,6 +572,7 @@ public class MessageAdapter extends BaseAdapter {
         ProgressBar progressBar;
         RelativeLayout rlMessage;
         FrameLayout flPickLayout;
+        FrameLayout flLayout;
     }
 
     private static class TextMessageHolder extends MessageHolderBase {
@@ -653,6 +653,7 @@ public class MessageAdapter extends BaseAdapter {
         ImageView ivphoto;
         RelativeLayout rlMessage;
         FrameLayout flPickLayout;
+        FrameLayout flLayout;
     }
 
     @Override

@@ -172,7 +172,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     
     private Button backButton;//返回按钮
     private TextView titleTextView;//标题
-    public static TextView mHomeNotice;//公告
+//    public static TextView mHomeNotice;//公告
     private int is_admin;//是否是管理员
     
     private Button quit_privatechat_button;//退出悄悄话
@@ -383,7 +383,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mEtMsgOnKeyListener();
 
         //公告
-        mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
+//        mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
         //标题
         titleTextView = (TextView)findViewById(R.id.tv_chat_title);
         
@@ -411,9 +411,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 				private_chat_view.setVisibility(View.VISIBLE);
 				mSpUtil.setIsPrivateChat(1);//开启悄悄话
 				mLlAffix.setVisibility(View.GONE);//关闭弹出
-				if (mHomeNotice.VISIBLE == View.VISIBLE) {
-					mHomeNotice.setVisibility(View.GONE);
-				}
+//				if (mHomeNotice.VISIBLE == View.VISIBLE) {
+//					mHomeNotice.setVisibility(View.GONE);
+//				}
 			}
 		});
               
@@ -725,7 +725,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     protected void showVoice(int mVoiceTime) {
 	
-    	mHomeNotice.setVisibility(View.INVISIBLE);
+//    	mHomeNotice.setVisibility(View.INVISIBLE);
     	String filePath = util.getFilePath(AudioRecorder2Mp3Util.MP3);
 
     	long currentTime = System.currentTimeMillis();
@@ -781,14 +781,14 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 .getMsg(mSpUtil.getUserId(), MSGPAGERNUM);
         List<MessageItem> msgList = new ArrayList<MessageItem>();// 消息对象数组
         
-        if (mHomeNotice == null) {
-			mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
-		}
-        if (list.size() > 5) {
-        	mHomeNotice.setVisibility(View.GONE);
-		} else {
-			mHomeNotice.setVisibility(View.VISIBLE);
-		}
+//        if (mHomeNotice == null) {
+//			mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
+//		}
+//        if (list.size() > 5) {
+//        	mHomeNotice.setVisibility(View.GONE);
+//		} else {
+//			mHomeNotice.setVisibility(View.VISIBLE);
+//		}
         
         if (list.size() > 0) {
 //        	mHomeNotice.setVisibility(View.GONE);
@@ -816,7 +816,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                     0,0,0,0);
         	msgList.add(item);
         	mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
-        	mHomeNotice.setVisibility(View.VISIBLE);
+//        	mHomeNotice.setVisibility(View.VISIBLE);
         }
         return msgList;
 
@@ -1066,7 +1066,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     private void hanlderTakePhotoData(Intent data) {
 
-    	mHomeNotice.setVisibility(View.INVISIBLE);
+//    	mHomeNotice.setVisibility(View.INVISIBLE);
         if (data == null) {
             // 新建bitmap
             Bitmap newBitmap = ImageTool
@@ -1337,7 +1337,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     }
     
     public static void sendTextMessage(String message,Boolean isSystemMessage) {
-    	mHomeNotice.setVisibility(View.INVISIBLE);
+//    	mHomeNotice.setVisibility(View.INVISIBLE);
     	String msg = message;
 
     	long currentTime = System.currentTimeMillis();
