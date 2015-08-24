@@ -29,6 +29,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -88,6 +89,7 @@ public class MessageAdapter extends BaseAdapter {
     int h;  
     boolean num=true; 
     TextView noticeTextView;
+    LinearLayout linearLayout;
 
     public MessageAdapter(Context context, List<MessageItem> msgList) {
         mContext = context;
@@ -330,6 +332,22 @@ public class MessageAdapter extends BaseAdapter {
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
         }
+        
+        if (mItem.getDate() == 0) {
+			holder.time.setVisibility(View.VISIBLE);
+			holder.head.setVisibility(View.GONE);
+			holder.name.setVisibility(View.GONE);
+			holder.rlMessage.setVisibility(View.GONE);
+			holder.progressBar.setVisibility(View.GONE);
+			holder.flPickLayout.setVisibility(View.GONE);
+			holder.time.setText("公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
+			holder.time.setTextColor(Color.rgb(254, 20, 99));
+			holder.time.setTextSize(13);
+			holder.time.setPadding(12, 12, 12, 12);
+			holder.time.bringToFront();
+			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
+			
+		}
 
         holder.msg.setOnClickListener(new OnClickListener() {
 
@@ -483,10 +501,6 @@ public class MessageAdapter extends BaseAdapter {
         holder.head.setEnabled(false);
         holder.progressBar.setVisibility(View.GONE);
         holder.progressBar.setProgress(50);
-
-        //
-        // holder.head.setBackgroundResource(PushApplication.heads[mItem
-        // .getHeadImg()]);
 
     }
 

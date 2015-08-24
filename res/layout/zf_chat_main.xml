@@ -75,16 +75,7 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/zxtj_home_notice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:paddingTop="5dp"
-            android:text="     公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！"
-            android:textColor="#FF6666"
-           
-            />
+        
 
     </FrameLayout>
 
