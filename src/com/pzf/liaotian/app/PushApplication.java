@@ -20,6 +20,7 @@ import com.pzf.liaotian.R;
 import com.pzf.liaotian.baidupush.client.PushMessageReceiver;
 import com.pzf.liaotian.baidupush.server.BaiduPush;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
+import com.pzf.liaotian.db.ConsultMessageDB;
 import com.pzf.liaotian.db.MessageDB;
 import com.pzf.liaotian.db.RecentDB;
 import com.pzf.liaotian.db.UserDB;
@@ -39,6 +40,7 @@ public class PushApplication extends Application {
     private SharePreferenceUtil mSpUtil;
     private UserDB mUserDB;
     private MessageDB mMsgDB;
+    private ConsultMessageDB mCSMsgDB;
     private RecentDB mRecentDB;
     // private List<User> mUserList;
     private MediaPlayer mMediaPlayer;
@@ -67,6 +69,7 @@ public class PushApplication extends Application {
         mSpUtil = new SharePreferenceUtil(this, SP_FILE_NAME);
         mUserDB = new UserDB(this);
         mMsgDB = new MessageDB(this);
+        mCSMsgDB = new ConsultMessageDB(this);
         mRecentDB = new RecentDB(this);
         // mUserList = mUserDB.getUser();
         mMediaPlayer = MediaPlayer.create(this, R.raw.office);
@@ -101,6 +104,12 @@ public class PushApplication extends Application {
         return mMsgDB;
     }
 
+    public synchronized ConsultMessageDB getConsultMessageDB() {
+        if (mCSMsgDB == null)
+        	mCSMsgDB = new ConsultMessageDB(this);
+        return mCSMsgDB;
+    }
+    
     public synchronized RecentDB getRecentDB() {
         if (mRecentDB == null)
             mRecentDB = new RecentDB(this);

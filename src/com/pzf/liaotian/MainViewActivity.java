@@ -104,6 +104,7 @@ public class MainViewActivity extends Activity {
 	Button button;
 	Button button2;
 	Button button3;
+	Button button4;
 	
 	EditText edit1;
 	EditText edit2;
@@ -161,6 +162,16 @@ public class MainViewActivity extends Activity {
 				Intent intent = new Intent(MainViewActivity.this,MainWebViewActivity.class);
 				startActivity(intent);
 				
+			}
+		});
+		 
+		 button4 = (Button)findViewById(R.id.button4);
+		 button4.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(MainViewActivity.this,ConsultActivity.class);
+				startActivity(intent);
 			}
 		});
 	}
