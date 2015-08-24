@@ -725,6 +725,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     protected void showVoice(int mVoiceTime) {
 	
+    	mHomeNotice.setVisibility(View.INVISIBLE);
     	String filePath = util.getFilePath(AudioRecorder2Mp3Util.MP3);
 
     	long currentTime = System.currentTimeMillis();
@@ -1058,6 +1059,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     private void hanlderTakePhotoData(Intent data) {
 
+    	mHomeNotice.setVisibility(View.INVISIBLE);
         if (data == null) {
             // 新建bitmap
             Bitmap newBitmap = ImageTool
@@ -1328,6 +1330,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     }
     
     public static void sendTextMessage(String message,Boolean isSystemMessage) {
+    	mHomeNotice.setVisibility(View.INVISIBLE);
     	String msg = message;
 
     	long currentTime = System.currentTimeMillis();
