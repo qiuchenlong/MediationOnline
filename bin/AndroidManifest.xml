@@ -61,7 +61,8 @@
 		<activity android:name="com.pzf.liaotian.WebViewActivity" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.common.util.AudioRecorder2Mp3Util" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.TouchImageView" android:screenOrientation="portrait"/>
-		
+		<activity android:name="com.pzf.liaotian.MainWebViewActivity" android:screenOrientation="portrait"/>
+				
         <!-- 消息预处理的intenService -->
         <service android:name="com.pzf.liaotian.baidupush.client.PreParseService" >
         </service>

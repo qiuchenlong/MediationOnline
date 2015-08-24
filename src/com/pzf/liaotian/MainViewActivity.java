@@ -103,6 +103,8 @@ public class MainViewActivity extends Activity {
 	
 	Button button;
 	Button button2;
+	Button button3;
+	
 	EditText edit1;
 	EditText edit2;
 	@Override
@@ -148,6 +150,17 @@ public class MainViewActivity extends Activity {
 				sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
 				sendIntent.setType("text/plain");
 				startActivity(sendIntent);
+			}
+		});
+		 
+		 button3 = (Button)findViewById(R.id.button3);
+		 button3.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(MainViewActivity.this,MainWebViewActivity.class);
+				startActivity(intent);
+				
 			}
 		});
 	}
