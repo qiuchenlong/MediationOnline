@@ -1324,7 +1324,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	long oldtime = mSpUtil.getsystemtime();
     	
     	long interval = newtime - oldtime;
-    	if (interval > 1000*60) {
+    	if (interval > 1000*5) {
     		Log.v("chat_time", "interval="+ interval);
 			Log.v("chat_time", "interval="+ new java.util.Date(interval));
 			mSpUtil.setSystemTime(newtime);

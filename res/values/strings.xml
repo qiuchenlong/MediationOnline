@@ -13,7 +13,7 @@
     <string name="trash">Trash</string>
     <string name="action_exit">返回</string>
     
-    <string name="app_name">在线调解</string>
+    <string name="app_name">海沧在线调解</string>
     <string name="net_error_tip">当前网络不可用，请检查你的网络设置</string>
     <!-- 上拉下拉 -->
     <string name="xlistview_header_hint_normal">下拉刷新</string>

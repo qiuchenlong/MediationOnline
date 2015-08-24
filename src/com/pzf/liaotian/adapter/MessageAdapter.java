@@ -487,7 +487,7 @@ public class MessageAdapter extends BaseAdapter {
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
 
         if (mItem.getIsHideTime() == 1) {
-			holder.time.setVisibility(View.INVISIBLE);
+			holder.time.setVisibility(View.GONE);
 		} else {
 			holder.time.setVisibility(View.VISIBLE);
 		}
