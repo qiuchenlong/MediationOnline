@@ -351,12 +351,6 @@ public class MsgListView extends ListView implements OnScrollListener {
 		if (mScrollListener != null) {
 			mScrollListener.onScrollStateChanged(view, scrollState);
 		}
-		if (PublicChatActivity.mHomeNotice != null) {
-			if (PublicChatActivity.mHomeNotice.VISIBLE == View.VISIBLE) {
-				PublicChatActivity.mHomeNotice.setVisibility(View.GONE);
-			}
-		}
-		Log.v("chat", "scroling" );
 	}
 
 	@Override
@@ -367,9 +361,7 @@ public class MsgListView extends ListView implements OnScrollListener {
 		if (mScrollListener != null) {
 			mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount,
 					totalItemCount);
-		}
-		
-		
+		}		
 	}
 
 	public void setXListViewListener(IXListViewListener l) {

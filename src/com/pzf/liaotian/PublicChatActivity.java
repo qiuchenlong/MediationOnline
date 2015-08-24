@@ -809,6 +809,13 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                
             }
         } else {
+        	String str = "";
+        	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+                    "", 0,
+                    str, 1, true, 1,
+                    0,0,0,0);
+        	msgList.add(item);
+        	mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
         	mHomeNotice.setVisibility(View.VISIBLE);
         }
         return msgList;
