@@ -181,6 +181,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     private TextView private_chat_to_mediator;
     //上传文件按钮
     private TextView uploadView;
+    //申述点 按钮
+    private Button shensuButton;
     
     private int mVioceTime;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
@@ -450,6 +452,19 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             }
         });
         mTvVoicePreeListener();// 按住录音按钮的事件
+        
+        //申诉点
+        shensuButton = (Button)findViewById(R.id.shensu_button);
+        shensuButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				 Intent intent =new Intent(PublicChatActivity.this,WebViewActivity.class);  
+                 intent.putExtra("URL_PATH", "http://www.csdn.net");
+                 startActivity(intent);
+				
+			}
+		});
     }
     
     
