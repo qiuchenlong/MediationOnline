@@ -171,6 +171,14 @@ public class MainViewActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(MainViewActivity.this,ConsultActivity.class);
+				intent.putExtra("USER_NAME", edit1.getText());
+				intent.putExtra("USER_ID", edit2.getText());
+				Log.v("chat", edit1.getText().toString());
+				intent.putExtra("USER_NAME", edit1.getText().toString());
+				intent.putExtra("USER_ID", edit2.getText().toString());
+				intent.putExtra("IS_PRIVATE_CHAT", 0);
+				intent.putExtra("IS_ADMIN", 1);
+				intent.putExtra("CHAT_ROOM_ID", "027");
 				startActivity(intent);
 			}
 		});

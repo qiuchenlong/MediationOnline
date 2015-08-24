@@ -64,6 +64,7 @@ import com.baidu.android.pushservice.PushManager;
 import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.google.gson.Gson;
 import com.huneng.fileexplorer.UploadView;
+import com.pzf.liaotian.adapter.ConsultMessageAdapter;
 import com.pzf.liaotian.adapter.FaceAdapter;
 import com.pzf.liaotian.adapter.FacePageAdeapter;
 import com.pzf.liaotian.adapter.MessageAdapter;
@@ -121,7 +122,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
     public PushApplication mApplication;
 
     private Button mBtnSend;// 发送消息按钮
-    public static MessageAdapter adapter;// 发送消息展示的adapter
+    public static ConsultMessageAdapter adapter;// 发送消息展示的adapter
     public static MsgListView mMsgListView;// 展示消息的
     public static ConsultMessageDB mCSMsgDB;// 保存消息的数据库
     public static RecentDB mRecentDB;
@@ -180,10 +181,6 @@ public class ConsultActivity extends Activity implements OnClickListener,
     private int mVioceTime;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
 
-
-
- 
-
     /**
      * @Description 滑动到列表底部
      */
@@ -226,15 +223,15 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
         initView();
 //
-//        mApplication.getNotificationManager().cancel(
-//                PushMessageReceiver.NOTIFY_ID);
-//        PushMessageReceiver.mNewNum = 0;
+        mApplication.getNotificationManager().cancel(
+                PushMessageReceiver.NOTIFY_ID);
+        PushMessageReceiver.mNewNum = 0;
 //
 //        mUserDB = mApplication.getUserDB();
 //        
-//        recodePermission = mSpUtil.getRecordPermission();
+        recodePermission = mSpUtil.getRecordPermission();
 //
-//        initUserInfo();
+        initUserInfo();
 //        
 //        mConnection.handleConnection(null);
     
@@ -277,9 +274,6 @@ public class ConsultActivity extends Activity implements OnClickListener,
     	mSpUtil.setIsPrivateChat(0);
     	Log.v("chat", "isprivatechat = " + isprivatechat);
     	
-    	String chatRoomId = intent.getStringExtra("CHAT_ROOM_ID");
-		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
-    	
     }
 
    
@@ -291,15 +285,15 @@ public class ConsultActivity extends Activity implements OnClickListener,
 //        mRecentDB = mApplication.getRecentDB();// 接收消息数据库
 //        mGson = mApplication.getGson();
 //
-//        adapter = new MessageAdapter(this, initMsgData());
-//        mMsgListView = (MsgListView) findViewById(R.id.msg_listView);
+        adapter = new ConsultMessageAdapter(this, initMsgData());
+        mMsgListView = (MsgListView) findViewById(R.id.msg_listView);
 ////        
 //        // 触摸ListView隐藏表情和输入法
-//        mMsgListView.setOnTouchListener(this);
-//        mMsgListView.setPullLoadEnable(false);
-//        mMsgListView.setXListViewListener(this);
-//        mMsgListView.setAdapter(adapter);
-//        mMsgListView.setSelection(adapter.getCount() - 1);
+        mMsgListView.setOnTouchListener(this);
+        mMsgListView.setPullLoadEnable(false);
+        mMsgListView.setXListViewListener(this);
+        mMsgListView.setAdapter(adapter);
+        mMsgListView.setSelection(adapter.getCount() - 1);
         mEtMsg = (EditText) findViewById(R.id.msg_et);
 //        mEtMsgOnKeyListener();
     	
@@ -402,7 +396,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
         PushMessageReceiver.ehList.remove(this);// 移除监听
     }
 
-    public static MessageAdapter getMessageAdapter() {
+    public static ConsultMessageAdapter getMessageAdapter() {
         return adapter;
     }
 
@@ -413,18 +407,8 @@ public class ConsultActivity extends Activity implements OnClickListener,
         List<MessageItem> list = mCSMsgDB
                 .getMsg(mSpUtil.getUserId(), MSGPAGERNUM);
         List<MessageItem> msgList = new ArrayList<MessageItem>();// 消息对象数组
-        
-        if (mHomeNotice == null) {
-			mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
-		}
-        if (list.size() > 5) {
-        	mHomeNotice.setVisibility(View.GONE);
-		} else {
-			mHomeNotice.setVisibility(View.VISIBLE);
-		}
-        
+              
         if (list.size() > 0) {
-//        	mHomeNotice.setVisibility(View.GONE);
         	
             for (MessageItem entity : list) {
                 if (entity.getName().equals("")) {
@@ -442,7 +426,13 @@ public class ConsultActivity extends Activity implements OnClickListener,
                
             }
         } else {
-        	mHomeNotice.setVisibility(View.VISIBLE);
+        	String str = "您好！我是海沧司法局的调解小秘书，有事您找我？我将在24小时内回复您。";
+        	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+                    "小秘书", System.currentTimeMillis(),
+                    str, 1, true, 1,
+                    0,mSpUtil.getIsPrivateChat(),0,0);
+        	msgList.add(item);
+        	mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
         }
         return msgList;
 
@@ -664,9 +654,9 @@ public class ConsultActivity extends Activity implements OnClickListener,
                 false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
 
         adapter.upDateMsg(item);
-//        mMsgListView.setSelection(adapter.getCount() - 1);
-//        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
-//        mEtMsg.setText("");
+        mMsgListView.setSelection(adapter.getCount() - 1);
+        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
+        mEtMsg.setText("");
 //        // ===发送消息到服务器
 //        com.pzf.liaotian.bean.Message msgItem = new com.pzf.liaotian.bean.Message(
 //                MessageItem.MESSAGE_TYPE_TEXT,
