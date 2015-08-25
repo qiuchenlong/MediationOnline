@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
@@ -89,7 +90,8 @@ public class UploadUtil {
 	 public static int mVoiceLength;
 	 public static Boolean isCome;
 	 public static int agreement;
-	 
+	 public static int isSystemMessage;
+	 public static int isAdmin;
 	 public static int isPrivateChat;
 	 	
 		public static  void handleMessage(String imgPath) {
@@ -191,7 +193,7 @@ public class UploadUtil {
 	      FileOutputStream out = new FileOutputStream(f);
 	      
 	      if (data == null) {
-	    	  uploadFile(_file,null);
+//	    	  uploadFile(_file,null);
 	    	  return null;
 		}
 	      
@@ -221,7 +223,12 @@ public class UploadUtil {
     	mSpUtil = PushApplication.getInstance().getSpUtil();
     	  
 		final String wsuri = mSpUtil.getServerIP();
-		mConnection.getInstance().handleConnection(_file);
+		try {
+			mConnection.getInstance().handleConnection(_file);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return "";
 

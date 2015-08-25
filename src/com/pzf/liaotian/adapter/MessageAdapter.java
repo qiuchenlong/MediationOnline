@@ -307,6 +307,7 @@ public class MessageAdapter extends BaseAdapter {
         handleBaseMessage(holder, mItem);
 
         if (mItem.getDate() == 0) {
+        	//显示公告
 			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
@@ -316,11 +317,9 @@ public class MessageAdapter extends BaseAdapter {
 			holder.time.bringToFront();
 			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
 			holder.flLayout.setVisibility(View.GONE);
-		} 
-        
-        //如果收到.doc文件
-        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
-        	holder.time.setVisibility(View.VISIBLE);
+		} else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
+        	//收到文件
+			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText("接收文件保存于："+mItem.getMessage());
 			holder.time.setPadding(12, 5, 12, 5);
@@ -343,12 +342,13 @@ public class MessageAdapter extends BaseAdapter {
             //如果收到的是调解协议书
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
             holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
-        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
-			//对方收到的text
-        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
-        	// 文字
-            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-                    .getMessage() + " "));
+        
+//        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
+//			//对方收到的text
+//        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
+//        	// 文字
+//            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+//                    .getMessage() + " "));
 		}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().equals(mItem.getName()+",进入聊天室")) {
 			//刚进入聊天室 发送提醒
 			holder.time.setVisibility(View.VISIBLE);
@@ -491,6 +491,9 @@ public class MessageAdapter extends BaseAdapter {
 
     private void handleBaseMessage(MessageHolderBase holder,
             final MessageItem mItem) {  
+    	mSpUtil.setIsSystemMessage(mItem.getIsSystemMessage());
+    	mSpUtil.setIsAgreement(mItem.getAgreement());
+    	
         //判断是不是悄悄话
         if (mItem.getIsPrivateChat() == 1) {
             holder.privateChat.setVisibility(View.VISIBLE);

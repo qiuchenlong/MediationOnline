@@ -4,12 +4,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream.PutField;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.TunnelRefusedException;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,12 +26,14 @@ import net.bither.util.NativeUtil;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
 import com.pzf.liaotian.PublicChatActivity;
 import com.pzf.liaotian.UploadUtil;
+import com.pzf.liaotian.UploadUtil.MYTask;
 import com.pzf.liaotian.adapter.MessageAdapter;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.bean.MessageItem;
@@ -39,7 +50,16 @@ import de.tavendo.autobahn.WebSocketHandler;
 public class WebSocketConnectTool extends WebSocketConnection {
 
 	private static SharePreferenceUtil mSpUtil;
-	  
+	static File _file;
+	 public static String mUserID;
+	 public static String mFileType;
+	 public static String mUserName;
+	 public static String mFilePath;
+	 public static int mVoiceLength;
+	 public static Boolean isCome;
+	 public static int agreement;
+	 
+	 public static int isPrivateChat;
 	
     /**
      * 内部类实现单例模式
@@ -63,7 +83,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
         return SingletonHolder.websocket;
     }
 
-    public void handleConnection(File file) {
+    public void handleConnection(File file) throws JSONException {
     	mSpUtil = PushApplication.getInstance().getSpUtil();
     	
     	final String wsuri = mSpUtil.getServerIP();
@@ -88,15 +108,15 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            	
 			            	
 			            	// 解析得到一个Map对象  
-//			                Map<String, Object> personMap = parseJSONString(payload); 
-//			            	Log.d("debug",  
-//			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
-//			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
-//			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
-//			                                + "\n" + "data:" + personMap.get("data"));  
-//			            	
-//			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
-//			            	Log.d("debug", decodeString); 
+			                Map<String, Object> personMap = parseJSONString(payload); 
+			            	Log.d("debug",  
+			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
+			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
+			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
+			                                + "\n" + "data:" + personMap.get("data"));  
+			            	
+			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
+			            	Log.d("debug", decodeString); 
 			            	
 			            	
 			            	
@@ -105,11 +125,14 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //				            	filetype = payload.substring(payload.lastIndexOf("."));
 //								Log.d("chat", "Got echo filetype: " + filetype);
 //					               
-//					            UploadUtil.mUserName = "调解员";
-//					            UploadUtil.mUserID = "100000";
-//					            UploadUtil.mFileType = filetype;
-//					            UploadUtil.mVoiceLength = 16;
-//					            UploadUtil.agreement = 0;
+					            UploadUtil.mUserName = (String) personMap.get("username");
+					            UploadUtil.mUserID = (String) personMap.get("userid");
+					            UploadUtil.mFileType = (String) personMap.get("filetype");
+					            UploadUtil.mVoiceLength = (Integer) personMap.get("voicetime");
+					            UploadUtil.isSystemMessage = (Integer) personMap.get("isSystemMessage");
+					            UploadUtil.agreement = (Integer) personMap.get("isagreement");
+					            UploadUtil.isAdmin = (Integer) personMap.get("isadmin");
+					            UploadUtil.isPrivateChat = (Integer) personMap.get("isPrivateChat");
 //					            mSpUtil.setIsAdmin(1);
 //					            
 //					            String path = "http://www.baidu.com";
@@ -117,11 +140,13 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //					            if (UploadUtil.isPrivateChat == 1) {
 //									return;
 //								}
-//					            
+////					            
 //					            //如果发送的是调解协议书
 //					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
 //									PublicChatActivity main = new PublicChatActivity();
 //									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
+//								} else if (payload.equals(mSpUtil.getNick()+",进入聊天室")) {
+//									
 //								} else {
 //									 //处理下载链接
 //						            UploadUtil.handleMessage(payload);
@@ -150,7 +175,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			}
     }
     
-    public static void sendMessage(File file) {
+    public static void sendMessage(File file) throws JSONException {
 		
 		   InputStream inputStream = null;
 		   
@@ -214,21 +239,49 @@ public class WebSocketConnectTool extends WebSocketConnection {
         }   
 	} 
 	
-	public static String getUserJsonInfo(String filetype,String data) {
-		return "{"+ 
-				"\"username\":"+
-				"\"" +  mSpUtil.getNick() + "\"," +
-				"\"userid\":" +
-				"\"" + mSpUtil.getUserId() + "\"," + 
-				"\"filetype\":" + 
-				"\"" + filetype + "\"," +
-				"\"isprivatechat\":" + 
-				mSpUtil.getIsPrivateChat() + "," +
-				"\"voicetime\":" + 
-				 mSpUtil.getVoiceTime() + "," +
-				 "\"data\":" + 
-				 "\"" +data + "\"" +
-			  "}";
+	public static String getUserJsonInfo(String filetype,String data) throws JSONException {
+			JSONObject json = new JSONObject();   
+		 	json.put("username", mSpUtil.getNick());
+		 	json.put("userid", mSpUtil.getUserId());
+		 	json.put("filetype", filetype);
+		 	json.put("isPrivateChat", mSpUtil.getIsPrivateChat());
+		 	json.put("voicetime", mSpUtil.getVoiceTime());
+		 	json.put("isSystemMessage", mSpUtil.getIsSystemMessage());
+		 	json.put("isagreement", mSpUtil.getIsAgreement());
+		 	json.put("isadmin", mSpUtil.getIsAdmin());
+		 	json.put("data", data);
+		 	return json.toString();
+//		
+//		return "{"+ 
+//				"\"username\":"+
+//				"\"" +  mSpUtil.getNick() + "\"," +
+//				"\"userid\":" +
+//				"\"" + mSpUtil.getUserId() + "\"," + 
+//				"\"filetype\":" + 
+//				"\"" + filetype + "\"," +
+//				"\"isprivatechat\":" + 
+//				mSpUtil.getIsPrivateChat() + "," +
+//				"\"voicetime\":" + 
+//				 mSpUtil.getVoiceTime() + "," +
+//				 "\"data\":" + 
+//				 "\"" +data + "\"" +
+//			  "}";
+	}
+	
+	public static Boolean intTransformBool(int data){
+		if (data == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public static int boolTransformInt(Boolean data) {
+		if (data == true) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 	
 	/** 
@@ -257,6 +310,9 @@ public class WebSocketConnectTool extends WebSocketConnection {
         }  
         return resultMap;  
     }  
+    
+    
+    
 }
 
 

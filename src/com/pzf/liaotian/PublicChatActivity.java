@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONException;
+
 import android.R.integer;
 import android.app.Activity;
 import android.app.Application;
@@ -280,7 +282,12 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
         initUserInfo();
 //        
-        mConnection.handleConnection(null);
+        try {
+			mConnection.handleConnection(null);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     
     }
     
@@ -736,10 +743,11 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         adapter.upDateMsg(item);
         mMsgListView.setSelection(adapter.getCount() - 1);
         mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
+        mSpUtil.setIsCome(false);
         
         new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath).send();// push发送消息到服务器
         // ===保存近期的消息
-        mSpUtil.setIsCome(false);
+       
         RecentItem recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_RECORD,
                 mSpUtil.getUserId(), 0, mSpUtil.getNick(),filePath, 0, System.currentTimeMillis(),
                 item.getVoiceTime(),mSpUtil.getIsPrivateChat());

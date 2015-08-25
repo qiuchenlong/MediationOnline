@@ -22,8 +22,8 @@ public class MessageItem extends BaseData{
     // Record
     public static final int MESSAGE_TYPE_RECORD = 4;
     
-    public static final int SYSTEM_MESSAGE = 10;
-    public static final int NOT_SYSTEM_MESSAGE = 11;
+    public static final int SYSTEM_MESSAGE = 1;
+    public static final int NOT_SYSTEM_MESSAGE = 0;
 
     private int msgType;// 消息类型
     private String name;// 消息来自

@@ -1,5 +1,7 @@
 package com.pzf.liaotian.common.util;
 
+import com.pzf.liaotian.bean.MessageItem;
+
 import android.R.bool;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,8 +18,29 @@ public class SharePreferenceUtil {
         sp = context.getSharedPreferences(file, Context.MODE_PRIVATE);
         editor = sp.edit();
     }
-
-  //语音权限
+  
+    //协议书
+    public void setIsAgreement(int  isAgreement) {
+    	editor.putInt("isagreement", isAgreement);
+    	editor.commit();
+    }
+    
+    public int getIsAgreement() {
+    	return sp.getInt("isagreement", 0);
+    }
+    
+    //系统消息
+    public void setIsSystemMessage(int  isSystemMessage) {
+    	editor.putInt("issystemmessage", isSystemMessage);
+    	editor.commit();
+    }
+    
+    public int getIsSystemMessage() {
+    	return sp.getInt("issystemmessage", MessageItem.NOT_SYSTEM_MESSAGE);
+    }
+    
+    
+  //时间
     public void setSystemTime(Long  currentTime) {
     	editor.putLong("currenttime", currentTime);
     	editor.commit();
