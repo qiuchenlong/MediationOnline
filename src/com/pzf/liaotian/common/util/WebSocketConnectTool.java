@@ -106,14 +106,15 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						public void onTextMessage(String payload) {
 			            	Log.d("chat", "Got echo: " + payload);
 			            	
-			            	
 			            	// 解析得到一个Map对象  
 			                Map<String, Object> personMap = parseJSONString(payload); 
 			            	Log.d("debug",  
 			                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
-			                                + "filetype:" + personMap.get("filetype") + "\n" + "isprivatechat:"  
-			                                + personMap.get("isprivatechat") + "\n" + "voicetime:" + personMap.get("voicetime")
-			                                + "\n" + "data:" + personMap.get("data"));  
+			                                + "filetype:" + personMap.get("filetype") + "\n" + "isPrivateChat:"  
+			                                + personMap.get("isPrivateChat") + "\n" + "voicetime:" + personMap.get("voicetime")
+			                                + "\n" + "data:" + personMap.get("data") +"\n" + "isSystemMessage:" + personMap.get("isSystemMessage")
+			                                + "\n" + "isadmin:" + personMap.get("isadmin")
+			                                + "\n" + "isPrivateChat:" + personMap.get("isPrivateChat"));  
 			            	
 			            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
 			            	Log.d("debug", decodeString); 
@@ -129,28 +130,29 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            UploadUtil.mUserID = (String) personMap.get("userid");
 					            UploadUtil.mFileType = (String) personMap.get("filetype");
 					            UploadUtil.mVoiceLength = (Integer) personMap.get("voicetime");
-					            UploadUtil.isSystemMessage = (Integer) personMap.get("isSystemMessage");
-					            UploadUtil.agreement = (Integer) personMap.get("isagreement");
-					            UploadUtil.isAdmin = (Integer) personMap.get("isadmin");
-					            UploadUtil.isPrivateChat = (Integer) personMap.get("isPrivateChat");
-//					            mSpUtil.setIsAdmin(1);
+					            UploadUtil.isSystemMessage = boolTransformInt((Boolean)personMap.get("isSystemMessage"));
+					            UploadUtil.agreement = boolTransformInt((Boolean) personMap.get("isagreement"));
+					            UploadUtil.isAdmin = boolTransformInt((Boolean) personMap.get("isadmin"));
+					            UploadUtil.isPrivateChat = boolTransformInt((Boolean) personMap.get("isPrivateChat"));
+					          
 //					            
 //					            String path = "http://www.baidu.com";
 //					               //如果是私聊则不接受消息，因为只有协调员可以看到
-//					            if (UploadUtil.isPrivateChat == 1) {
-//									return;
-//								}
-////					            
-//					            //如果发送的是调解协议书
-//					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
-//									PublicChatActivity main = new PublicChatActivity();
+					            if (UploadUtil.isPrivateChat == 1) {
+									return;
+								}
+					            //返回的信息处理
+					            if (decodeString.contains(UploadUtil.mUserName+",进入聊天室")) {
+					            	PublicChatActivity main = new PublicChatActivity();
+									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, decodeString, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
+								} else if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
+									//调解协议书
+									PublicChatActivity main = new PublicChatActivity();
 //									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
-//								} else if (payload.equals(mSpUtil.getNick()+",进入聊天室")) {
-//									
-//								} else {
-//									 //处理下载链接
-//						            UploadUtil.handleMessage(payload);
-//								}					            
+								} else {
+									 //处理下载链接
+						            UploadUtil.handleMessage(payload);
+								}					            
 //				            }
 			            }
 			            
@@ -244,11 +246,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 		 	json.put("username", mSpUtil.getNick());
 		 	json.put("userid", mSpUtil.getUserId());
 		 	json.put("filetype", filetype);
-		 	json.put("isPrivateChat", mSpUtil.getIsPrivateChat());
+		 	json.put("isPrivateChat", intTransformBool(mSpUtil.getIsPrivateChat()));
 		 	json.put("voicetime", mSpUtil.getVoiceTime());
-		 	json.put("isSystemMessage", mSpUtil.getIsSystemMessage());
-		 	json.put("isagreement", mSpUtil.getIsAgreement());
-		 	json.put("isadmin", mSpUtil.getIsAdmin());
+		 	json.put("isSystemMessage", intTransformBool(mSpUtil.getIsSystemMessage()));
+		 	json.put("isagreement", intTransformBool(mSpUtil.getIsAgreement()));
+		 	json.put("isadmin", intTransformBool(mSpUtil.getIsAdmin()));
 		 	json.put("data", data);
 		 	return json.toString();
 //		
@@ -295,15 +297,18 @@ public class WebSocketConnectTool extends WebSocketConnection {
         try {  
             // 直接把JSON字符串转化为一个JSONObject对象  
             JSONObject person = new JSONObject(JSONString);  
-            // 第1个键值对  
-            resultMap.put("username", person.getString("username"));  
-            // 第2个键值对  
-            resultMap.put("userid", person.getString("userid"));  
-            // 第3个键值对  
-            resultMap.put("filetype", person.getString("filetype"));  
-            resultMap.put("isprivatechat", person.getInt("isprivatechat")); 
+           
+            resultMap.put("username", person.getString("username"));         
+            resultMap.put("userid", person.getString("userid"));              
+            resultMap.put("filetype", person.getString("filetype")); 
             resultMap.put("voicetime", person.getInt("voicetime")); 
-            // 第4个键值对  
+
+            resultMap.put("isPrivateChat", person.getBoolean("isPrivateChat")); 
+            resultMap.put("isSystemMessage", person.getBoolean("isSystemMessage")); 
+            resultMap.put("isagreement", person.getBoolean("isagreement")); 
+            resultMap.put("isadmin", person.getBoolean("isadmin"));
+            
+            
             resultMap.put("data", person.getString("data"));
         } catch (JSONException e) {  
             e.printStackTrace();  

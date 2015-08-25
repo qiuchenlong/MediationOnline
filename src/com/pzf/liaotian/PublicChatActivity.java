@@ -1353,8 +1353,10 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	
     	int isSystem;
     	if (isSystemMessage == true) {
+    		mSpUtil.setIsSystemMessage(MessageItem.SYSTEM_MESSAGE);
 			isSystem = MessageItem.SYSTEM_MESSAGE;
 		} else {
+			mSpUtil.setIsSystemMessage(MessageItem.NOT_SYSTEM_MESSAGE);
 			isSystem = MessageItem.NOT_SYSTEM_MESSAGE;
 		}
     	
@@ -1400,7 +1402,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mRecentDB.saveRecent(recentItem);
     }
     
-    public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement) {
+    public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement,int isSystemMessage,int isPrivateChat) {
 
 //            String userId = msgItem.getUser_id();
 //            if (!userId.equals(mSpUtil.getUserId()))// 如果不是当前正在聊天对象的消息，不处理
@@ -1427,26 +1429,28 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             if (fileType.equals(".jpg") || fileType.equals(".png")) {
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                         userName, currentTime,
-                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                        Path,1,true,0,0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
                         userID, 1, userName,
                         Path, 0,
-                        System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
+                        System.currentTimeMillis(), 0,isPrivateChat);
             }
             else if (fileType.equals(".amr") || fileType.equals(".mp3")) {//语音
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
 
                 		userName, currentTime,
                 		Path, 1, true, 0,
-                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                        voiceLength,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(
                         MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
                        userName, Path, 0,
-                        System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
+                        System.currentTimeMillis(), voiceLength,isPrivateChat);
              }
-             else if (fileType.equals(".txt")) {//文本
+             else if (fileType.equals(".txt") && isSystemMessage == 0) {//文本
+            	 
+            	
             	 //直接将文本内容存到数据库
             	 String str = ""; 
             	 try {  
@@ -1468,42 +1472,48 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
                         userName, currentTime,
                         str, 1, true, 1,
-                        0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                        0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                         userID, 1, userName,
                         str, 0,
-                        System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
+                        System.currentTimeMillis(), 0,isPrivateChat);
+            } else if (fileType.equals(".txt") && isSystemMessage == 1) {
+            	 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+
+                         userName, currentTime,
+                         Path, 1, true, 1,
+                         0,isPrivateChat,isHide,0,MessageItem.SYSTEM_MESSAGE);
             }
              else if (fileType.contains(".doc")) {//文档
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
                  		Path, 0, true, 0,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                         voiceLength,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
                         userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
+                         System.currentTimeMillis(), voiceLength,isPrivateChat);
             }
              else if (agreement == 1) {//待确认-调解协议书
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
                         Path, 0, true, 1,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
+                         voiceLength,isPrivateChat,isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
                         userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
+                         System.currentTimeMillis(), voiceLength,isPrivateChat);
             }
             
 //
             adapter.upDateMsg(item);// 更新界面
             mMsgDB.saveMsg(userID, item);// 保存数据库
-            mRecentDB.saveRecent(recentItem);
+//            mRecentDB.saveRecent(recentItem);
 
             scrollToBottomListItem();
         }    

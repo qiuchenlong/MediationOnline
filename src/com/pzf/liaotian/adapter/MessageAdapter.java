@@ -349,14 +349,17 @@ public class MessageAdapter extends BaseAdapter {
 //        	// 文字
 //            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 //                    .getMessage() + " "));
-		}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().equals(mItem.getName()+",进入聊天室")) {
+		}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(mItem.getName()+",进入聊天室")) {
 			//刚进入聊天室 发送提醒
 			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText(mItem.getName()+",进入聊天室");
-			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setPadding(12, 10, 12, 10);
+			
 			holder.time.bringToFront();
 			holder.time.setTextSize(14);
+			holder.time.setTextColor(Color.WHITE);
+			holder.time.setBackgroundResource(R.drawable.chat_time_block);
 			holder.flLayout.setVisibility(View.GONE);
 		} 
         else {

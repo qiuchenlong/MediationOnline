@@ -143,7 +143,7 @@ public class UploadUtil {
 	            main.mApplication = PushApplication.getInstance();
 	            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
 	            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
-	            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement);
+	            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement,isSystemMessage,isPrivateChat);
 	        }
 
 	    }
