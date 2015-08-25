@@ -418,6 +418,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 				private_chat_view.setVisibility(View.VISIBLE);
 				mSpUtil.setIsPrivateChat(1);//开启悄悄话
 				mLlAffix.setVisibility(View.GONE);//关闭弹出
+				mBtnAffix.setBackgroundResource(R.drawable.zztj_add);
+				mBtnAffix2.setBackgroundResource(R.drawable.zztj_add);
 //				if (mHomeNotice.VISIBLE == View.VISIBLE) {
 //					mHomeNotice.setVisibility(View.GONE);
 //				}
@@ -1041,7 +1043,11 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	String path = data.getStringExtra("FilePath");
             	Log.v("chat", path);
             	String msg = path.substring(path.lastIndexOf('/')+1);
-
+            	
+            	if (!path.contains(".doc")) {
+            		Toast.makeText(this, "只能发送.doc文件", Toast.LENGTH_SHORT).show();
+            		return;
+				}
             	long currentTime = System.currentTimeMillis();
             	int isHide = isHideTimeLabel(currentTime);
                 MessageItem item = new MessageItem(

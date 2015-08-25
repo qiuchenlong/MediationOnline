@@ -313,7 +313,7 @@ public class MessageAdapter extends BaseAdapter {
 			holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
 			holder.time.setTextColor(Color.rgb(254, 20, 99));
 			holder.time.setTextSize(14);
-			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setPadding(12, 12, 12, 12);
 			holder.time.bringToFront();
 			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
 			holder.flLayout.setVisibility(View.GONE);
@@ -322,7 +322,7 @@ public class MessageAdapter extends BaseAdapter {
 			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText("接收文件保存于："+mItem.getMessage());
-			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setPadding(12, 12, 12, 12);
 			holder.time.setTextSize(14);
 			holder.time.bringToFront();
 			holder.flLayout.setVisibility(View.GONE);
@@ -332,7 +332,7 @@ public class MessageAdapter extends BaseAdapter {
         	holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText("已发送文件："+mItem.getMessage());
-			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setPadding(12, 12, 12, 12);
 			holder.time.setTextSize(14);
 			holder.time.bringToFront();
 			holder.flLayout.setVisibility(View.GONE);
@@ -354,13 +354,14 @@ public class MessageAdapter extends BaseAdapter {
 			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText(mItem.getName()+",进入聊天室");
-			holder.time.setPadding(12, 12, 12, 12);
+			
 			
 			holder.time.bringToFront();
 			holder.time.setTextSize(14);
 			holder.time.setTextColor(Color.WHITE);
 			holder.time.setBackgroundResource(R.drawable.chat_time_block);
 			holder.flLayout.setVisibility(View.GONE);
+			holder.time.setPadding(12, 12, 12, 12);
 		}else {
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
