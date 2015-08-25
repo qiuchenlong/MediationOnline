@@ -1,5 +1,8 @@
 package com.pzf.liaotian;
 
+import com.pzf.liaotian.app.PushApplication;
+import com.pzf.liaotian.common.util.SharePreferenceUtil;
+
 import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,14 +28,18 @@ public class MainWebViewActivity extends Activity{
 
 	private WebView myWebView = null;
 	private Button backButton;
-
+	private static SharePreferenceUtil mSpUtil;
+	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_webview);
-
+        
+        mSpUtil = PushApplication.getInstance().getSpUtil();
+        mSpUtil.setServerIP("ws://192.168.0.228:8484");
+        
         // 打开网页
         myWebView = (WebView) findViewById(R.id.main_webview);
         myWebView.addJavascriptInterface(MainWebViewActivity.this, "ChatRoom");

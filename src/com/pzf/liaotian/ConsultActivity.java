@@ -263,7 +263,6 @@ public class ConsultActivity extends Activity implements OnClickListener,
      * 初始化用户信息
      */
     private void initUserInfo() {
-    	mSpUtil.setServerIP("ws://192.168.0.228:8484");
     	
     	Intent intent = getIntent();
     	mSpUtil.setUserId(intent.getStringExtra("USER_ID"));
