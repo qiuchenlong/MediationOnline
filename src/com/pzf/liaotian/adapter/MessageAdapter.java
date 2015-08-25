@@ -326,6 +326,9 @@ public class MessageAdapter extends BaseAdapter {
         } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
 			//对方收到的text
         	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
+        	// 文字
+            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+                    .getMessage() + " "));
 		}
         else {
              // 文字
@@ -488,12 +491,14 @@ public class MessageAdapter extends BaseAdapter {
 
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);
+		
 		} else {
 			holder.time.setVisibility(View.VISIBLE);
 		}
         
         holder.name.setText(mItem.getName());
         holder.name.setVisibility(View.VISIBLE);
+        holder.name.bringToFront();
         holder.head.setBackgroundResource(PushApplication.heads[mItem
                 .getHeadImg()]);
         holder.head.setEnabled(false);

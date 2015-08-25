@@ -37,14 +37,14 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-             >
+            android:layout_marginTop="10dp"
+            android:orientation="vertical" >
 
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dip"
+                android:layout_marginRight="2dip"
                 android:background="@drawable/balloon_r_selector"
                 android:clickable="true"
                 android:minHeight="44.0dip" >
@@ -131,25 +131,29 @@
             -->
         </FrameLayout>
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="40.0dip"
-            android:layout_height="40.0dip"
-            android:layout_gravity="top"
-            android:background="@drawable/chat_tool_camera"
-            android:clickable="true"
-            android:focusable="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/chat_item_icon_bg_selector" />
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/nametitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout1"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:text="TextView"
-        android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/nametitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/black" />
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="40.0dip"
+                android:layout_height="40.0dip"
+                android:background="@drawable/chat_tool_camera"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/chat_item_icon_bg_selector" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

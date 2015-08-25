@@ -109,7 +109,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            UploadUtil.mUserID = "100000";
 					            UploadUtil.mFileType = filetype;
 					            UploadUtil.mVoiceLength = 16;
-					            UploadUtil.agreement = 1;
+					            UploadUtil.agreement = 0;
 					            mSpUtil.setIsAdmin(1);
 					            
 					            String path = "http://www.baidu.com";

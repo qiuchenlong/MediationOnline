@@ -33,16 +33,29 @@
         android:orientation="horizontal"
          >
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="40.0dip"
-            android:layout_height="40.0dip"
-            android:background="@drawable/chat_tool_camera"
-            android:clickable="true"
-            android:focusable="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/chat_item_icon_bg_selector"
-             />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/nametitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/black" />
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="40.0dip"
+                android:layout_height="40.0dip"
+                android:background="@drawable/chat_tool_camera"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/chat_item_icon_bg_selector" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -53,7 +66,8 @@
                 android:id="@+id/relativeLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dip"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/balloon_l_selector"
                 android:clickable="true"
                 android:minHeight="44.0dip" >
@@ -138,14 +152,5 @@
         </FrameLayout>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/nametitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout1"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:text="TextView"
-        android:textColor="@color/black" />
 
 </RelativeLayout>
