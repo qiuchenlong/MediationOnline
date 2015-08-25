@@ -159,11 +159,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            @Override
 			            public void onClose(int code, String reason) {
 			               Log.d("chat", "Connection lost.");
-			               if (_file != null) {
-			            	  PublicChatActivity.sendTextMessage("网络连接错误，消息发送失败",true);
-						} else {
-							 PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",退出聊天室",true);	
-						}
+//			               if (_file != null) {
+//			            	  PublicChatActivity.sendTextMessage("网络连接错误，消息发送失败",true);
+//						} else {
+//							 PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",退出聊天室",true);	
+//						}
 			            }
 			         });
 			      } catch (WebSocketException e) {
