@@ -151,7 +151,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
 								} else {
 									 //处理下载链接
-						            UploadUtil.handleMessage(payload);
+						            UploadUtil.handleMessage(decodeString);
 								}					            
 //				            }
 			            }

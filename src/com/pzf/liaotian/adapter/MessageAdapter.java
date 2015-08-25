@@ -328,7 +328,7 @@ public class MessageAdapter extends BaseAdapter {
 			holder.flLayout.setVisibility(View.GONE);
 	
         }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
-        	
+        	//发送文件
         	holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText("已发送文件："+mItem.getMessage());
@@ -354,15 +354,14 @@ public class MessageAdapter extends BaseAdapter {
 			holder.time.setVisibility(View.VISIBLE);
 			holder.name.setVisibility(View.GONE);
 			holder.time.setText(mItem.getName()+",进入聊天室");
-			holder.time.setPadding(12, 10, 12, 10);
+			holder.time.setPadding(12, 12, 12, 12);
 			
 			holder.time.bringToFront();
 			holder.time.setTextSize(14);
 			holder.time.setTextColor(Color.WHITE);
 			holder.time.setBackgroundResource(R.drawable.chat_time_block);
 			holder.flLayout.setVisibility(View.GONE);
-		} 
-        else {
+		}else {
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
@@ -504,11 +503,11 @@ public class MessageAdapter extends BaseAdapter {
             holder.privateChat.setVisibility(View.GONE);
         }
 
-        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getMessage().contains("已发送文件：")) {
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
-        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT){
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
-        }
+//        if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getMessage().contains("已发送文件：")) {
+//            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+//        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT){
+//            holder.rlMessage.setBackgroundResource(R.drawable.balloon3_r);
+//        }
 
 
 
