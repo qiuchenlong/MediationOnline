@@ -335,7 +335,7 @@ public class PreviewActivity extends TitleBarActivity implements
                     MessageItem messageItem = new MessageItem(
                             MessageItem.MESSAGE_TYPE_IMG, mSpUtil.getNick(),
                             System.currentTimeMillis(), imgItem.getImagePath(),
-                            mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),0,0);
+                            mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),0,0,MessageItem.NOT_SYSTEM_MESSAGE);
                     mMsgDB.saveMsg(mSpUtil.getUserId(), messageItem);
                     messageItemList.add(messageItem);
                     // 保存到最近数据库中

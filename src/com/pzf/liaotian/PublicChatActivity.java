@@ -732,7 +732,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	int isHide = isHideTimeLabel(currentTime);
         MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
                 mSpUtil.getNick(), currentTime, filePath,
-                mSpUtil.getHeadIcon(), false, 0, mVioceTime,mSpUtil.getIsPrivateChat(),isHide,0);
+                mSpUtil.getHeadIcon(), false, 0, mVioceTime,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
         adapter.upDateMsg(item);
         mMsgListView.setSelection(adapter.getCount() - 1);
         mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
@@ -813,7 +813,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
                     "", 0,
                     str, 1, true, 1,
-                    0,0,0,0);
+                    0,0,0,0,MessageItem.NOT_SYSTEM_MESSAGE);
         	msgList.add(item);
         	mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
 //        	mHomeNotice.setVisibility(View.VISIBLE);
@@ -1039,7 +1039,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 MessageItem item = new MessageItem(
                          MessageItem.MESSAGE_TYPE_FILE, mSpUtil.getNick(),
                          currentTime, msg, mSpUtil.getHeadIcon(),
-                         false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
+                         false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  adapter.upDateMsg(item);
                  mMsgListView.setSelection(adapter.getCount() - 1);
@@ -1085,13 +1085,13 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         // listview展示
         MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                 mSpUtil.getNick(), currentTime,
-                mTakePhotoFilePath, mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
+                mTakePhotoFilePath, mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
         adapter.upDateMsg(item);
 
         // 保存到数据库中
         MessageItem messageItem = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                 mSpUtil.getNick(), currentTime,
-                mTakePhotoFilePath, mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
+                mTakePhotoFilePath, mSpUtil.getHeadIcon(), false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
         mMsgDB.saveMsg(mSpUtil.getUserId(), messageItem);
 
@@ -1343,10 +1343,17 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	long currentTime = System.currentTimeMillis();
     	int isHide = isHideTimeLabel(currentTime);
     	
+    	int isSystem;
+    	if (isSystemMessage == true) {
+			isSystem = MessageItem.SYSTEM_MESSAGE;
+		} else {
+			isSystem = MessageItem.NOT_SYSTEM_MESSAGE;
+		}
+    	
         MessageItem item = new MessageItem(
                 MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
                 currentTime, msg, mSpUtil.getHeadIcon(),
-                false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
+                false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,isSystem);
 
         adapter.upDateMsg(item);
         mMsgListView.setSelection(adapter.getCount() - 1);
@@ -1367,14 +1374,14 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         String fileName = item.getDate()+".txt";
         writeTxtToFile(msg, filePath, fileName);
         mSpUtil.setIsCome(false);
-        if (isSystemMessage) {
-        	if (mConnection.isConnected()) {
-        		mConnection.sendTextMessage(msg);
-			}			
-		} else {
+//        if (isSystemMessage) {
+//        	if (mConnection.isConnected()) {
+//        		mConnection.sendTextMessage(msg);
+//			}			
+//		} else {
 			new SendMsgAsyncTask(mGson.toJson(msgItem), mSpUtil.getUserId(),filePath+fileName)
             .send();
-		}
+//		}
         
         // ===保存近期的消息
 
@@ -1412,7 +1419,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             if (fileType.equals(".jpg") || fileType.equals(".png")) {
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                         userName, currentTime,
-                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0);
+                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
                         userID, 1, userName,
@@ -1424,7 +1431,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
                 		userName, currentTime,
                 		Path, 1, true, 0,
-                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
+                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(
                         MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
@@ -1453,7 +1460,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
                         userName, currentTime,
                         str, 1, true, 1,
-                        0,mSpUtil.getIsPrivateChat(),isHide,0);
+                        0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                         userID, 1, userName,
@@ -1465,7 +1472,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
                  		userName, currentTime,
                  		Path, 0, true, 0,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
+                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
@@ -1477,7 +1484,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
                  		userName, currentTime,
                         Path, 0, true, 1,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement);
+                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,

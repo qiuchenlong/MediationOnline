@@ -430,7 +430,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
         	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
                     "小秘书", System.currentTimeMillis(),
                     str, 1, true, 1,
-                    0,mSpUtil.getIsPrivateChat(),0,0);
+                    0,mSpUtil.getIsPrivateChat(),0,0,MessageItem.NOT_SYSTEM_MESSAGE);
         	msgList.add(item);
         	mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
         }
@@ -651,7 +651,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
         MessageItem item = new MessageItem(
                 MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
                 currentTime, msg, mSpUtil.getHeadIcon(),
-                false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0);
+                false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
         adapter.upDateMsg(item);
         mMsgListView.setSelection(adapter.getCount() - 1);
@@ -717,7 +717,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
             if (fileType.equals(".jpg") || fileType.equals(".png")) {
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                         userName, currentTime,
-                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0);
+                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
                         userID, 1, userName,
@@ -729,7 +729,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
                 		userName, currentTime,
                 		Path, 1, true, 0,
-                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
+                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(
                         MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
@@ -758,7 +758,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
                         userName, currentTime,
                         str, 1, true, 1,
-                        0,mSpUtil.getIsPrivateChat(),isHide,0);
+                        0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                         userID, 1, userName,
@@ -770,7 +770,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
                  		userName, currentTime,
                  		Path, 0, true, 0,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0);
+                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,
@@ -782,7 +782,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
                  		userName, currentTime,
                         Path, 0, true, 1,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement);
+                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
                          MessageItem.MESSAGE_TYPE_FILE, userID, 0,

@@ -170,7 +170,7 @@ public class ImageGridActivity extends TitleBarActivity implements
                                 MessageItem.MESSAGE_TYPE_IMG,
                                 mSpUtil.getNick(), System.currentTimeMillis(),
                                 imgItem.getImagePath(), mSpUtil.getHeadIcon(),
-                                false, 0, 0,mSpUtil.getIsPrivateChat(),0,0);
+                                false, 0, 0,mSpUtil.getIsPrivateChat(),0,0,MessageItem.NOT_SYSTEM_MESSAGE);
                         
                        imgPath = imgItem.getImagePath();
                         mMsgDB.saveMsg(mSpUtil.getUserId(), messageItem);

@@ -77,9 +77,9 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            public void onOpen() {
 			               Log.d("chat", "Status: Connected to " + wsuri);	
 			               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",进入聊天室",true);
-			               if (_file != null) {
-								sendMessage(_file);	
-							}
+//			               if (_file != null) {
+//								sendMessage(_file);	
+//							}
 			       	    }
 			            
 			            @Override
@@ -100,33 +100,33 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            	
 			            	
 			            	
-				            String filetype = null;
-				            if (payload.contains(".")) {
-				            	filetype = payload.substring(payload.lastIndexOf("."));
-								Log.d("chat", "Got echo filetype: " + filetype);
-					               
-					            UploadUtil.mUserName = "调解员";
-					            UploadUtil.mUserID = "100000";
-					            UploadUtil.mFileType = filetype;
-					            UploadUtil.mVoiceLength = 16;
-					            UploadUtil.agreement = 0;
-					            mSpUtil.setIsAdmin(1);
-					            
-					            String path = "http://www.baidu.com";
-					               //如果是私聊则不接受消息，因为只有协调员可以看到
-					            if (UploadUtil.isPrivateChat == 1) {
-									return;
-								}
-					            
-					            //如果发送的是调解协议书
-					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
-									PublicChatActivity main = new PublicChatActivity();
-									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
-								} else {
-									 //处理下载链接
-						            UploadUtil.handleMessage(payload);
-								}					            
-				            }
+//				            String filetype = null;
+//				            if (payload.contains(".")) {
+//				            	filetype = payload.substring(payload.lastIndexOf("."));
+//								Log.d("chat", "Got echo filetype: " + filetype);
+//					               
+//					            UploadUtil.mUserName = "调解员";
+//					            UploadUtil.mUserID = "100000";
+//					            UploadUtil.mFileType = filetype;
+//					            UploadUtil.mVoiceLength = 16;
+//					            UploadUtil.agreement = 0;
+//					            mSpUtil.setIsAdmin(1);
+//					            
+//					            String path = "http://www.baidu.com";
+//					               //如果是私聊则不接受消息，因为只有协调员可以看到
+//					            if (UploadUtil.isPrivateChat == 1) {
+//									return;
+//								}
+//					            
+//					            //如果发送的是调解协议书
+//					            if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
+//									PublicChatActivity main = new PublicChatActivity();
+//									main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
+//								} else {
+//									 //处理下载链接
+//						            UploadUtil.handleMessage(payload);
+//								}					            
+//				            }
 			            }
 			            
 			            @Override

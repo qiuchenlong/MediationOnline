@@ -306,18 +306,38 @@ public class MessageAdapter extends BaseAdapter {
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
 
+        if (mItem.getDate() == 0) {
+			holder.time.setVisibility(View.VISIBLE);
+			holder.name.setVisibility(View.GONE);
+			holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
+			holder.time.setTextColor(Color.rgb(254, 20, 99));
+			holder.time.setTextSize(14);
+			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.bringToFront();
+			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
+			holder.flLayout.setVisibility(View.GONE);
+		} 
+        
         //如果收到.doc文件
         if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
-             // 文字
-            holder.msg.insertGif(convertNormalStringToSpannableString("接收文件保存于："+mItem
-                    .getMessage()));
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
-            holder.name.setText("  系统");
+        	holder.time.setVisibility(View.VISIBLE);
+			holder.name.setVisibility(View.GONE);
+			holder.time.setText("接收文件保存于："+mItem.getMessage());
+			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setTextSize(14);
+			holder.time.bringToFront();
+			holder.flLayout.setVisibility(View.GONE);
+	
         }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
-        	 // 文字
-            holder.msg.insertGif(convertNormalStringToSpannableString("已发送文件："+mItem
-                    .getMessage()));
-            holder.rlMessage.setBackgroundResource(R.drawable.balloon1_r);
+        	
+        	holder.time.setVisibility(View.VISIBLE);
+			holder.name.setVisibility(View.GONE);
+			holder.time.setText("已发送文件："+mItem.getMessage());
+			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.setTextSize(14);
+			holder.time.bringToFront();
+			holder.flLayout.setVisibility(View.GONE);
+           
         }
         else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
             //如果收到的是调解协议书
@@ -329,26 +349,24 @@ public class MessageAdapter extends BaseAdapter {
         	// 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
-		}
+		}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().equals(mItem.getName()+",进入聊天室")) {
+			//刚进入聊天室 发送提醒
+			holder.time.setVisibility(View.VISIBLE);
+			holder.name.setVisibility(View.GONE);
+			holder.time.setText(mItem.getName()+",进入聊天室");
+			holder.time.setPadding(12, 5, 12, 5);
+			holder.time.bringToFront();
+			holder.time.setTextSize(14);
+			holder.flLayout.setVisibility(View.GONE);
+		} 
         else {
              // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
+            holder.flLayout.setVisibility(View.VISIBLE);
         }
         
-        if (mItem.getDate() == 0) {
-			holder.time.setVisibility(View.VISIBLE);
-			holder.name.setVisibility(View.GONE);
-			holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
-			holder.time.setTextColor(Color.rgb(254, 20, 99));
-			holder.time.setTextSize(14);
-			holder.time.setPadding(12, 5, 12, 5);
-			holder.time.bringToFront();
-			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
-			holder.flLayout.setVisibility(View.GONE);
-		} else {
-			holder.flLayout.setVisibility(View.VISIBLE);
-		}
+      
 
         holder.msg.setOnClickListener(new OnClickListener() {
 
@@ -368,6 +386,7 @@ public class MessageAdapter extends BaseAdapter {
         });
 
     }
+    
 
     /**
      * @Description 处理图片消息

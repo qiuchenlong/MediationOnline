@@ -21,6 +21,9 @@ public class MessageItem extends BaseData{
     public static final int MESSAGE_TYPE_FILE = 3;
     // Record
     public static final int MESSAGE_TYPE_RECORD = 4;
+    
+    public static final int SYSTEM_MESSAGE = 10;
+    public static final int NOT_SYSTEM_MESSAGE = 11;
 
     private int msgType;// 消息类型
     private String name;// 消息来自
@@ -34,6 +37,7 @@ public class MessageItem extends BaseData{
     private int isPrivateChat;
     private int isHideTime;
     private int agreement;
+    private int isSystemMessage;
     
     public MessageItem() {
         // TODO Auto-generated constructor stub
@@ -63,9 +67,11 @@ public class MessageItem extends BaseData{
      * 			  如果需要隐藏发送消息的时间 置1
      * @param agreement 
      * 			  如果是协议书 为1
+     * @param isSystemMessage 
+     * 			  系统消息
      */
     public MessageItem(int msgType, String name, long date, String message,
-            int headImg, boolean isComMeg, int isNew, int voiceTime,int isprivatechat,int isHideTime,int agreement) {
+            int headImg, boolean isComMeg, int isNew, int voiceTime,int isprivatechat,int isHideTime,int agreement,int isSystemMessage) {
         super();
         this.msgType = msgType;
         this.name = name;
@@ -78,8 +84,17 @@ public class MessageItem extends BaseData{
         this.isPrivateChat = isprivatechat;
         this.isHideTime = isHideTime;
         this.agreement = agreement;
+        this.isSystemMessage = isSystemMessage;
     }
 
+    public int getIsSystemMessage() {
+    	return isSystemMessage;
+    }
+    
+    public void setIsSystemMessage(int isSystemMessage) {
+    	this.isSystemMessage = isSystemMessage;
+    }
+    
     public int getAgreement() {
     	return agreement;
     }
