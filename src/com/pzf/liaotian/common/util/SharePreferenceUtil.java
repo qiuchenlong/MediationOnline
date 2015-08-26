@@ -19,6 +19,17 @@ public class SharePreferenceUtil {
         editor = sp.edit();
     }
   
+    //聊天室id
+    public void setRoomID(int  roomid) {
+    	editor.putInt("roomid", roomid);
+    	editor.commit();
+    }
+    
+    public int getRoomID() {
+    	return sp.getInt("roomid", 0);
+    }
+    
+    
     //调解咨询
     public void setIsConsult(Boolean  isConsult) {
     	editor.putBoolean("isconsult", isConsult);

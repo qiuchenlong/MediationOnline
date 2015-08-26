@@ -75,7 +75,7 @@ public class MainWebViewActivity extends Activity{
     }
     
     @JavascriptInterface
-    public void startChat(){
+    public void startChat(String json){
     	Intent intent = new Intent(MainWebViewActivity.this,PublicChatActivity.class);
     	startActivity(intent);
 //    	AlertDialog.Builder ab=new AlertDialog.Builder(MainWebViewActivity.this);
@@ -89,6 +89,15 @@ public class MainWebViewActivity extends Activity{
 //			}
 //		});
 //		ab.create().show();
+    }
+    
+    @JavascriptInterface
+    public void toShare(){
+    	Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, "有纠纷怎么办？去哪找调解机构？找哪家合适？人家什么时候上班？…别再纠结啦！下载海沧在线调解APP，在家就能调解，还能了解最新调解动态，在线咨询，让调解更简单。点击下载http://xxxxxx.com");
+		sendIntent.setType("text/plain");
+		startActivity(sendIntent);
     }
 
 }

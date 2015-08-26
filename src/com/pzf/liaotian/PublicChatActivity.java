@@ -332,6 +332,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	Log.v("chat", "isprivatechat = " + isprivatechat);
     	
     	String chatRoomId = intent.getStringExtra("CHAT_ROOM_ID");
+    	mSpUtil.setRoomID(Integer.parseInt(chatRoomId));
 		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
     	
     }

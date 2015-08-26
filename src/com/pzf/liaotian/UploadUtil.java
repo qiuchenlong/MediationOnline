@@ -95,6 +95,7 @@ public class UploadUtil {
 	 public static int isAdmin;
 	 public static int isPrivateChat;
 	 public static int isConsult;
+	 public static int mRoomID;
 	 	
 		public static  void handleMessage(String imgPath) {
 			new MYTask().execute(imgPath);

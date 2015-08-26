@@ -149,8 +149,13 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						            UploadUtil.agreement = boolTransformInt((Boolean) personMap.get("isagreement"));
 						            UploadUtil.isAdmin = boolTransformInt((Boolean) personMap.get("isadmin"));
 						            UploadUtil.isPrivateChat = boolTransformInt((Boolean) personMap.get("isPrivateChat"));
-						          
+						            UploadUtil.mRoomID = (Integer) personMap.get("roomid");
 //						            
+						            int roomid = mSpUtil.getRoomID();
+						            //同一个房间才能收到信息
+						            if (roomid != UploadUtil.mRoomID) {
+										return;
+									}
 //						            String path = "http://www.baidu.com";
 //						               //如果是私聊则不接受消息，因为只有协调员可以看到
 						            if (UploadUtil.isPrivateChat == 1) {
@@ -272,6 +277,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 	
 	public static String getUserJsonInfo(String filetype,String data) throws JSONException {
 			JSONObject json = new JSONObject();   
+			json.put("roomid", mSpUtil.getRoomID());
 		 	json.put("username", mSpUtil.getNick());
 		 	json.put("userid", mSpUtil.getUserId());
 		 	json.put("filetype", filetype);
@@ -316,7 +322,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
             resultMap.put("userid", chat.getString("userid"));              
             resultMap.put("filetype", chat.getString("filetype")); 
             resultMap.put("voicetime", chat.getInt("voicetime")); 
-
+            resultMap.put("roomid", chat.getInt("roomid")); 
             resultMap.put("isPrivateChat", chat.getBoolean("isPrivateChat")); 
             resultMap.put("isSystemMessage", chat.getBoolean("isSystemMessage")); 
             resultMap.put("isagreement", chat.getBoolean("isagreement")); 
