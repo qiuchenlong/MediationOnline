@@ -137,6 +137,7 @@
             android:layout_width="0.0dip"
             android:layout_height="35dp"
             android:layout_marginBottom="6.0dip"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="6.0dip"
             android:layout_weight="1.08"
             android:inputType="textMultiLine"
@@ -157,7 +158,7 @@
             <Button
                 android:id="@+id/send_btn"
                 android:layout_width="50.0dip"
-                android:layout_height="34.0dip"
+                android:layout_height="30.0dip"
                 android:layout_marginLeft="4.0dip"
                 android:background="@drawable/chat_bottombar_btn_selector"
                 android:shadowColor="#ff568ab5"

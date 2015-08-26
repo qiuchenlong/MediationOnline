@@ -347,14 +347,14 @@ public class MessageAdapter extends BaseAdapter {
 	            //如果收到的是调解协议书
 	        	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
 	            holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
-	        
+	            holder.flLayout.setVisibility(View.VISIBLE);
 //	        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
 //				//对方收到的text
 //	        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
 //	        	// 文字
 //	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 //	                    .getMessage() + " "));
-			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(mItem.getName()+",进入聊天室")) {
+			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(",进入聊天室")) {
 				//刚进入聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
@@ -368,6 +368,10 @@ public class MessageAdapter extends BaseAdapter {
 				holder.flLayout.setVisibility(View.GONE);
 				holder.time.setPadding(12, 12, 12, 12);
 			}else {
+				holder.time.setPadding(12, 5, 12, 5);
+				holder.time.setTextSize(14);
+				holder.time.setTextColor(Color.WHITE);
+				holder.time.setBackgroundResource(R.drawable.chat_time_block);
 	             // 文字
 	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 	                    .getMessage() + " "));
@@ -520,7 +524,7 @@ public class MessageAdapter extends BaseAdapter {
 
 
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
-
+        holder.time.setPadding(12, 5, 12, 5);
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);
 		

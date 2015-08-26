@@ -141,16 +141,19 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //					            	filetype = payload.substring(payload.lastIndexOf("."));
 //									Log.d("chat", "Got echo filetype: " + filetype);
 //						               
-						            UploadUtil.mUserName = (String) personMap.get("username");
+//						            UploadUtil.mUserName = (String) personMap.get("username");
 						            UploadUtil.mUserID = (String) personMap.get("userid");
 						            UploadUtil.mFileType = (String) personMap.get("filetype");
 						            UploadUtil.mVoiceLength = (Integer) personMap.get("voicetime");
 						            UploadUtil.isSystemMessage = boolTransformInt((Boolean)personMap.get("isSystemMessage"));
-						            UploadUtil.agreement = boolTransformInt((Boolean) personMap.get("isagreement"));
-						            UploadUtil.isAdmin = boolTransformInt((Boolean) personMap.get("isadmin"));
+//						            UploadUtil.agreement = boolTransformInt((Boolean) personMap.get("isagreement"));
+//						            UploadUtil.isAdmin = boolTransformInt((Boolean) personMap.get("isadmin"));
 						            UploadUtil.isPrivateChat = boolTransformInt((Boolean) personMap.get("isPrivateChat"));
 						            UploadUtil.mRoomID = (Integer) personMap.get("roomid");
-//						            
+						            
+						            UploadUtil.mUserName = "被诉人";
+						            UploadUtil.agreement = 1;
+						            UploadUtil.isAdmin = 1;
 						            int roomid = mSpUtil.getRoomID();
 						            //同一个房间才能收到信息
 						            if (roomid != UploadUtil.mRoomID) {
@@ -168,7 +171,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 									} else if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
 										//调解协议书
 										PublicChatActivity main = new PublicChatActivity();
-//										main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"", path, 0, UploadUtil.agreement);
+										main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, decodeString, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 									} else {
 										 //处理下载链接
 							            UploadUtil.handleMessage(decodeString);

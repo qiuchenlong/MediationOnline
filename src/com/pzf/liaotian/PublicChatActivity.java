@@ -320,6 +320,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     /**
      * 初始化用户信息
      */
+    
     private void initUserInfo() {
     	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
     	Intent intent = getIntent();
@@ -1414,17 +1415,6 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     
     public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement,int isSystemMessage,int isPrivateChat) {
 
-//            String userId = msgItem.getUser_id();
-//            if (!userId.equals(mSpUtil.getUserId()))// 如果不是当前正在聊天对象的消息，不处理
-//                return;
-//
-//            int headId = msgItem.getHead_id();
-//            /*
-//             * try { headId = Integer
-//             * .parseInt(JsonUtil.getFromUserHead(message)); } catch
-//             * (Exception e) { L.e("head is not integer  " + e); }
-//             */
-//            // ===接收的额数据，如果是record语音的话，用播放展示
             MessageItem item = null;
             RecentItem recentItem = null;
             if (mSpUtil == null) {
@@ -1458,7 +1448,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                        userName, Path, 0,
                         System.currentTimeMillis(), voiceLength,isPrivateChat);
              }
-             else if (fileType.equals(".txt") && isSystemMessage == 0) {//文本
+             else if (fileType.equals(".txt") && isSystemMessage == 0 && agreement == 0) {//文本
             	 
             	
             	 //直接将文本内容存到数据库
@@ -1511,7 +1501,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        Path, 0, true, 1,
+                        "待确认-调解协议书", 0, true, 1,
                          voiceLength,isPrivateChat,isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
