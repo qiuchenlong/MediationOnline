@@ -306,87 +306,94 @@ public class MessageAdapter extends BaseAdapter {
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
 
-        if (mItem.getDate() == 0) {
-        	//显示公告
-			holder.time.setVisibility(View.VISIBLE);
-			holder.name.setVisibility(View.GONE);
-			holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
-			holder.time.setTextColor(Color.rgb(254, 20, 99));
-			holder.time.setTextSize(14);
-			holder.time.setPadding(12, 12, 12, 12);
-			holder.time.bringToFront();
-			holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
-			holder.flLayout.setVisibility(View.GONE);
-		} else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
-        	//收到文件
-			holder.time.setVisibility(View.VISIBLE);
-			holder.name.setVisibility(View.GONE);
-			holder.time.setText("接收文件保存于："+mItem.getMessage());
-			holder.time.setPadding(12, 12, 12, 12);
-			holder.time.setTextSize(14);
-			holder.time.bringToFront();
-			holder.flLayout.setVisibility(View.GONE);
-	
-        }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
-        	//发送文件
-        	holder.time.setVisibility(View.VISIBLE);
-			holder.name.setVisibility(View.GONE);
-			holder.time.setText("已发送文件："+mItem.getMessage());
-			holder.time.setPadding(12, 12, 12, 12);
-			holder.time.setTextSize(14);
-			holder.time.bringToFront();
-			holder.flLayout.setVisibility(View.GONE);
-           
-        }
-        else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
-            //如果收到的是调解协议书
-        	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
-            holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
-        
-//        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
-//			//对方收到的text
-//        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
-//        	// 文字
-//            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-//                    .getMessage() + " "));
-		}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(mItem.getName()+",进入聊天室")) {
-			//刚进入聊天室 发送提醒
-			holder.time.setVisibility(View.VISIBLE);
-			holder.name.setVisibility(View.GONE);
-			holder.time.setText(mItem.getName()+",进入聊天室");
-			
-			
-			holder.time.bringToFront();
-			holder.time.setTextSize(14);
-			holder.time.setTextColor(Color.WHITE);
-			holder.time.setBackgroundResource(R.drawable.chat_time_block);
-			holder.flLayout.setVisibility(View.GONE);
-			holder.time.setPadding(12, 12, 12, 12);
-		}else {
-             // 文字
+        if (mSpUtil.getIsConsult()) {
+        	 // 文字
             holder.msg.insertGif(convertNormalStringToSpannableString(mItem
                     .getMessage() + " "));
-            holder.flLayout.setVisibility(View.VISIBLE);
-        }
+		} else {
+			if (mItem.getDate() == 0) {
+	        	//显示公告
+				holder.time.setVisibility(View.VISIBLE);
+				holder.name.setVisibility(View.GONE);
+				holder.time.setText("    公告：请双方当事人尊重法律，尊重对方，就事论事，避免人身攻击和论及其他无关事物，谢谢！");
+				holder.time.setTextColor(Color.rgb(254, 20, 99));
+				holder.time.setTextSize(14);
+				holder.time.setPadding(12, 12, 12, 12);
+				holder.time.bringToFront();
+				holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
+				holder.flLayout.setVisibility(View.GONE);
+			} else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
+	        	//收到文件
+				holder.time.setVisibility(View.VISIBLE);
+				holder.name.setVisibility(View.GONE);
+				holder.time.setText("接收文件保存于："+mItem.getMessage());
+				holder.time.setPadding(12, 12, 12, 12);
+				holder.time.setTextSize(14);
+				holder.time.bringToFront();
+				holder.flLayout.setVisibility(View.GONE);
+		
+	        }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
+	        	//发送文件
+	        	holder.time.setVisibility(View.VISIBLE);
+				holder.name.setVisibility(View.GONE);
+				holder.time.setText("已发送文件："+mItem.getMessage());
+				holder.time.setPadding(12, 12, 12, 12);
+				holder.time.setTextSize(14);
+				holder.time.bringToFront();
+				holder.flLayout.setVisibility(View.GONE);
+	           
+	        }
+	        else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+	            //如果收到的是调解协议书
+	        	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
+	            holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
+	        
+//	        } else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsNew() == 1 && mItem.isComMeg() == true) {
+//				//对方收到的text
+//	        	holder.rlMessage.setBackgroundResource(R.drawable.balloon1_l);
+//	        	// 文字
+//	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+//	                    .getMessage() + " "));
+			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(mItem.getName()+",进入聊天室")) {
+				//刚进入聊天室 发送提醒
+				holder.time.setVisibility(View.VISIBLE);
+				holder.name.setVisibility(View.GONE);
+				holder.time.setText(mItem.getName()+",进入聊天室");
+				
+				
+				holder.time.bringToFront();
+				holder.time.setTextSize(14);
+				holder.time.setTextColor(Color.WHITE);
+				holder.time.setBackgroundResource(R.drawable.chat_time_block);
+				holder.flLayout.setVisibility(View.GONE);
+				holder.time.setPadding(12, 12, 12, 12);
+			}else {
+	             // 文字
+	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
+	                    .getMessage() + " "));
+	            holder.flLayout.setVisibility(View.VISIBLE);
+	        }
+	        
+	      
+
+	        holder.msg.setOnClickListener(new OnClickListener() {
+
+	            @Override
+	            public void onClick(View arg0) {
+	                int filetype = mItem.getMsgType();
+	                //如果是协议书，点击后会跳转到相应的url
+	                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+	                
+	                    Intent intent =new Intent(mContext,WebViewActivity.class);  
+	                    intent.putExtra("URL_PATH", mItem.getMessage());
+	                    mContext.startActivity(intent);
+	                } 
+	                 Log.v("chat", "text message=" + filetype);
+
+	            }
+	        });
+		}
         
-      
-
-        holder.msg.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                int filetype = mItem.getMsgType();
-                //如果是协议书，点击后会跳转到相应的url
-                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
-                
-                    Intent intent =new Intent(mContext,WebViewActivity.class);  
-                    intent.putExtra("URL_PATH", mItem.getMessage());
-                    mContext.startActivity(intent);
-                } 
-                 Log.v("chat", "text message=" + filetype);
-
-            }
-        });
 
     }
     

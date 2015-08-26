@@ -19,6 +19,16 @@ public class SharePreferenceUtil {
         editor = sp.edit();
     }
   
+    //调解咨询
+    public void setIsConsult(Boolean  isConsult) {
+    	editor.putBoolean("isconsult", isConsult);
+    	editor.commit();
+    }
+    
+    public Boolean getIsConsult() {
+    	return sp.getBoolean("isconsult", false);
+    }
+    
     //协议书
     public void setIsAgreement(int  isAgreement) {
     	editor.putInt("isagreement", isAgreement);

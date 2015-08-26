@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONException;
+
 import android.R.integer;
 import android.app.Activity;
 import android.app.Application;
@@ -232,12 +234,21 @@ public class ConsultActivity extends Activity implements OnClickListener,
         recodePermission = mSpUtil.getRecordPermission();
 //
         initUserInfo();
-//        
-//        mConnection.handleConnection(null);
+        
+        try {
+			mConnection.handleConnection(null);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     
     }
     
-
+    @Override  
+    protected void onStart() {  
+        super.onStart();  
+//        mSpUtil.setIsConsult(true);
+    } 
 
     /**
      * 更新文本内容
@@ -645,17 +656,17 @@ public class ConsultActivity extends Activity implements OnClickListener,
     	String msg = message;
 
     	long currentTime = System.currentTimeMillis();
-    	int isHide = isHideTimeLabel(currentTime);
+    	int isHide = 0;
     	
         MessageItem item = new MessageItem(
                 MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
                 currentTime, msg, mSpUtil.getHeadIcon(),
-                false, 0, 0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                false,true);
 
-        adapter.upDateMsg(item);
-        mMsgListView.setSelection(adapter.getCount() - 1);
-        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
-        mEtMsg.setText("");
+//        adapter.upDateMsg(item);
+//        mMsgListView.setSelection(adapter.getCount() - 1);
+//        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
+//        mEtMsg.setText("");
 //        // ===发送消息到服务器
 //        com.pzf.liaotian.bean.Message msgItem = new com.pzf.liaotian.bean.Message(
 //                MessageItem.MESSAGE_TYPE_TEXT,
@@ -666,27 +677,15 @@ public class ConsultActivity extends Activity implements OnClickListener,
 //        if (!file.exists()) {
 //			file.mkdirs();
 //		}
-//        
-//        //TODO
+////        
+////        //TODO
 //        String fileName = item.getDate()+".txt";
 //        writeTxtToFile(msg, filePath, fileName);
 //        mSpUtil.setIsCome(false);
-//        if (isSystemMessage) {
-//        	if (mConnection.isConnected()) {
-//        		mConnection.sendTextMessage(msg);
-//			}			
-//		} else {
-//			new SendMsgAsyncTask(mGson.toJson(msgItem), mSpUtil.getUserId(),filePath+fileName)
-//            .send();
-//		}
-//        
-//        // ===保存近期的消息
 //
-//        RecentItem recentItem = new RecentItem(
-//                MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getUserId(),
-//                0, mSpUtil.getNick(), msg, 0,
-//                System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
-//        mRecentDB.saveRecent(recentItem);
+//			new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath+fileName)
+//            .send();
+
     }
     
     public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement) {
