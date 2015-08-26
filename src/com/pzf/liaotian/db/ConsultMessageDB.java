@@ -31,7 +31,7 @@ public class ConsultMessageDB {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
 
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER,isconsult INTEGER)");
 
         int isCome = 0;
         if (entity.isComMeg()) {// 如果是收到的消息，保存在数据库的值为1
@@ -40,11 +40,11 @@ public class ConsultMessageDB {
         db.execSQL(
                 "insert into _"
                         + "localMessage"
-                        + " (messagetype,name,img,date,isCome,message,isNew,voiceTime,isprivatechat,ishidetime,agreement,issystemmessage) values(?,?,?,?,?,?,?,?,?,?,?,?)",
+                        + " (messagetype,name,img,date,isCome,message,isNew,voiceTime,isprivatechat,ishidetime,agreement,issystemmessage,isconsult) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 new Object[] { entity.getMsgType(), entity.getName(),
                         entity.getHeadImg(), entity.getDate(), isCome,
                         entity.getMessage(), entity.getIsNew(),
-                        entity.getVoiceTime(),entity.getIsPrivateChat(),entity.getIsHideTime(),entity.getAgreement(),entity.getIsSystemMessage() });
+                        entity.getVoiceTime(),entity.getIsPrivateChat(),entity.getIsHideTime(),entity.getAgreement(),entity.getIsSystemMessage(),entity.getIsConsult() });
     }
 
     public List<MessageItem> getMsg(String id, int pager) {
@@ -52,7 +52,7 @@ public class ConsultMessageDB {
         int num = 10 * (pager + 1);// 本来是准备做滚动到顶端自动加载数据
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER,isconsult INTEGER)");
         Cursor c = db.rawQuery("SELECT * from _" + "localMessage"
                 + " ORDER BY _id DESC LIMIT " + num, null);
         while (c.moveToNext()) {
@@ -68,12 +68,13 @@ public class ConsultMessageDB {
             int ishidetime =c.getInt(c.getColumnIndex("ishidetime"));
             int agreement =c.getInt(c.getColumnIndex("agreement"));
             int issystemmessage =c.getInt(c.getColumnIndex("issystemmessage"));
+            int isconsult = c.getInt(c.getColumnIndex("isconsult"));
             boolean isComMsg = false;
             if (isCome == 1) {
                 isComMsg = true;
             }
             MessageItem entity = new MessageItem(msgType, name, date, message,
-                    img, isComMsg, isNew, voiceTime,isprivatechat,ishidetime,agreement,issystemmessage);
+                    img, isComMsg, isNew, voiceTime,isprivatechat,ishidetime,agreement,issystemmessage,isconsult);
             list.add(entity);
         }
         c.close();
@@ -84,7 +85,7 @@ public class ConsultMessageDB {
     public int getNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER,isconsult INTEGER)");
         Cursor c = db.rawQuery("SELECT isNew from _" + "localMessage" + " where isNew=1",
                 null);
         int count = c.getCount();
@@ -96,7 +97,7 @@ public class ConsultMessageDB {
     public void clearNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
                 + "localMessage"
-                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
+                + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER,isconsult INTEGER)");
         db.execSQL("update _" + "localMessage" + " set isNew=0 where isNew=1");
     }
 

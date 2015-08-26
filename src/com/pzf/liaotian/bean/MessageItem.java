@@ -40,7 +40,7 @@ public class MessageItem extends BaseData{
     private int isHideTime;
     private int agreement;
     private int isSystemMessage;
-    private boolean isConsult;
+    private int isConsult;
     
     public MessageItem() {
         // TODO Auto-generated constructor stub
@@ -90,17 +90,32 @@ public class MessageItem extends BaseData{
         this.isSystemMessage = isSystemMessage;
     }
     
-    public MessageItem(int msgType,String name, long date, String message,int headImg,Boolean isComMeg,Boolean isConsult) {
+    public MessageItem(int msgType, String name, long date, String message,
+            int headImg, boolean isComMeg, int isNew, int voiceTime,int isprivatechat,int isHideTime,int agreement,int isSystemMessage,int isConsult) {
     	super();
     	this.msgType = msgType;
-    	this.name = name;
-    	this.time = date;
-    	this.message = message;
-    	this.headImg = headImg;
-    	this.isComMeg = isComMeg();
+        this.name = name;
+        this.time = date;
+        this.message = message;
+        this.headImg = headImg;
+        this.isComMeg = isComMeg;
+        this.isNew = isNew;
+        this.voiceTime = voiceTime;
+        this.isPrivateChat = isprivatechat;
+        this.isHideTime = isHideTime;
+        this.agreement = agreement;
+        this.isSystemMessage = isSystemMessage;
     	this.isConsult = isConsult;
     }
 
+    public int getIsConsult() {
+    	return isConsult;
+    }
+    
+    public void setIsConsult(int isConsult) {
+    	this.isConsult = isConsult;
+    }
+    
     public int getIsSystemMessage() {
     	return isSystemMessage;
     }

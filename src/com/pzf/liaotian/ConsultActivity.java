@@ -247,7 +247,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
     @Override  
     protected void onStart() {  
         super.onStart();  
-//        mSpUtil.setIsConsult(true);
+        mSpUtil.setIsConsult(true);
     } 
 
     /**
@@ -274,7 +274,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
      * 初始化用户信息
      */
     private void initUserInfo() {
-    	
+    	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
     	Intent intent = getIntent();
     	mSpUtil.setUserId(intent.getStringExtra("USER_ID"));
     	mSpUtil.setNick(intent.getStringExtra("USER_NAME"));
@@ -636,21 +636,21 @@ public class ConsultActivity extends Activity implements OnClickListener,
 
     }
     
-    private static int isHideTimeLabel(long newtime) {
-    	long oldtime = mSpUtil.getsystemtime();
-    	
-    	long interval = newtime - oldtime;
-    	if (interval > 1000*60) {
-    		Log.v("chat_time", "interval="+ interval);
-			Log.v("chat_time", "interval="+ new java.util.Date(interval));
-			mSpUtil.setSystemTime(newtime);
-			return 0;
-		} else {
-			return 1;
-		}
-    	
-    
-    }
+//    private static int isHideTimeLabel(long newtime) {
+//    	long oldtime = mSpUtil.getsystemtime();
+//    	
+//    	long interval = newtime - oldtime;
+//    	if (interval > 1000*60) {
+//    		Log.v("chat_time", "interval="+ interval);
+//			Log.v("chat_time", "interval="+ new java.util.Date(interval));
+//			mSpUtil.setSystemTime(newtime);
+//			return 0;
+//		} else {
+//			return 1;
+//		}
+//    	
+//    
+//    }
     
     public static void sendTextMessage(String message,Boolean isSystemMessage) {
     	String msg = message;
@@ -658,37 +658,38 @@ public class ConsultActivity extends Activity implements OnClickListener,
     	long currentTime = System.currentTimeMillis();
     	int isHide = 0;
     	
-        MessageItem item = new MessageItem(
-                MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
-                currentTime, msg, mSpUtil.getHeadIcon(),
-                false,true);
+    	int isConsult = 1;
+    	 MessageItem item = new MessageItem(
+                 MessageItem.MESSAGE_TYPE_TEXT, mSpUtil.getNick(),
+                 currentTime, msg, mSpUtil.getHeadIcon(),
+                 false, 0, 0,0,isHide,0,0,isConsult);
 
-//        adapter.upDateMsg(item);
-//        mMsgListView.setSelection(adapter.getCount() - 1);
-//        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
-//        mEtMsg.setText("");
+        adapter.upDateMsg(item);
+        mMsgListView.setSelection(adapter.getCount() - 1);
+        mCSMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
+        mEtMsg.setText("");
 //        // ===发送消息到服务器
 //        com.pzf.liaotian.bean.Message msgItem = new com.pzf.liaotian.bean.Message(
 //                MessageItem.MESSAGE_TYPE_TEXT,
 //                System.currentTimeMillis(), msg, "", 0);
 //        
-//        String filePath = chatContext.getExternalFilesDir(null).toString() +"/word/";
-//        File file = new File(filePath);
-//        if (!file.exists()) {
-//			file.mkdirs();
-//		}
+        String filePath = chatContext.getExternalFilesDir(null).toString() +"/word/";
+        File file = new File(filePath);
+        if (!file.exists()) {
+			file.mkdirs();
+		}
 ////        
 ////        //TODO
-//        String fileName = item.getDate()+".txt";
-//        writeTxtToFile(msg, filePath, fileName);
-//        mSpUtil.setIsCome(false);
-//
-//			new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath+fileName)
-//            .send();
+        String fileName = item.getDate()+".txt";
+        writeTxtToFile(msg, filePath, fileName);
+        mSpUtil.setIsCome(false);
+
+			new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath+fileName)
+            .send();
 
     }
     
-    public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement) {
+    public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int isConsult) {
 
 //            String userId = msgItem.getUser_id();
 //            if (!userId.equals(mSpUtil.getUserId()))// 如果不是当前正在聊天对象的消息，不处理
@@ -709,32 +710,9 @@ public class ConsultActivity extends Activity implements OnClickListener,
             mSpUtil.setIsCome(true);
 
             long currentTime = System.currentTimeMillis();
-        	int isHide = isHideTimeLabel(currentTime);
+        	int isHide = 0;
         	
-    		//图片
-            if (fileType.equals(".jpg") || fileType.equals(".png")) {
-                item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
-                        userName, currentTime,
-                        Path,1,true,0,0,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
-                        userID, 1, userName,
-                        Path, 0,
-                        System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
-            }
-            else if (fileType.equals(".amr") || fileType.equals(".mp3")) {//语音
-                item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
-
-                		userName, currentTime,
-                		Path, 1, true, 0,
-                        voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                recentItem = new RecentItem(
-                        MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
-                       userName, Path, 0,
-                        System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
-             }
-             else if (fileType.equals(".txt")) {//文本
+    	 if (fileType.equals(".txt")) {//文本
             	 //直接将文本内容存到数据库
             	 String str = ""; 
             	 try {  
@@ -763,35 +741,10 @@ public class ConsultActivity extends Activity implements OnClickListener,
                         str, 0,
                         System.currentTimeMillis(), 0,mSpUtil.getIsPrivateChat());
             }
-             else if (fileType.contains(".doc")) {//文档
-            	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
-
-                 		userName, currentTime,
-                 		Path, 0, true, 0,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                 recentItem = new RecentItem(
-                         MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
-            }
-             else if (agreement == 1) {//待确认-调解协议书
-            	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
-
-                 		userName, currentTime,
-                        Path, 0, true, 1,
-                         voiceLength,mSpUtil.getIsPrivateChat(),isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                 recentItem = new RecentItem(
-                         MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,mSpUtil.getIsPrivateChat());
-            }
             
 //
             adapter.upDateMsg(item);// 更新界面
             mCSMsgDB.saveMsg(userID, item);// 保存数据库
-            mRecentDB.saveRecent(recentItem);
 
             scrollToBottomListItem();
         }    

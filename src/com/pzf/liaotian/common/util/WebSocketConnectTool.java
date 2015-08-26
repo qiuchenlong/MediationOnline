@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import net.bither.util.NativeUtil;
 
+import android.R.integer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -97,9 +98,9 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            public void onOpen() {
 			               Log.d("chat", "Status: Connected to " + wsuri);	
 			               //如果不是进入调解咨询页面 则不用发送这句话
-//			               if (!mSpUtil.getIsConsult()) {
+			               if (!mSpUtil.getIsConsult()) {
 				               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",进入聊天室",true);  
-//			               }
+			               }
 //			               if (_file != null) {
 //								sendMessage(_file);	
 //							}
@@ -110,7 +111,15 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            	Log.d("chat", "Got echo: " + payload);
 			            	
 			            	if (mSpUtil.getIsConsult()) {
-								
+			            		
+				                Map<String, Object> consultMap = consultJSONString(payload); 
+				                String decodeString = new String(Base64.decode((String) consultMap.get("data"), Base64.NO_WRAP));
+				                UploadUtil.mUserName = "小秘书";
+					            UploadUtil.mUserID = (String) consultMap.get("userid");
+					            UploadUtil.mFileType = (String) consultMap.get("filetype");
+					            UploadUtil.isConsult = boolTransformInt((Boolean) consultMap.get("isconsult"));
+					            UploadUtil.handleMessage(decodeString);
+					            
 							} else {
 								// 解析得到一个Map对象  
 				                Map<String, Object> personMap = chatJSONString(payload); 
@@ -330,10 +339,8 @@ public class WebSocketConnectTool extends WebSocketConnection {
             resultMap.put("username", consult.getString("username"));         
             resultMap.put("userid", consult.getString("userid"));              
             resultMap.put("filetype", consult.getString("filetype")); 
-            resultMap.put("isconsult", consult.getBoolean("isConsult"));
+            resultMap.put("isconsult", consult.getBoolean("isconsult"));
            
-            
-            
             resultMap.put("data", consult.getString("data"));
         } catch (JSONException e) {  
             e.printStackTrace();  

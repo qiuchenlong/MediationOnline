@@ -38,6 +38,7 @@ import org.json.JSONException;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
 import com.pzf.liaotian.common.util.WebSocketConnectTool;
+import com.pzf.liaotian.db.ConsultMessageDB;
 
 
 import android.R.integer;
@@ -93,6 +94,7 @@ public class UploadUtil {
 	 public static int isSystemMessage;
 	 public static int isAdmin;
 	 public static int isPrivateChat;
+	 public static int isConsult;
 	 	
 		public static  void handleMessage(String imgPath) {
 			new MYTask().execute(imgPath);
@@ -139,11 +141,20 @@ public class UploadUtil {
 	            super.onPostExecute(result);
 	            mFilePath = saveFile(result);
 	            
-	            PublicChatActivity main = new PublicChatActivity();
-	            main.mApplication = PushApplication.getInstance();
-	            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
-	            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
-	            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement,isSystemMessage,isPrivateChat);
+	            if (mSpUtil.getIsConsult()) {
+					ConsultActivity consult = new ConsultActivity();
+					consult.mApplication = PushApplication.getInstance();
+					consult.mCSMsgDB = consult.mApplication.getConsultMessageDB();
+					consult.receiveMessageFormServer(mUserName, mUserID, mFileType, mFilePath,isConsult);
+					
+				} else {
+					PublicChatActivity main = new PublicChatActivity();
+		            main.mApplication = PushApplication.getInstance();
+		            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
+		            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
+		            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement,isSystemMessage,isPrivateChat);
+				}
+	            
 	        }
 
 	    }
@@ -172,7 +183,13 @@ public class UploadUtil {
 		}
 	     
 	     String fileName = "/" + mUserID +System.currentTimeMillis() + mFileType;
-	     String fullPath = PublicChatActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
+	     String fullPath = null;
+	     if (mSpUtil.getIsConsult()) {
+	    	  fullPath = ConsultActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
+		} else {
+			 fullPath = PublicChatActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
+		}
+	     
 	     File f = new File(fullPath);
 	     if (!f.exists()) {
 	      f.mkdirs();
