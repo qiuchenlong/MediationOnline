@@ -16,6 +16,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
+import com.pzf.liaotian.common.util.WebSocketConnectTool;
+import com.zztj.chat.bean.BackImageStruct;
 import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
 import com.zztj.chat.bean.BackTextStruct;
@@ -50,6 +52,7 @@ public class MainWebViewActivity extends Activity{
 	private WebView myWebView = null;
 	private Button backButton;
 	private static SharePreferenceUtil mSpUtil;
+	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
 	
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -118,41 +121,9 @@ public class MainWebViewActivity extends Activity{
 //        System.out.println("name--->" + jsonBean.getMessageInfo().avatar);
 //        System.out.println("name--->" + jsonBean.getBaseInfo().getSessionID());
         
-        //发送普通文本信息到服务端   
-//      String jsonData = "{\"type\" : \"say\",\"base_info\" : {\"room_id\" : 123,\"from_client_id\" : 123,\"from_username\" :\"用户名1\",\"to_client_id\" : \"ALL\",\"is_secret\" : 0},\"message_info\" : {\"msg_type\":\"text\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"用户名1\",\"content\":\"说话内容\",\"time\":\"2010-02-02 10:10:10\"}}";      
-//      Gson gson = new Gson();
-//      java.lang.reflect.Type type = new TypeToken<SendTextStruct>(){}.getType();
-//      SendTextStruct jsonBean = gson.fromJson(jsonData, type);
-//
-//      System.out.println("name--->" + jsonBean.getType());
-//      System.out.println("name--->" + jsonBean.getMessageInfo().time);
-      
-        //发送文本到服务端返回的数据
-//      String jsonData = "{\"type\" : \"say\",\"base_info\" : {\"room_id\" : 123,\"from_client_id\" : 123,\"from_username\" :\"用户名1\",\"to_client_id\" : \"ALL\"},\"message_info\" : {\"msg_type\":\"text\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"用户名1\",\"content\":\" 说话内容\",\"is_secret\" : 0,\"time\":\"2010-02-02 10:10:10\"}}";      
-//      Gson gson = new Gson();
-//      java.lang.reflect.Type type = new TypeToken<BackTextStruct>(){}.getType();
-//      BackTextStruct jsonBean = gson.fromJson(jsonData, type);
-//
-//      System.out.println("name--->" + jsonBean.getType());
-//      System.out.println("name--->" + jsonBean.getMessageInfo().time);
-      
-      //发送图片消息到服务端的数据
-//      String jsonData = "{\"type\" : \"say\",\"base_info\" : {\"room_id\" : 123,\"from_client_id\" : 123,\"from_username\" : \"用户名1\",\"to_client_id\" : \"ALL\",\"is_secret\" : 0},\"message_info\" : {\"msg_type\":\"image\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"用户名1\", \"filename\":\"相片名称1\",\"content\":\" 图片base64编码\",\"extension\":\".png\",\"time\":\"2010-02-02 10:10:10\"}}";      
-//      Gson gson = new Gson();
-//      java.lang.reflect.Type type = new TypeToken<SendImageStruct>(){}.getType();
-//      SendImageStruct jsonBean = gson.fromJson(jsonData, type);
-//
-//      System.out.println("name--->" + jsonBean.getType());
-//      System.out.println("name--->" + jsonBean.getMessageInfo().time);
         
-        //发送图片服务端返回的信息
-      String jsonData = "{\"type\" : \"say\",\"base_info\" : {\"room_id\" : 123,\"from_client_id\" : 123,\"from_username\" : \"用户名1\",\"to_client_id\" : \"ALL\",\"is_secret\" : 0},\"message_info\" : {\"msg_type\":\"image\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"用户名1\", \"filename\":\"相片名称1\",\"content\":\" 图片base64编码\",\"extension\":\".png\",\"time\":\"2010-02-02 10:10:10\"}}";      
-      Gson gson = new Gson();
-      java.lang.reflect.Type type = new TypeToken<SendImageStruct>(){}.getType();
-      SendImageStruct jsonBean = gson.fromJson(jsonData, type);
 
-      System.out.println("name--->" + jsonBean.getType());
-      System.out.println("name--->" + jsonBean.getMessageInfo().time);
+      
       
         
     }
@@ -160,6 +131,25 @@ public class MainWebViewActivity extends Activity{
     
     @JavascriptInterface
     public void startChat(String json){
+    	//进入聊天室，向服务器提交信息。
+    	//组织要提交的json信息
+    	EnterChatRoom enterRoom = new EnterChatRoom();
+        enterRoom.setBaseInfo(new Base_Info());
+        enterRoom.init("enter", "PHPSESSID", 1000);
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(enterRoom);
+        Log.v("=============", jsonStr);
+        
+        //向服务器发送信息
+        try {
+			mConnection.handleConnection(null,"enter",jsonStr);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+    	
+    	
     	Intent intent = new Intent(MainWebViewActivity.this,PublicChatActivity.class);
 //    	Map<String, Object> personMap = chatJSONString(json);
 // 

@@ -1,6 +1,6 @@
 package com.zztj.chat.bean;
 
-public class BackImageStruct {
+public class BackScretStruct {
 
 	public String type;
 	public Base_Info base_info;
@@ -35,7 +35,7 @@ public class BackImageStruct {
 		public long from_client_id;
 		public String from_username;
 		public String to_client_id;
-		public String is_secret;
+		
 		
 		public void setRoomID(long roomid) {
 			this.room_id = roomid;
@@ -53,9 +53,7 @@ public class BackImageStruct {
 			this.to_client_id = to_client_id;
 		}
 		
-		public void setIsSecret(String is_secret) {
-			this.is_secret = is_secret;
-		}
+		
 		
 		public long getRoomID() {
 			return room_id;
@@ -73,9 +71,7 @@ public class BackImageStruct {
 			return to_client_id;
 		}
 		
-		public String getIsSecret() {
-			return is_secret;
-		}
+	
 			
 	}
 	
@@ -84,24 +80,15 @@ public class BackImageStruct {
 		public String avatar;
 		public String username;
 		public String content;
-		public String extension;
-		public String src_url;
+		public String is_secret;
 		public String time;
 		
-		public void setSrcUrl(String src_url) {
-			this.src_url = src_url;
+		public void setIsSecret(String is_secret) {
+			this.is_secret = is_secret;
 		}
 		
-		public String getSrcUrl() {
-			return src_url;
-		}
-		
-		public void setExtension(String extension) {
-			this.extension = extension;
-		}
-		
-		public String getExtension() {
-			return extension;
+		public String getIsSecret() {
+			return is_secret;
 		}
 		
 		public void setMsgTypeInfo(String msg_type) {

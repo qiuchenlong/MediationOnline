@@ -1,6 +1,6 @@
 package com.zztj.chat.bean;
 
-public class BackImageStruct {
+public class BackFileStruct {
 
 	public String type;
 	public Base_Info base_info;

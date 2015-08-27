@@ -236,7 +236,7 @@ public class ConsultActivity extends Activity implements OnClickListener,
         initUserInfo();
         
         try {
-			mConnection.handleConnection(null);
+			mConnection.handleConnection(null,null,null);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

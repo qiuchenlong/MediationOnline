@@ -1,6 +1,6 @@
 package com.zztj.chat.bean;
 
-public class BackImageStruct {
+public class SendScretStruct {
 
 	public String type;
 	public Base_Info base_info;
@@ -84,25 +84,7 @@ public class BackImageStruct {
 		public String avatar;
 		public String username;
 		public String content;
-		public String extension;
-		public String src_url;
 		public String time;
-		
-		public void setSrcUrl(String src_url) {
-			this.src_url = src_url;
-		}
-		
-		public String getSrcUrl() {
-			return src_url;
-		}
-		
-		public void setExtension(String extension) {
-			this.extension = extension;
-		}
-		
-		public String getExtension() {
-			return extension;
-		}
 		
 		public void setMsgTypeInfo(String msg_type) {
 			this.msg_type = msg_type;

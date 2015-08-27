@@ -242,7 +242,7 @@ public class UploadUtil {
     	  
 		final String wsuri = mSpUtil.getServerIP();
 		try {
-			mConnection.getInstance().handleConnection(_file);
+			mConnection.getInstance().handleConnection(_file,null,null);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

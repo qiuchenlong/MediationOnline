@@ -84,7 +84,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
         return SingletonHolder.websocket;
     }
 
-    public void handleConnection(File file) throws JSONException {
+    public void handleConnection(File file,final String action,final String json) throws JSONException {
     	mSpUtil = PushApplication.getInstance().getSpUtil();
     	
     	final String wsuri = mSpUtil.getServerIP();
@@ -97,10 +97,15 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            @Override
 			            public void onOpen() {
 			               Log.d("chat", "Status: Connected to " + wsuri);	
+			               
+			               if (action.equals("enter")) {
+							SingletonHolder.websocket.sendTextMessage(json);
+						}
+			               
 			               //如果不是进入调解咨询页面 则不用发送这句话
-			               if (!mSpUtil.getIsConsult()) {
-				               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",进入聊天室",true);  
-			               }
+//			               if (!mSpUtil.getIsConsult()) {
+//				               PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",进入聊天室",true);  
+//			               }
 //			               if (_file != null) {
 //								sendMessage(_file);	
 //							}
@@ -195,9 +200,12 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			         Log.d("chat", e.toString());
 			      }
 			} else {
-				if (file != null) {
-					sendMessage(file);	
-				}						     					
+				if (action.equals("enter")) {
+					SingletonHolder.websocket.sendTextMessage(json);
+				}
+//				if (file != null) {
+//					sendMessage(file);	
+//				}						     					
 			}
     }
     

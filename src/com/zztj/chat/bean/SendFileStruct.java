@@ -1,6 +1,6 @@
 package com.zztj.chat.bean;
 
-public class BackImageStruct {
+public class SendFileStruct {
 
 	public String type;
 	public Base_Info base_info;
@@ -83,18 +83,10 @@ public class BackImageStruct {
 		public String msg_type;
 		public String avatar;
 		public String username;
+		public String filename;
 		public String content;
 		public String extension;
-		public String src_url;
 		public String time;
-		
-		public void setSrcUrl(String src_url) {
-			this.src_url = src_url;
-		}
-		
-		public String getSrcUrl() {
-			return src_url;
-		}
 		
 		public void setExtension(String extension) {
 			this.extension = extension;
@@ -102,6 +94,14 @@ public class BackImageStruct {
 		
 		public String getExtension() {
 			return extension;
+		}
+		
+		public void setFileName(String filename) {
+			this.filename = filename;
+		}
+		
+		public String getFileName() {
+			return filename;
 		}
 		
 		public void setMsgTypeInfo(String msg_type) {
