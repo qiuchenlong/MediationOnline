@@ -22,6 +22,7 @@ import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
 import com.zztj.chat.bean.BackTextStruct;
 import com.zztj.chat.bean.EnterChatRoomServer;
+import com.zztj.chat.bean.JsonMessageStruct;
 import com.zztj.chat.bean.SendImageStruct;
 import com.zztj.chat.bean.SendTextStruct;
 import com.zztj.chat.bean.User;
@@ -53,6 +54,7 @@ public class MainWebViewActivity extends Activity{
 	private Button backButton;
 	private static SharePreferenceUtil mSpUtil;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
+	public MainWebViewActivity mContent;
 	
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -60,6 +62,8 @@ public class MainWebViewActivity extends Activity{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_webview);
+        
+        mContent = this;
         
         mSpUtil = PushApplication.getInstance().getSpUtil();
         mSpUtil.setServerIP("ws://192.168.0.228:8484");
@@ -110,20 +114,18 @@ public class MainWebViewActivity extends Activity{
         
         //进入聊天室，服务端返回的数据
         
-// String jsonData = "{\"type\": \"enter\",\"base_info\" : {\"room_id\": 123,\"from_client_id\": 123,\"from_username\": \"用户名1\"},\"message_info\" : {\"client_list\":[{\"client_id\" : 111,\"userid\" : 1,\"username\" : \"username1\",\"realname\" : \"名称1\",\"head_view_pic\" : \"头像\"},{\"client_id\" : 222,\"userid\" : 2,\"username\" : \"username2\",\"realname\" : \"名称2\",\"head_view_pic\" : \"头像\"}],\"msg_type\":\"text\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"系统通知\",\"content\":\" 进入会议室\",\"time\":\"2010-02-02 10:10:10\"}}";
-//        
-//        Gson gson = new Gson();
-//        java.lang.reflect.Type type = new TypeToken<EnterChatRoomServer>(){}.getType();
-//        EnterChatRoomServer jsonBean = gson.fromJson(jsonData, type);
-//
-//        System.out.println("name--->" + jsonBean.getType());
-//        System.out.println("name--->" + jsonBean.getBaseInfo().getFromClientID());
+        String jsonData = "{\"type\":\"enter\",\"base_info\":{\"session_id\":\"PHPSESSID\",\"room_id\":1000}}";        
+        Gson gson = new Gson();
+        java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
+        JsonMessageStruct jsonBean = gson.fromJson(jsonData, type);
+
+        System.out.println("name--->" + jsonBean.getType());
+        System.out.println("name--->" + jsonBean.getBaseInfo().session_id);
 //        System.out.println("name--->" + jsonBean.getMessageInfo().avatar);
-//        System.out.println("name--->" + jsonBean.getBaseInfo().getSessionID());
         
         
 
-      
+      startChat("");
       
         
     }
@@ -142,22 +144,23 @@ public class MainWebViewActivity extends Activity{
         
         //向服务器发送信息
         try {
-			mConnection.handleConnection(null,"enter",jsonStr);
+			mConnection.handleConnection(null,"enter",jsonStr,mContent);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-    	
-    	
-    	Intent intent = new Intent(MainWebViewActivity.this,PublicChatActivity.class);
+
+    }
+    
+    public void enterChatRoom() {
+       	Intent intent = new Intent(MainWebViewActivity.this,PublicChatActivity.class);
 //    	Map<String, Object> personMap = chatJSONString(json);
 // 
-//    	intent.putExtra("USER_NAME", (String) personMap.get("username"));
-//		intent.putExtra("USER_ID", (String) personMap.get("userid"));
-//		intent.putExtra("IS_PRIVATE_CHAT", 0);
-//		intent.putExtra("IS_ADMIN", 0);
-//		intent.putExtra("CHAT_ROOM_ID", "027");
+    	intent.putExtra("USER_NAME","阿斯达");
+		intent.putExtra("USER_ID", "111");
+		intent.putExtra("IS_PRIVATE_CHAT", 0);
+		intent.putExtra("IS_ADMIN", 0);
+		intent.putExtra("CHAT_ROOM_ID", "027");
 		startActivity(intent);
     }
     

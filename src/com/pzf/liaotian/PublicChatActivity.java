@@ -282,12 +282,12 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
         initUserInfo();
 //        
-        try {
-			mConnection.handleConnection(null,null,null);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//        try {
+//			mConnection.handleConnection(null,null,null,null);
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
     
     }
     
@@ -332,9 +332,15 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	mSpUtil.setIsPrivateChat(0);
     	Log.v("chat", "isprivatechat = " + isprivatechat);
     	
-    	String chatRoomId = intent.getStringExtra("CHAT_ROOM_ID");
-    	mSpUtil.setRoomID(Integer.parseInt(chatRoomId));
+    	int chatRoomId = intent.getIntExtra("CHAT_ROOM_ID",0);
+    	mSpUtil.setRoomID(chatRoomId);
 		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
+		
+		MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+          		mSpUtil.getNick(), System.currentTimeMillis(),
+                intent.getStringExtra("CONTENT"), 0, true, 1,
+                  0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+		adapter.upDateMsg(item);// 更新界面
     	
     }
 

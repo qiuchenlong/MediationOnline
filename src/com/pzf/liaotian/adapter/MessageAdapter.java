@@ -354,11 +354,11 @@ public class MessageAdapter extends BaseAdapter {
 //	        	// 文字
 //	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 //	                    .getMessage() + " "));
-			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains(",进入聊天室")) {
+			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains("进入会议室")) {
 				//刚进入聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
-				holder.time.setText(mItem.getName()+",进入聊天室");
+				holder.time.setText(mItem.getName()+",进入会议室");
 				
 				
 				holder.time.bringToFront();
