@@ -137,7 +137,7 @@
             android:layout_width="0.0dip"
             android:layout_height="35dp"
             android:layout_marginBottom="6.0dip"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="6dp"
             android:layout_marginTop="6.0dip"
             android:layout_weight="1.08"
             android:inputType="textMultiLine"
