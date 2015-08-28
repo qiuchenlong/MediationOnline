@@ -34,9 +34,10 @@ public class MessageDB {
                 + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
 
         int isCome = 0;
-        if (entity.isComMeg()) {// 如果是收到的消息，保存在数据库的值为1
+        
+        if (entity != null && entity.isComMeg()) {// 如果是收到的消息，保存在数据库的值为1
             isCome = 1;
-        }
+        } 
         db.execSQL(
                 "insert into _"
                         + "localMessage"

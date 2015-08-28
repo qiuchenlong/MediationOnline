@@ -125,7 +125,7 @@
         <EditText
             android:id="@+id/msg_et"
             android:layout_width="0.0dip"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="6.0dip"
             android:layout_marginTop="6.0dip"
             android:layout_weight="1.08"
@@ -134,6 +134,7 @@
             android:paddingLeft="10.0dip"
             android:paddingRight="14.0dip"
             android:paddingTop="4.0dip"
+            android:autoText="true"
             android:textSize="16.0sp" />
 
         <RelativeLayout

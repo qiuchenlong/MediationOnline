@@ -17,14 +17,10 @@ import com.google.gson.stream.JsonReader;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
 import com.pzf.liaotian.common.util.WebSocketConnectTool;
-import com.zztj.chat.bean.BackImageStruct;
 import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
-import com.zztj.chat.bean.BackTextStruct;
 import com.zztj.chat.bean.EnterChatRoomServer;
 import com.zztj.chat.bean.JsonMessageStruct;
-import com.zztj.chat.bean.SendImageStruct;
-import com.zztj.chat.bean.SendTextStruct;
 import com.zztj.chat.bean.User;
 
 import android.R.integer;
@@ -76,6 +72,7 @@ public class MainWebViewActivity extends Activity{
 //        myWebView.loadUrl(path);// 百度链接
         
         myWebView.loadUrl("file:///android_asset/demo.html");
+//        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -119,8 +116,8 @@ public class MainWebViewActivity extends Activity{
         java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
         JsonMessageStruct jsonBean = gson.fromJson(jsonData, type);
 
-        System.out.println("name--->" + jsonBean.getType());
-        System.out.println("name--->" + jsonBean.getBaseInfo().session_id);
+        System.out.println("name--->" + jsonBean.type);
+        System.out.println("name--->" + jsonBean.base_info.session_id);
 //        System.out.println("name--->" + jsonBean.getMessageInfo().avatar);
         
         

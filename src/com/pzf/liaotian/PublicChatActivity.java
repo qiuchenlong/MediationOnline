@@ -757,7 +757,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mMsgListView.setSelection(adapter.getCount() - 1);
         mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 消息保存数据库
         mSpUtil.setIsCome(false);
-        
+        //发送语音
         new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath).send();// push发送消息到服务器
         // ===保存近期的消息
        
@@ -1075,6 +1075,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                      mLlAffix.setVisibility(View.GONE);
                  }
                  mSpUtil.setIsCome(false);
+                 //发送文件
                  new SendMsgAsyncTask(null, null,path).send();// push发送消息到服务器
                 
             	break;
@@ -1130,11 +1131,10 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 System.currentTimeMillis(), messageItem.getMessage(), "", 0);
         if ("".equals(mSpUtil.getUserId())) {
             Log.e("fff", "用户id为空4");
-            return;
         }
         
         
-        //TODO
+        //发送照片
         mSpUtil.setIsCome(false);
         String filePath = mTakePhotoFilePath;
         new SendMsgAsyncTask(mGson.toJson(message), mSpUtil.getUserId(),filePath).send();
@@ -1406,6 +1406,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 //        		mConnection.sendTextMessage(msg);
 //			}			
 //		} else {
+        //发送文本
 			new SendMsgAsyncTask(mGson.toJson(msgItem), mSpUtil.getUserId(),filePath+fileName)
             .send();
 //		}
@@ -1432,7 +1433,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         	int isHide = isHideTimeLabel(currentTime);
         	
     		//图片
-            if (fileType.equals(".jpg") || fileType.equals(".png")) {
+            if (fileType.equals(".jpg") || fileType.equals(".png") || fileType.equals("image")) {
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                         userName, currentTime,
                         Path,1,true,0,0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
@@ -1442,7 +1443,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                         Path, 0,
                         System.currentTimeMillis(), 0,isPrivateChat);
             }
-            else if (fileType.equals(".amr") || fileType.equals(".mp3")) {//语音
+            else if (fileType.equals(".amr") || fileType.equals(".mp3") || fileType.equals("audio")) {//语音
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
 
                 		userName, currentTime,
@@ -1454,44 +1455,44 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                        userName, Path, 0,
                         System.currentTimeMillis(), voiceLength,isPrivateChat);
              }
-             else if (fileType.equals(".txt") && isSystemMessage == 0 && agreement == 0) {//文本
+             else if ((fileType.equals(".txt") || fileType.equals("text"))  && isSystemMessage == 0 && agreement == 0) {//文本
             	 
             	
             	 //直接将文本内容存到数据库
-            	 String str = ""; 
-            	 try {  
-                     File urlFile = new File(Path);  
-                     InputStreamReader isr = new InputStreamReader(new FileInputStream(urlFile), "gbk");  
-                     BufferedReader br = new BufferedReader(isr);    
-                         
-                     String mimeTypeLine = null ;  
-                     while ((mimeTypeLine = br.readLine()) != null) {  
-                       str = str+mimeTypeLine;  
-                   }  
-                     br.close();
-                     isr.close();
-            	 } catch (Exception e) {  
-            		 e.printStackTrace();  
-            	 }  
+//            	 String str = ""; 
+//            	 try {  
+//                     File urlFile = new File(Path);  
+//                     InputStreamReader isr = new InputStreamReader(new FileInputStream(urlFile), "gbk");  
+//                     BufferedReader br = new BufferedReader(isr);    
+//                         
+//                     String mimeTypeLine = null ;  
+//                     while ((mimeTypeLine = br.readLine()) != null) {  
+//                       str = str+mimeTypeLine;  
+//                   }  
+//                     br.close();
+//                     isr.close();
+//            	 } catch (Exception e) {  
+//            		 e.printStackTrace();  
+//            	 }  
             	          	 
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                         userName, currentTime,
-                        str, 1, true, 1,
+                        Path, 1, true, 1,
                         0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                         userID, 1, userName,
-                        str, 0,
+                        Path, 0,
                         System.currentTimeMillis(), 0,isPrivateChat);
-            } else if (fileType.equals(".txt") && isSystemMessage == 1) {
+            } else if ((fileType.equals(".txt") || fileType.equals("text")) && isSystemMessage == 1) {
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                          userName, currentTime,
                          Path, 1, true, 1,
                          0,isPrivateChat,isHide,0,MessageItem.SYSTEM_MESSAGE);
             }
-             else if (fileType.contains(".doc")) {//文档
+             else if (fileType.contains(".doc") || fileType.contains("file")) {//文档
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
