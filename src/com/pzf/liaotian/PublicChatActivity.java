@@ -322,7 +322,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     
     private void initUserInfo() {
-    	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
+//    	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
+    	mSpUtil.setServerIP("ws://172.17.5.228:7272");
     	Intent intent = getIntent();
     	
     	int userid = intent.getIntExtra("USER_ID", 0);
@@ -485,7 +486,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 			@Override
 			public void onClick(View arg0) {
 				 Intent intent =new Intent(PublicChatActivity.this,WebViewActivity.class);  
-                 intent.putExtra("URL_PATH", "http://www.csdn.net");
+                 intent.putExtra("URL_PATH", "http://www.adjol.com/Home/AdjOl/adjpoint/room_id/123.html");
                  startActivity(intent);
 				
 			}
@@ -806,18 +807,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         List<MessageItem> list = mMsgDB
                 .getMsg(mSpUtil.getUserId(), MSGPAGERNUM);
         List<MessageItem> msgList = new ArrayList<MessageItem>();// 消息对象数组
-        
-//        if (mHomeNotice == null) {
-//			mHomeNotice = (TextView)findViewById(R.id.zxtj_home_notice);
-//		}
-//        if (list.size() > 5) {
-//        	mHomeNotice.setVisibility(View.GONE);
-//		} else {
-//			mHomeNotice.setVisibility(View.VISIBLE);
-//		}
-        
+      
         if (list.size() > 0) {
-//        	mHomeNotice.setVisibility(View.GONE);
         	
             for (MessageItem entity : list) {
                 if (entity.getName().equals("")) {

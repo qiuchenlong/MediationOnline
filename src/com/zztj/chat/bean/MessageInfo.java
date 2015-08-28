@@ -15,7 +15,7 @@ public class MessageInfo {
 	public String filename;
 	public String extension;
 	public String src_url;
-	
+	public int is_agreedoc;
 	
 
 }

@@ -256,83 +256,12 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            UploadUtil.mRoomID = jsonBean.base_info.room_id;
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
 				            UploadUtil.handleMessage(jsonBean.message_info.src_url);
-						} 
+						} else if (mSpUtil.getAdminID() != 0 && UploadUtil.agreement == 1) {
+							//调解协议书
+							PublicChatActivity main = new PublicChatActivity();
+							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, "/Home/AdjOl/adjagreement.html?room_id="+mSpUtil.getRoomID(), UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
+						}
 			              
-			              System.out.println("name--->" + jsonBean.type);
-			              System.out.println("name--->" + jsonBean.base_info.room_id);
-			              System.out.println("name--->" + jsonBean.message_info.content);
-			              
-			            	
-			            				            	
-			            	///////////////////////////////////////////////
-			            	
-//			            	if (mSpUtil.getIsConsult()) {
-//			            		
-//				                Map<String, Object> consultMap = consultJSONString(payload); 
-//				                String decodeString = new String(Base64.decode((String) consultMap.get("data"), Base64.NO_WRAP));
-//				                UploadUtil.mUserName = "小秘书";
-//					            UploadUtil.mUserID = (String) consultMap.get("userid");
-//					            UploadUtil.mFileType = (String) consultMap.get("filetype");
-//					            UploadUtil.isConsult = boolTransformInt((Boolean) consultMap.get("isconsult"));
-//					            UploadUtil.handleMessage(decodeString);
-//					            
-//							} else {
-//								// 解析得到一个Map对象  
-//				                Map<String, Object> personMap = chatJSONString(payload); 
-//				            	Log.d("debug",  
-//				                        "username:" + personMap.get("username") + "\n" + "userid:" + personMap.get("userid") + "\n"  
-//				                                + "filetype:" + personMap.get("filetype") + "\n" + "isPrivateChat:"  
-//				                                + personMap.get("isPrivateChat") + "\n" + "voicetime:" + personMap.get("voicetime")
-//				                                + "\n" + "data:" + personMap.get("data") +"\n" + "isSystemMessage:" + personMap.get("isSystemMessage")
-//				                                + "\n" + "isadmin:" + personMap.get("isadmin")
-//				                                + "\n" + "isPrivateChat:" + personMap.get("isPrivateChat"));  
-//				            	
-//				            	String decodeString = new String(Base64.decode((String) personMap.get("data"), Base64.NO_WRAP));
-//				            	Log.d("debug", decodeString); 
-//				            	
-//				            	
-//				            	
-////					            String filetype = null;
-////					            if (payload.contains(".")) {
-////					            	filetype = payload.substring(payload.lastIndexOf("."));
-////									Log.d("chat", "Got echo filetype: " + filetype);
-////						               
-////						            UploadUtil.mUserName = (String) personMap.get("username");
-//						            UploadUtil.mUserID = (String) personMap.get("userid");
-//						            UploadUtil.mFileType = (String) personMap.get("filetype");
-//						            UploadUtil.mVoiceLength = (Integer) personMap.get("voicetime");
-//						            UploadUtil.isSystemMessage = boolTransformInt((Boolean)personMap.get("isSystemMessage"));
-////						            UploadUtil.agreement = boolTransformInt((Boolean) personMap.get("isagreement"));
-////						            UploadUtil.isAdmin = boolTransformInt((Boolean) personMap.get("isadmin"));
-//						            UploadUtil.isPrivateChat = boolTransformInt((Boolean) personMap.get("isPrivateChat"));
-//						            UploadUtil.mRoomID = (Integer) personMap.get("roomid");
-//						            
-//						            UploadUtil.mUserName = "被诉人";
-//						            UploadUtil.agreement = 1;
-//						            UploadUtil.isAdmin = 1;
-//						            int roomid = mSpUtil.getRoomID();
-//						            //同一个房间才能收到信息
-//						            if (roomid != UploadUtil.mRoomID) {
-//										return;
-//									}
-////						            String path = "http://www.baidu.com";
-////						               //如果是私聊则不接受消息，因为只有协调员可以看到
-//						            if (UploadUtil.isPrivateChat == 1) {
-//										return;
-//									}
-//						            //返回的信息处理
-//						            if (decodeString.contains(UploadUtil.mUserName+",进入聊天室")) {
-//						            	PublicChatActivity main = new PublicChatActivity();
-//										main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, decodeString, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
-//									} else if (mSpUtil.getIsAdmin() == 1 && UploadUtil.agreement == 1) {
-//										//调解协议书
-//										PublicChatActivity main = new PublicChatActivity();
-//										main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, decodeString, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
-//									} else {
-//										 //处理下载链接
-//							            UploadUtil.handleMessage(decodeString);
-//									}		
-//							}
 			            				            
 			            }
 			            
@@ -384,12 +313,13 @@ public class WebSocketConnectTool extends WebSocketConnection {
          byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
                     
                 
-         String fileName = file.toString();
+         String filePath = file.toString();
          String suffixName = null;
-         if (fileName.contains(".")) {
-				suffixName = fileName.substring(fileName.length()-4, fileName.length());
+         if (filePath.contains(".")) {
+				suffixName = filePath.substring(filePath.length()-4, filePath.length());
 			}
          
+         String fileName = getFileName(filePath);
          
         //判断要传送文件的格式  		   
 		   if (file.toString().contains(".jpg") || file.toString().contains(".png")) {
@@ -408,11 +338,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
                            
             //需要发送的信息：姓名、用户ID、文件类型、是否是悄悄话、音频长度
             String encodeString = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-            String user_info = getUserJsonInfo(".jpg",encodeString);
+            String user_info = getUserJsonInfo(".jpg",encodeString,fileName);
             SingletonHolder.websocket.sendTextMessage(user_info);
 		   } else {
 			   String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
-			   String user_info = getUserJsonInfo(suffixName,encodeString);
+			   String user_info = getUserJsonInfo(suffixName,encodeString,fileName);
 			   if (mSpUtil.getIsConsult()) {
 				user_info = getConsultJsonInfo(suffixName, encodeString);
 			}
@@ -426,6 +356,18 @@ public class WebSocketConnectTool extends WebSocketConnection {
         }   
 	} 
     
+    public static String getFileName(String pathandname){  
+        
+        int start=pathandname.lastIndexOf("/");  
+        int end=pathandname.lastIndexOf(".");  
+        if(start!=-1 && end!=-1){  
+            return pathandname.substring(start+1,end);    
+        }else{  
+            return null;  
+        }  
+          
+    }
+    
     public static String getConsultJsonInfo(String filetype,String data) throws JSONException {
 		JSONObject json = new JSONObject();   
 	 	json.put("username", mSpUtil.getNick());
@@ -436,7 +378,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 	 	return json.toString();
     }
 	
-	public static String getUserJsonInfo(String filetype,String data) throws JSONException {
+	public static String getUserJsonInfo(String filetype,String data,String filename) throws JSONException {
 		
 		//组织要提交的json信息
     	JsonMessageStruct send = new JsonMessageStruct();
@@ -449,8 +391,8 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	send.base_info.to_client_id = "ALL";
     	send.base_info.is_secret = 0;
     	
-    	send.message_info.avatar = "/asd/asd/asd/123.png";
-    	send.message_info.username = "用户名1";
+    	send.message_info.avatar = " ";
+    	send.message_info.username = mSpUtil.getNick();
     	send.message_info.content = data;
     	
     	long time=System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();  
@@ -462,17 +404,16 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	
     	if (filetype.equals(".jpg") || filetype.equals("png")) {
     		send.message_info.msg_type = "image";
-    		send.message_info.filename = "";
+    		send.message_info.filename = filename;
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 0) {
 			send.message_info.msg_type = "text";
-			send.message_info.filename = "相片名称";
 		} else if (filetype.equals(".mp3")) {
 			send.message_info.msg_type = "audio";
 			send.message_info.filename = mSpUtil.getVoiceTime() + "秒";
 			
 		} else if (filetype.equals(".doc")) {
 			send.message_info.msg_type = "file";
-			send.message_info.filename = "文档文件.doc";
+			send.message_info.filename = filename+".doc";
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 1) { //悄悄话
 			send.base_info.is_secret = 1;
 			send.base_info.to_client_id = String.valueOf(mSpUtil.getAdminID());
@@ -502,54 +443,8 @@ public class WebSocketConnectTool extends WebSocketConnection {
 		}
 	}
 	
-	/** 
-     * JSON解析 
-     *  
-     * @param JSONString 
-     * @return 
-     */  
-    private Map<String, Object> chatJSONString(String JSONString) {  
-        Map<String, Object> resultMap = new HashMap<String, Object>();  
-        try {  
-            // 直接把JSON字符串转化为一个JSONObject对象  
-            JSONObject chat = new JSONObject(JSONString);  
-           
-            resultMap.put("username", chat.getString("username"));         
-            resultMap.put("userid", chat.getString("userid"));              
-            resultMap.put("filetype", chat.getString("filetype")); 
-            resultMap.put("voicetime", chat.getInt("voicetime")); 
-            resultMap.put("roomid", chat.getInt("roomid")); 
-            resultMap.put("isPrivateChat", chat.getBoolean("isPrivateChat")); 
-            resultMap.put("isSystemMessage", chat.getBoolean("isSystemMessage")); 
-            resultMap.put("isagreement", chat.getBoolean("isagreement")); 
-            resultMap.put("isadmin", chat.getBoolean("isadmin"));
-            
-            
-            resultMap.put("data", chat.getString("data"));
-        } catch (JSONException e) {  
-            e.printStackTrace();  
-        }  
-        return resultMap;  
-    }  
-    
-    private Map<String, Object> consultJSONString(String JSONString) {  
-        Map<String, Object> resultMap = new HashMap<String, Object>();  
-        try {  
-            // 直接把JSON字符串转化为一个JSONObject对象  
-            JSONObject consult = new JSONObject(JSONString);  
-           
-            resultMap.put("username", consult.getString("username"));         
-            resultMap.put("userid", consult.getString("userid"));              
-            resultMap.put("filetype", consult.getString("filetype")); 
-            resultMap.put("isconsult", consult.getBoolean("isconsult"));
-           
-            resultMap.put("data", consult.getString("data"));
-        } catch (JSONException e) {  
-            e.printStackTrace();  
-        }  
-        return resultMap;  
-    }
-    
+	
+
     
     
 }

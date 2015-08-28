@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import net.bither.util.ImageShower;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.content.ClipData.Item;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -328,7 +330,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.name.setVisibility(View.GONE);
 				holder.time.setText("接收文件保存于："+mItem.getMessage());
 				holder.time.setPadding(12, 12, 12, 12);
-				holder.time.setTextSize(14);
+				holder.time.setTextSize(12);
 				holder.time.bringToFront();
 				holder.flLayout.setVisibility(View.GONE);
 		
@@ -338,7 +340,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.name.setVisibility(View.GONE);
 				holder.time.setText("已发送文件："+mItem.getMessage());
 				holder.time.setPadding(12, 12, 12, 12);
-				holder.time.setTextSize(14);
+				holder.time.setTextSize(12);
 				holder.time.bringToFront();
 				holder.flLayout.setVisibility(View.GONE);
 	           
@@ -362,14 +364,14 @@ public class MessageAdapter extends BaseAdapter {
 				
 				
 				holder.time.bringToFront();
-				holder.time.setTextSize(14);
+				holder.time.setTextSize(12);
 				holder.time.setTextColor(Color.WHITE);
 				holder.time.setBackgroundResource(R.drawable.chat_time_block);
 				holder.flLayout.setVisibility(View.GONE);
 				holder.time.setPadding(12, 12, 12, 12);
 			}else {
 				holder.time.setPadding(12, 5, 12, 5);
-				holder.time.setTextSize(14);
+				holder.time.setTextSize(12);
 				holder.time.setTextColor(Color.WHITE);
 				holder.time.setBackgroundResource(R.drawable.chat_time_block);
 	             // 文字
@@ -378,7 +380,16 @@ public class MessageAdapter extends BaseAdapter {
 	            holder.flLayout.setVisibility(View.VISIBLE);
 	        }
 	        
-	      
+	      holder.time.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				 if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
+						Intent intent = getWordFileIntent(mItem.getMessage());
+						 mContext.startActivity(intent);
+					}
+			}
+		});
 
 	        holder.msg.setOnClickListener(new OnClickListener() {
 
@@ -386,7 +397,7 @@ public class MessageAdapter extends BaseAdapter {
 	            public void onClick(View arg0) {
 	                int filetype = mItem.getMsgType();
 	                //如果是协议书，点击后会跳转到相应的url
-	                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+	                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getAdminID() != 0 && mItem.getAgreement() == 1) {
 	                
 	                    Intent intent =new Intent(mContext,WebViewActivity.class);  
 	                    intent.putExtra("URL_PATH", mItem.getMessage());
@@ -401,6 +412,16 @@ public class MessageAdapter extends BaseAdapter {
 
     }
     
+  //android获取一个用于打开Word文件的intent 
+    public static Intent getWordFileIntent( String param ) 
+    { 
+      Intent intent = new Intent("android.intent.action.VIEW"); 
+      intent.addCategory("android.intent.category.DEFAULT"); 
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+      Uri uri = Uri.fromFile(new File(param )); 
+      intent.setDataAndType(uri, "application/msword"); 
+      return intent; 
+    } 
 
     /**
      * @Description 处理图片消息
@@ -551,7 +572,8 @@ public class MessageAdapter extends BaseAdapter {
         holder.head = (ImageView) convertView.findViewById(R.id.icon);
 
         holder.time = (TextView) convertView.findViewById(R.id.datetime);
-        
+        holder.time.setTextSize(12);
+        holder.time.setPadding(12, 5, 12, 5);
         
         
         // holder.msg = (GifTextView) convertView.findViewById(R.id.textView2);

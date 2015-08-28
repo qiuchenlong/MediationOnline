@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,8 +64,8 @@ public class MainWebViewActivity extends Activity{
         
         mSpUtil = PushApplication.getInstance().getSpUtil();
 
-        mSpUtil.setServerIP("ws://192.168.0.228:8484");
-        
+//        mSpUtil.setServerIP("ws://192.168.0.228:8484");
+        mSpUtil.setServerIP("ws://172.17.5.228:7272");
         // 打开网页
         myWebView = (WebView) findViewById(R.id.main_webview);
         myWebView.addJavascriptInterface(MainWebViewActivity.this, "ChatRoom");
@@ -182,6 +183,13 @@ public class MainWebViewActivity extends Activity{
 		sendIntent.putExtra(Intent.EXTRA_TEXT, "有纠纷怎么办？去哪找调解机构？找哪家合适？人家什么时候上班？…别再纠结啦！下载海沧在线调解APP，在家就能调解，还能了解最新调解动态，在线咨询，让调解更简单。点击下载http://xxxxxx.com");
 		sendIntent.setType("text/plain");
 		startActivity(sendIntent);
+    }
+    
+    @JavascriptInterface
+    public String getDeviceID(){
+    	SharedPreferences settings = getSharedPreferences("global_id", 0);
+        String id = settings.getString("device_id","");
+        return id;
     }
     
     @Override  
