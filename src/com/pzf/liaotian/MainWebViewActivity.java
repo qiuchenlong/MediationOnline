@@ -184,6 +184,12 @@ public class MainWebViewActivity extends Activity{
 		startActivity(sendIntent);
     }
     
+    @Override  
+    protected void onDestroy() {  
+        super.onDestroy();  
+        mSpUtil.setUserIDs("");
+    } 
+    
     
 
 }

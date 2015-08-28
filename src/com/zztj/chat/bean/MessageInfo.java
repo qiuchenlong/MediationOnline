@@ -5,7 +5,7 @@ import java.util.List;
 public class MessageInfo {
 
 	
-	public List<ClientList> client_List;
+	public List<ClientList> client_list;
 	public String msg_type;
 	public String avatar;
 	public String username;
@@ -15,6 +15,7 @@ public class MessageInfo {
 	public String filename;
 	public String extension;
 	public String src_url;
+	
 	
 
 }

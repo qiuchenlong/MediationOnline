@@ -524,6 +524,7 @@ public class MessageAdapter extends BaseAdapter {
 
 
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
+        holder.time.setTextSize(12);
         holder.time.setPadding(12, 5, 12, 5);
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);

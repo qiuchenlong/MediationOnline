@@ -8,7 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream.PutField;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -47,9 +50,11 @@ import com.pzf.liaotian.bean.RecentItem;
 import com.pzf.liaotian.db.MessageDB;
 import com.pzf.liaotian.db.RecentDB;
 import com.pzf.liaotian.xlistview.MsgListView;
+import com.zztj.chat.bean.ClientList;
 import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.JsonMessageStruct;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
+import com.zztj.chat.bean.MessageInfo;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -130,26 +135,37 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						public void onTextMessage(String payload) {
 			            	Log.d("chat", "Got echo: " + payload);
 			            	
-			            //进入聊天室返回的信息	
-//			            String jsonData = "{\"type\": \"enter\",\"base_info\" : {\"room_id\": 123,\"from_client_id\": 123,\"from_username\": \"用户名1\"},\"message_info\" : {\"client_list\":[{\"client_id\" : 111,\"userid\" : 1,\"username\" : \"username1\",\"realname\" : \"名称1\",\"head_view_pic\" : \"头像\"},{\"client_id\" : 222,\"userid\" : 2,\"username\" : \"username2\",\"realname\" : \"名称2\",\"head_view_pic\" : \"头像\"}],\"msg_type\":\"text\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"系统通知\",\"content\":\" 进入会议室\",\"time\":\"2010-02-02 10:10:10\"}}";
 			              Gson gson = new Gson();
 			              java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
 			              JsonMessageStruct jsonBean = gson.fromJson(payload, type);
 			              
-//			              //发送文本返回的信息
-//			              String textData = "{\"type\" : \"say\",\"base_info\" : {\"room_id\" : 123,\"from_client_id\" : 123,\"from_username\" :\"用户名1\",\"to_client_id\" : \"ALL\"},\"message_info\" : {\"msg_type\":\"text\",\"avatar\":\"/public/asset/admin/images/p2.png\",\"username\":\"用户名1\",\"content\":\" 说话内容\",\"is_secret\" : 0,\"time\":\"2010-02-02 10:10:10\"}}";
-//			              gson = new Gson();
-//			              type = new TypeToken<JsonMessageStruct>(){}.getType();
-//			              JsonMessageStruct text = gson.fromJson(jsonData, type);
+
 			              
 			              if (jsonBean.type.equals("enter")) {
 							//进入聊天室
 			            	  Intent intent = new Intent(mContent,PublicChatActivity.class);
 			            	  
-			            	  
-			            	  Log.d("chat", "Got echo: " + jsonBean.message_info);
-			            	  
-						      intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
+				              
+				              String userid = "";
+				              for (int i = 0; i <= 1 ; i++) {
+				            	  //如果是管理员的话 记住管理员的id
+				            	  if (jsonBean.message_info.client_list.get(i).is_adjuster == 1) {
+									mSpUtil.setAdminID(jsonBean.message_info.client_list.get(i).userid);
+								} else {
+									mSpUtil.setAdminID(0);
+								}
+				            	  
+				            	  //记住其他人的userid
+				            	  if (userid.equals("")) {
+									userid = String.valueOf(jsonBean.message_info.client_list.get(i).userid);
+								} else {
+									userid = userid + "," + String.valueOf(jsonBean.message_info.client_list.get(i).userid);
+								}
+//				            	
+							}
+				              mSpUtil.setUserIDs(userid);
+				       
+				              			intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
 						        		intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
 						        		intent.putExtra("IS_PRIVATE_CHAT", 0);
 						        		intent.putExtra("IS_ADMIN", 0);
@@ -157,6 +173,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						        		intent.putExtra("CONTENT", jsonBean.message_info.content);
 						        		mContent.startActivity(intent);
 						} else if (jsonBean.type.equals("say") && jsonBean.message_info.msg_type.equals("text")) {
+							
+							if ( mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
+								return ;
+							}
+							
 							 UploadUtil.mUserName = jsonBean.base_info.from_username;
 					            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 					            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -169,6 +190,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 								main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, jsonBean.message_info.content, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 			
 						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("image")) {
+							if (mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
+								return ;
+							}
+							
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -182,6 +207,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
 				            UploadUtil.handleMessage(jsonBean.message_info.src_url);
 						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("audio")){
+							if (mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
+								return ;
+							}
+							
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -195,6 +224,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
 				            UploadUtil.handleMessage(jsonBean.message_info.src_url);
 						} else if (jsonBean.type.equals("say")&&jsonBean.base_info.is_secret == 1){
+							if (mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
+								return ;
+							}
+							
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -208,6 +241,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, jsonBean.message_info.content, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 		
 						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("file")){
+							if ( mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
+								return ;
+							}
+							
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -415,45 +452,37 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	send.message_info.avatar = "/asd/asd/asd/123.png";
     	send.message_info.username = "用户名1";
     	send.message_info.content = data;
-    	send.message_info.time = "2010-02-02";
+    	
+    	long time=System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();  
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+        Date d1=new Date(time);  
+        String send_time=format.format(d1);  
+        
+    	send.message_info.time = send_time;
     	
     	if (filetype.equals(".jpg") || filetype.equals("png")) {
     		send.message_info.msg_type = "image";
+    		send.message_info.filename = "";
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 0) {
 			send.message_info.msg_type = "text";
-			send.message_info.extension = ".png";
 			send.message_info.filename = "相片名称";
 		} else if (filetype.equals(".mp3")) {
 			send.message_info.msg_type = "audio";
-//			send.message_info.filename = "17秒";
 			send.message_info.filename = mSpUtil.getVoiceTime() + "秒";
-			send.message_info.extension = ".mp3";
 			
 		} else if (filetype.equals(".doc")) {
 			send.message_info.msg_type = "file";
-			send.message_info.extension = ".doc";
 			send.message_info.filename = "文档文件.doc";
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 1) { //悄悄话
 			send.base_info.is_secret = 1;
-			send.base_info.to_client_id = "233332";
+			send.base_info.to_client_id = String.valueOf(mSpUtil.getAdminID());
 			send.message_info.msg_type = "text";
 		}
     	
         Gson gson = new Gson();
         String jsonStr = gson.toJson(send);
         Log.v("=============", jsonStr);
-        
-//			JSONObject json = new JSONObject();   
-//			json.put("roomid", mSpUtil.getRoomID());
-//		 	json.put("username", mSpUtil.getNick());
-//		 	json.put("userid", mSpUtil.getUserId());
-//		 	json.put("filetype", filetype);
-//		 	json.put("isPrivateChat", intTransformBool(mSpUtil.getIsPrivateChat()));
-//		 	json.put("voicetime", mSpUtil.getVoiceTime());
-//		 	json.put("isSystemMessage", intTransformBool(mSpUtil.getIsSystemMessage()));
-//		 	json.put("isagreement", intTransformBool(mSpUtil.getIsAgreement()));
-//		 	json.put("isadmin", intTransformBool(mSpUtil.getIsAdmin()));
-//		 	json.put("data", data);
+       
 		 	return jsonStr;
 	}
 	

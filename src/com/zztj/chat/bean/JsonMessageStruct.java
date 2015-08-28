@@ -10,6 +10,7 @@ import com.zztj.chat.bean.EnterChatRoomServer.Message_Info.Client_List;
 public class JsonMessageStruct {
 
 	public static JsonMessageStruct jsonMessage;
+	
 	public String type;
 	public BaseInfo base_info;
 	public MessageInfo message_info;

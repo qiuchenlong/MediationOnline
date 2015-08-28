@@ -1,5 +1,8 @@
 package com.pzf.liaotian.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.pzf.liaotian.bean.MessageItem;
 
 import android.R.bool;
@@ -12,6 +15,7 @@ public class SharePreferenceUtil {
     public static final String SHOW_HEAD_KEY = "show_head";
     public static final String PULLREFRESH_SOUND_KEY = "pullrefresh_sound";
     
+    public static  Map<String, String> map = new HashMap<String, String>();
     
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -20,6 +24,27 @@ public class SharePreferenceUtil {
         sp = context.getSharedPreferences(file, Context.MODE_PRIVATE);
         editor = sp.edit();
     }
+    
+    //其他人的id
+    public void setUserIDs(String  user_ids) {
+    	editor.putString("userids", user_ids);
+    	editor.commit();
+    }
+    
+    public String getUserIDs() {
+    	return sp.getString("userids", "");
+    }
+    
+    //调解员id
+    public void setAdminID(int  adminid) {
+    	editor.putInt("adminid", adminid);
+    	editor.commit();
+    }
+    
+    public int getAdminID() {
+    	return sp.getInt("adminid", 0);
+    }
+    
   
     //聊天室id
     public void setRoomID(int  roomid) {

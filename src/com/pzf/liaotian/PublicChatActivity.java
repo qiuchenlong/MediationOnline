@@ -325,11 +325,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
     	Intent intent = getIntent();
     	
-    	String userid = intent.getStringExtra("USER_ID");
-    	if (userid == null || userid.equals("")) {
-			userid = "0";
-		}
-    	mSpUtil.setUserId(userid);
+    	int userid = intent.getIntExtra("USER_ID", 0);
+    
+    	mSpUtil.setUserId(String.valueOf(userid));
     	
     	mSpUtil.setNick(intent.getStringExtra("USER_NAME"));
     	mSpUtil.setIsAdmin(intent.getIntExtra("IS_ADMIN", 0));
@@ -347,6 +345,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 intent.getStringExtra("CONTENT"), 0, true, 1,
                   0,0,0,0,MessageItem.SYSTEM_MESSAGE);
 		adapter.upDateMsg(item);// 更新界面
+		mMsgDB.saveMsg(String.valueOf(userid), item);// 保存数据	
     	
     }
 
@@ -1433,6 +1432,12 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             if (mSpUtil == null) {
 				mSpUtil = PushApplication.getInstance().getSpUtil();
 			}
+            
+            if (Path == null) {
+            	 Toast.makeText(chatContext, "网络错误，消息接受失败", Toast.LENGTH_SHORT).show();
+            	 return;
+			}
+            
             mSpUtil.setIsCome(true);
 
             long currentTime = System.currentTimeMillis();

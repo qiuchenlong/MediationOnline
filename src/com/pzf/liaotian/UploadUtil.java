@@ -166,6 +166,7 @@ public class UploadUtil {
 	    /** 保存方法 */
 	    public static String saveFile(byte[] data) {
 	     Log.e(TAG, "保存文件");
+	 
 	     
 	     String type = "";
 	     String subPath = "";
@@ -211,7 +212,7 @@ public class UploadUtil {
 	      FileOutputStream out = new FileOutputStream(f);
 	      
 	      if (data == null) {
-//	    	  uploadFile(_file,null);
+	    	 
 	    	  return null;
 		}
 	      
