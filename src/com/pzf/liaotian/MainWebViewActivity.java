@@ -62,6 +62,7 @@ public class MainWebViewActivity extends Activity{
         mContent = this;
         
         mSpUtil = PushApplication.getInstance().getSpUtil();
+
         mSpUtil.setServerIP("ws://192.168.0.228:8484");
         
         // 打开网页
@@ -71,8 +72,8 @@ public class MainWebViewActivity extends Activity{
         String path = "http://www.baidu.com";
 //        myWebView.loadUrl(path);// 百度链接
         
-        myWebView.loadUrl("file:///android_asset/demo.html");
-//        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
+//        myWebView.loadUrl("file:///android_asset/demo.html");
+        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);

@@ -43,7 +43,7 @@
         android:label="@string/app_name"
          >
         <activity
-            android:name="com.pzf.liaotian.MainViewActivity"
+            android:name="com.pzf.liaotian.LoadActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,6 +63,7 @@
 		<activity android:name="com.pzf.liaotian.TouchImageView" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.MainWebViewActivity" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.ConsultActivity" android:screenOrientation="portrait"/>
+		<activity android:name="com.pzf.liaotian.MainViewActivity" android:screenOrientation="portrait"/>
 				
         <!-- 消息预处理的intenService -->
         <service android:name="com.pzf.liaotian.baidupush.client.PreParseService" >

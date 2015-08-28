@@ -324,7 +324,12 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     private void initUserInfo() {
     	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
     	Intent intent = getIntent();
-    	mSpUtil.setUserId(intent.getStringExtra("USER_ID"));
+    	
+    	String userid = intent.getStringExtra("USER_ID");
+    	if (userid == null || userid.equals("")) {
+			userid = "0";
+		}
+    	mSpUtil.setUserId(userid);
     	
     	mSpUtil.setNick(intent.getStringExtra("USER_NAME"));
     	mSpUtil.setIsAdmin(intent.getIntExtra("IS_ADMIN", 0));

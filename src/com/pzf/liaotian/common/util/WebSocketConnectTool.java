@@ -145,6 +145,10 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			              if (jsonBean.type.equals("enter")) {
 							//进入聊天室
 			            	  Intent intent = new Intent(mContent,PublicChatActivity.class);
+			            	  
+			            	  
+			            	  Log.d("chat", "Got echo: " + jsonBean.message_info);
+			            	  
 						      intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
 						        		intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
 						        		intent.putExtra("IS_PRIVATE_CHAT", 0);
@@ -182,7 +186,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
 				            String time = jsonBean.message_info.content;
-				            String newStr = time.substring(time.indexOf("秒"));
+				            String newStr = time.substring(0,time.indexOf("秒"));
 				            UploadUtil.mVoiceLength = Integer.parseInt(newStr);
 				            UploadUtil.agreement = 0;
 				            UploadUtil.isSystemMessage = 0;
@@ -403,7 +407,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	
     	send.type = "say";
     	send.base_info.room_id = mSpUtil.getRoomID();
-    	send.base_info.from_client_id = 123;
+    	send.base_info.from_client_id = Integer.parseInt(mSpUtil.getUserId());
     	send.base_info.from_username = mSpUtil.getNick();
     	send.base_info.to_client_id = "ALL";
     	send.base_info.is_secret = 0;
@@ -420,6 +424,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			send.message_info.extension = ".png";
 			send.message_info.filename = "相片名称";
 		} else if (filetype.equals(".mp3")) {
+			send.message_info.msg_type = "audio";
 //			send.message_info.filename = "17秒";
 			send.message_info.filename = mSpUtil.getVoiceTime() + "秒";
 			send.message_info.extension = ".mp3";

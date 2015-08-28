@@ -11,6 +11,8 @@ public class SharePreferenceUtil {
     public static final String MESSAGE_SOUND_KEY = "message_sound";
     public static final String SHOW_HEAD_KEY = "show_head";
     public static final String PULLREFRESH_SOUND_KEY = "pullrefresh_sound";
+    
+    
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
