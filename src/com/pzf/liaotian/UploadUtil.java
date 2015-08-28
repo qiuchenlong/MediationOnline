@@ -169,14 +169,14 @@ public class UploadUtil {
 	     
 	     String type = "";
 	     String subPath = "";
-	     if (mFileType.equals(".jpg") || mFileType.equals(".png")) {
+	     if (mFileType.equals(".jpg") || mFileType.equals(".png") || mFileType.contains("image")) {
 			subPath = "/photo";
-		} else if(mFileType.equals(".amr")){
+		} else if(mFileType.equals(".amr") || mFileType.contains("audio")){
 			subPath = "/voice";
-		} else if (mFileType.contains(".txt")) {
+		} else if (mFileType.contains(".txt") || mFileType.contains("text")) {
 			subPath = "/word";
 			mFileType = ".txt";
-		} else if (mFileType.contains(".doc")) {
+		} else if (mFileType.contains(".doc") || mFileType.contains("file")) {
 			subPath = "/world";
 			mFileType = ".doc";
 		} else {

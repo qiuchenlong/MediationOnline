@@ -198,11 +198,11 @@ public class ImageGridActivity extends TitleBarActivity implements
                     messageAdapter.upDateMsgByList(messageItemList);
                 }
                 
-                if ("".equals(mSpUtil.getUserId())) {
+//                if ("".equals(mSpUtil.getUserId())) {
 //                    Log.e("fff", "用户id为空2");
-                    T.show(ImageGridActivity.this, "用户id为空", 1);
-                    return;
-                }
+//                    T.show(ImageGridActivity.this, "用户id为空", 1);
+//                    return;
+//                }
                 // 发送push
                 new SendMsgAsyncTask(null, mSpUtil.getUserId(),imgPath)
                         .send();

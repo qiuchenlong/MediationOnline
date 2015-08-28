@@ -106,8 +106,15 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            public void onOpen() {
 			               Log.d("chat", "Status: Connected to " + wsuri);	
 			               
-			               if (action.equals("enter")) {
+			               if (action != null && action.equals("enter")) {
 							SingletonHolder.websocket.sendTextMessage(json);
+						} else if (_file != null) {
+							try {
+								sendMessage(_file);
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}	
 						}
 			               
 			               //如果不是进入调解咨询页面 则不用发送这句话
@@ -145,7 +152,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						        		intent.putExtra("CHAT_ROOM_ID", jsonBean.base_info.room_id);
 						        		intent.putExtra("CONTENT", jsonBean.message_info.content);
 						        		mContent.startActivity(intent);
-						} else if (jsonBean.type.equals("say")||jsonBean.message_info.msg_type.equals("text")) {
+						} else if (jsonBean.type.equals("say") && jsonBean.message_info.msg_type.equals("text")) {
 							 UploadUtil.mUserName = jsonBean.base_info.from_username;
 					            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 					            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -157,7 +164,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 					            PublicChatActivity main = new PublicChatActivity();
 								main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, jsonBean.message_info.content, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 			
-						} else if (jsonBean.type.equals("say")||jsonBean.message_info.msg_type.equals("image")) {
+						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("image")) {
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -166,9 +173,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            UploadUtil.isSystemMessage = 0;
 				            UploadUtil.isPrivateChat = jsonBean.message_info.is_secret;
 				            UploadUtil.mRoomID = jsonBean.base_info.room_id;
+				            
+				           
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
 				            UploadUtil.handleMessage(jsonBean.message_info.src_url);
-						} else if (jsonBean.type.equals("say")||jsonBean.message_info.msg_type.equals("audio")){
+						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("audio")){
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -181,7 +190,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            UploadUtil.mRoomID = jsonBean.base_info.room_id;
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
 				            UploadUtil.handleMessage(jsonBean.message_info.src_url);
-						} else if (jsonBean.type.equals("say")||jsonBean.base_info.is_secret == 1){
+						} else if (jsonBean.type.equals("say")&&jsonBean.base_info.is_secret == 1){
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
@@ -194,14 +203,14 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            PublicChatActivity main = new PublicChatActivity();
 							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, jsonBean.message_info.content, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 		
-						} else if (jsonBean.type.equals("say")||jsonBean.message_info.msg_type.equals("file")){
+						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("file")){
 							UploadUtil.mUserName = jsonBean.base_info.from_username;
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
 				           
 				            UploadUtil.mVoiceLength = 0;
 				            UploadUtil.agreement = 0;
-				            UploadUtil.isSystemMessage = 0;
+				            UploadUtil.isSystemMessage = 1;
 				            UploadUtil.isPrivateChat = jsonBean.message_info.is_secret;
 				            UploadUtil.mRoomID = jsonBean.base_info.room_id;
 //				            String decodeString = new String(Base64.decode((String) jsonBean.message_info.src_url, Base64.NO_WRAP));
