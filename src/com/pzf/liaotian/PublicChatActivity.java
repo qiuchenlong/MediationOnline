@@ -32,8 +32,10 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
@@ -294,7 +296,10 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     @Override  
     protected void onStart() {  
         super.onStart();  
+//        initUserInfo();
        mSpUtil.setIsConsult(false);
+//       mMsgListView.refreshDrawableState();
+       mMsgListView.mListViewListener.onRefresh();
     } 
 
     /**
@@ -322,8 +327,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     
     private void initUserInfo() {
-//    	 mSpUtil.setServerIP("ws://192.168.0.228:8484");
-    	mSpUtil.setServerIP("ws://172.17.5.228:7272");
+    	
     	Intent intent = getIntent();
     	
     	int userid = intent.getIntExtra("USER_ID", 0);
@@ -341,6 +345,17 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	mSpUtil.setRoomID(chatRoomId);
 		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
 		
+		adapter = new MessageAdapter(this, initMsgData());
+        mMsgListView = (MsgListView) findViewById(R.id.msg_listView);
+        
+        // 触摸ListView隐藏表情和输入法
+        mMsgListView.setOnTouchListener(this);
+        mMsgListView.setPullLoadEnable(false);
+        mMsgListView.setXListViewListener(this);
+        mMsgListView.setAdapter(adapter);
+        mMsgListView.setSelection(adapter.getCount() - 1);
+
+        
 		MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
           		mSpUtil.getNick(), System.currentTimeMillis(),
                 intent.getStringExtra("CONTENT"), 0, true, 1,
@@ -394,16 +409,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mRecentDB = mApplication.getRecentDB();// 接收消息数据库
         mGson = mApplication.getGson();
 
-        adapter = new MessageAdapter(this, initMsgData());
-        mMsgListView = (MsgListView) findViewById(R.id.msg_listView);
         
-        // 触摸ListView隐藏表情和输入法
-        mMsgListView.setOnTouchListener(this);
-        mMsgListView.setPullLoadEnable(false);
-        mMsgListView.setXListViewListener(this);
-        mMsgListView.setAdapter(adapter);
-        mMsgListView.setSelection(adapter.getCount() - 1);
-
         mEtMsgOnKeyListener();
 
         //公告
@@ -486,7 +492,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 			@Override
 			public void onClick(View arg0) {
 				 Intent intent =new Intent(PublicChatActivity.this,WebViewActivity.class);  
-                 intent.putExtra("URL_PATH", "http://www.adjol.com/Home/AdjOl/adjpoint/room_id/123.html");
+                 intent.putExtra("URL_PATH", "http://hcjd.cdncache.com/Home/AdjOl/adjpoint/room_id/"+mSpUtil.getRoomID()+".html");
                  startActivity(intent);
 				
 			}
@@ -808,9 +814,19 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 .getMsg(mSpUtil.getUserId(), MSGPAGERNUM);
         List<MessageItem> msgList = new ArrayList<MessageItem>();// 消息对象数组
       
-        if (list.size() > 0) {
+        if (list.size() > 0) {       	
+        	MessageItem objectItem = list.get(0);
+//        	if (!objectItem.getMessage().contains("公告")) {
+//        		String str = "";
+//            	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+//                        "", 0,
+//                        str, 1, true, 1,
+//                        0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+//            	list.add(0, item);
+//			}
         	
             for (MessageItem entity : list) {
+            	
                 if (entity.getName().equals("")) {
                     entity.setName(mSpUtil.getNick());
                 }
@@ -826,11 +842,13 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                
             }
         } else {
+        	
+        	//如果没有数据 就加一个公告
         	String str = "";
         	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
                     "", 0,
                     str, 1, true, 1,
-                    0,0,0,0,MessageItem.NOT_SYSTEM_MESSAGE);
+                    0,0,0,0,MessageItem.SYSTEM_MESSAGE);
         	msgList.add(item);
         	mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
 //        	mHomeNotice.setVisibility(View.VISIBLE);
@@ -1428,7 +1446,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 Toast.makeText(chatContext, "网络错误，消息接受失败", Toast.LENGTH_SHORT).show();
             	 return;
 			}
-            
+       	 Spanned content=Html.fromHtml(Path);
+
             mSpUtil.setIsCome(true);
 
             long currentTime = System.currentTimeMillis();
@@ -1480,21 +1499,21 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                         userName, currentTime,
-                        Path, 1, true, 1,
+                        content.toString(), 1, true, 1,
                         0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
                 recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
                         userID, 1, userName,
-                        Path, 0,
+                        content.toString(), 0,
                         System.currentTimeMillis(), 0,isPrivateChat);
             } else if ((fileType.equals(".txt") || fileType.equals("text")) && isSystemMessage == 1) {
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                          userName, currentTime,
-                         Path, 1, true, 1,
+                         content.toString(), 1, true, 1,
                          0,isPrivateChat,isHide,0,MessageItem.SYSTEM_MESSAGE);
             }
-             else if (fileType.contains(".doc") || fileType.contains("file")) {//文档
+             else if (fileType.contains(".doc") || fileType.contains(".docx") || fileType.contains("file")) {//文档
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,

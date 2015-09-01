@@ -16,12 +16,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class WebViewActivity extends Activity{
 
 	private WebView myWebView = null;
 	private Button backButton;
-
+	private RelativeLayout layout;
+	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -33,7 +36,8 @@ public class WebViewActivity extends Activity{
         myWebView = (WebView) findViewById(R.id.protocol_confirm_webview);
         Intent intent = getIntent();
         String path = intent.getStringExtra("URL_PATH");
-        myWebView.loadUrl(path);// 百度链接
+      
+        myWebView.loadUrl(path);
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);

@@ -37,7 +37,7 @@ public class MsgListView extends ListView implements OnScrollListener {
 	private OnScrollListener mScrollListener; // user's scroll listener
 
 	// the interface to trigger refresh and load more.
-	private IXListViewListener mListViewListener;
+	public IXListViewListener mListViewListener;
 
 	// -- header view
 	private MsgHeader mHeaderView;

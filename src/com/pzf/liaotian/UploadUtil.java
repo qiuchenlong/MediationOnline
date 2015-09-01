@@ -140,21 +140,12 @@ public class UploadUtil {
 	        protected void onPostExecute(byte[] result) {
 	            // TODO Auto-generated method stub
 	            super.onPostExecute(result);
-	            mFilePath = saveFile(result);
-	            
-	            if (mSpUtil.getIsConsult()) {
-					ConsultActivity consult = new ConsultActivity();
-					consult.mApplication = PushApplication.getInstance();
-					consult.mCSMsgDB = consult.mApplication.getConsultMessageDB();
-					consult.receiveMessageFormServer(mUserName, mUserID, mFileType, mFilePath,isConsult);
-					
-				} else {
+	            mFilePath = saveFile(result);            
 					PublicChatActivity main = new PublicChatActivity();
 		            main.mApplication = PushApplication.getInstance();
 		            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
 		            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
 		            main.receiveMessageFormServer(mUserName,mUserID,mFileType,mFilePath,mVoiceLength,agreement,isSystemMessage,isPrivateChat);
-				}
 	            
 	        }
 
@@ -177,7 +168,7 @@ public class UploadUtil {
 		} else if (mFileType.contains(".txt") || mFileType.contains("text")) {
 			subPath = "/word";
 			mFileType = ".txt";
-		} else if (mFileType.contains(".doc") || mFileType.contains("file")) {
+		} else if (mFileType.contains(".doc") ||mFileType.contains(".docx")|| mFileType.contains("file")) {
 			subPath = "/world";
 			mFileType = ".doc";
 		} else {
@@ -186,11 +177,9 @@ public class UploadUtil {
 	     
 	     String fileName = "/" + mUserID +System.currentTimeMillis() + mFileType;
 	     String fullPath = null;
-	     if (mSpUtil.getIsConsult()) {
-	    	  fullPath = ConsultActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
-		} else {
-			 fullPath = PublicChatActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
-		}
+	    
+	     fullPath = PublicChatActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
+		
 	     
 	     File f = new File(fullPath);
 	     if (!f.exists()) {
@@ -216,7 +205,8 @@ public class UploadUtil {
 	    	  return null;
 		}
 	      
-	      if (mFileType.equals(".jpg") || mFileType.equals(".png")) {
+	      Log.v("chat", mFileType);
+	      if (mFileType.contains(".jpg") || mFileType.contains(".png") || mFileType.contains("image")) {
 	    	  Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
 		    bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
 		} else {

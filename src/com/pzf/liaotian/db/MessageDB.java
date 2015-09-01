@@ -8,7 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.bean.MessageItem;
+import com.pzf.liaotian.common.util.SharePreferenceUtil;
 /**
  * @desc:消息数据库
  * @author: pangzf
@@ -21,15 +23,17 @@ import com.pzf.liaotian.bean.MessageItem;
 public class MessageDB {
     public static final String MSG_DBNAME = "message.db";
     private SQLiteDatabase db;
-
+    private static SharePreferenceUtil mSpUtil;
+    
     public MessageDB(Context context) {
+    	mSpUtil = PushApplication.getInstance().getSpUtil();
         db = context.openOrCreateDatabase(MSG_DBNAME, Context.MODE_PRIVATE,
                 null);
     }
 
     public void saveMsg(String id, MessageItem entity) {
         db.execSQL("CREATE table IF NOT EXISTS _"
-                + "localMessage"
+                + "localMessage" + mSpUtil.getRoomID()
 
                 + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
 
@@ -40,7 +44,7 @@ public class MessageDB {
         } 
         db.execSQL(
                 "insert into _"
-                        + "localMessage"
+                        + "localMessage" +mSpUtil.getRoomID()
                         + " (messagetype,name,img,date,isCome,message,isNew,voiceTime,isprivatechat,ishidetime,agreement,issystemmessage) values(?,?,?,?,?,?,?,?,?,?,?,?)",
                 new Object[] { entity.getMsgType(), entity.getName(),
                         entity.getHeadImg(), entity.getDate(), isCome,
@@ -52,9 +56,9 @@ public class MessageDB {
         List<MessageItem> list = new LinkedList<MessageItem>();
         int num = 10 * (pager + 1);// 本来是准备做滚动到顶端自动加载数据
         db.execSQL("CREATE table IF NOT EXISTS _"
-                + "localMessage"
+                + "localMessage" +mSpUtil.getRoomID()
                 + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,messagetype INTEGER,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
-        Cursor c = db.rawQuery("SELECT * from _" + "localMessage"
+        Cursor c = db.rawQuery("SELECT * from _" + "localMessage" +mSpUtil.getRoomID()
                 + " ORDER BY _id DESC LIMIT " + num, null);
         while (c.moveToNext()) {
             String name = c.getString(c.getColumnIndex("name"));
@@ -84,9 +88,9 @@ public class MessageDB {
 
     public int getNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
-                + "localMessage"
+                + "localMessage" +mSpUtil.getRoomID()
                 + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
-        Cursor c = db.rawQuery("SELECT isNew from _" + "localMessage" + " where isNew=1",
+        Cursor c = db.rawQuery("SELECT isNew from _" + "localMessage" + +mSpUtil.getRoomID() + " where isNew=1",
                 null);
         int count = c.getCount();
         // L.i("new message num = " + count);
@@ -96,9 +100,9 @@ public class MessageDB {
 
     public void clearNewCount(String id) {
         db.execSQL("CREATE table IF NOT EXISTS _"
-                + "localMessage"
+                + "localMessage" +mSpUtil.getRoomID()
                 + " (_id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, img TEXT,date TEXT,isCome TEXT,message TEXT,isNew TEXT,voiceTime INTEGER,isprivatechat INTEGER,ishidetime INTEGER,agreement INTEGER,issystemmessage INTEGER)");
-        db.execSQL("update _" + "localMessage" + " set isNew=0 where isNew=1");
+        db.execSQL("update _" + "localMessage" + +mSpUtil.getRoomID()+" set isNew=0 where isNew=1");
     }
 
     public void close() {

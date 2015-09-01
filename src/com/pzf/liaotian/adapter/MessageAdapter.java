@@ -21,6 +21,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -308,12 +310,7 @@ public class MessageAdapter extends BaseAdapter {
             final MessageItem mItem, final View parent) {
         handleBaseMessage(holder, mItem);
 
-        if (mSpUtil.getIsConsult()) {
-        	 // 文字
-            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-                    .getMessage() + " "));
-		} else {
-			if (mItem.getDate() == 0) {
+			if (mItem.getDate() == 0 && mItem.getMsgType() == MessageItem.SYSTEM_MESSAGE) {
 	        	//显示公告
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
@@ -324,7 +321,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.time.bringToFront();
 				holder.time.setBackgroundColor(Color.rgb(242, 242, 242));
 				holder.flLayout.setVisibility(View.GONE);
-			} else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
+			} else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && (mItem.getMessage().contains(".doc") || mItem.getMessage().contains(".docx"))){
 	        	//收到文件
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
@@ -334,7 +331,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.time.bringToFront();
 				holder.flLayout.setVisibility(View.GONE);
 		
-	        }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && mItem.getMessage().contains(".doc")) {
+	        }else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == false && (mItem.getMessage().contains(".doc") || mItem.getMessage().contains(".docx"))) {
 	        	//发送文件
 	        	holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
@@ -375,8 +372,8 @@ public class MessageAdapter extends BaseAdapter {
 				holder.time.setTextColor(Color.WHITE);
 				holder.time.setBackgroundResource(R.drawable.chat_time_block);
 	             // 文字
-	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
-	                    .getMessage() + " "));
+				 Spanned content=Html.fromHtml(mItem.getMessage());
+	            holder.msg.insertGif(convertNormalStringToSpannableString(content.toString()));
 	            holder.flLayout.setVisibility(View.VISIBLE);
 	        }
 	        
@@ -384,7 +381,7 @@ public class MessageAdapter extends BaseAdapter {
 			
 			@Override
 			public void onClick(View arg0) {
-				 if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true && mItem.getMessage().contains(".doc")){
+				 if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.isComMeg() == true &&( mItem.getMessage().contains(".doc") ||  mItem.getMessage().contains(".docx") )){
 						Intent intent = getWordFileIntent(mItem.getMessage());
 						 mContext.startActivity(intent);
 					}
@@ -407,7 +404,6 @@ public class MessageAdapter extends BaseAdapter {
 
 	            }
 	        });
-		}
         
 
     }

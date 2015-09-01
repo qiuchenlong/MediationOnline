@@ -3,12 +3,15 @@
     android:id="@+id/root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+     >
 
     <RelativeLayout 
+    android:id="@+id/tabbar"
     android:layout_width="fill_parent"
     android:layout_height="46dip"
-    android:padding="0.0px" >
+    android:padding="0.0px"
+    android:visibility="gone" >
 
          <TextView android:id="@+id/tv_chat_title"
              android:layout_width="fill_parent"
