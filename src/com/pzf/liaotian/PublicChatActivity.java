@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -67,6 +69,7 @@ import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.huneng.fileexplorer.UploadView;
 import com.pzf.liaotian.adapter.FaceAdapter;
 import com.pzf.liaotian.adapter.FacePageAdeapter;
@@ -99,6 +102,7 @@ import com.pzf.liaotian.view.JazzyViewPager.TransitionEffect;
 import com.pzf.liaotian.view.Util;
 import com.pzf.liaotian.xlistview.MsgListView;
 import com.pzf.liaotian.xlistview.MsgListView.IXListViewListener;
+import com.zztj.chat.bean.JsonMessageStruct;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -190,7 +194,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     
     private int mVioceTime;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
-
+	public static String laoutContent;
+	
     private Runnable mSleepTask = new Runnable() {
         public void run() {
             stopRecord();
@@ -354,15 +359,16 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mMsgListView.setXListViewListener(this);
         mMsgListView.setAdapter(adapter);
         mMsgListView.setSelection(adapter.getCount() - 1);
-
         
-		MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
-          		mSpUtil.getNick(), System.currentTimeMillis(),
-                intent.getStringExtra("CONTENT"), 0, true, 1,
-                  0,0,0,0,MessageItem.SYSTEM_MESSAGE);
-		adapter.upDateMsg(item);// 更新界面
-		mMsgDB.saveMsg(String.valueOf(userid), item);// 保存数据	
-    	
+//		MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+//          		mSpUtil.getNick(), System.currentTimeMillis(),
+//                intent.getStringExtra("CONTENT"), 0, true, 1,
+//                  0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+//		adapter.upDateMsg(item);
+		
+//		 mMsgListView.mListViewListener.onRefresh();
+//		mMsgDB.saveMsg(String.valueOf(userid), item);// 保存数据	
+		 	
     }
 
     /**
@@ -466,7 +472,27 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				Log.v("chat", "back back");
-				
+				JsonMessageStruct send = new JsonMessageStruct();
+		    	send.init();
+		    	
+		    	send.type = "logout";
+		    	send.base_info.room_id = mSpUtil.getRoomID();
+		    	send.base_info.from_client_id = Integer.parseInt(mSpUtil.getUserId());
+		    	send.base_info.from_username = mSpUtil.getNick();
+		    	send.message_info.msg_type = "text";
+		    	send.message_info.username = "系统通知";
+		    	send.message_info.content = mSpUtil.getNick()+" 退出会议室";
+		    	
+		    	send.message_info.avatar = " ";
+		    	
+		    	long time=System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();  
+		        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+		        Date d1=new Date(time);  
+		        String send_time=format.format(d1);  
+				send.message_info.time = send_time;
+				Gson gson = new Gson();
+				String jsonStr = gson.toJson(send);
+				WebSocketConnectTool.getInstance().sendTextMessage(jsonStr);
 				mSpUtil.setIsPrivateChat(0);
 				finish();
 			}
@@ -814,16 +840,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 .getMsg(mSpUtil.getUserId(), MSGPAGERNUM);
         List<MessageItem> msgList = new ArrayList<MessageItem>();// 消息对象数组
       
-        if (list.size() > 0) {       	
-        	MessageItem objectItem = list.get(0);
-//        	if (!objectItem.getMessage().contains("公告")) {
-//        		String str = "";
-//            	MessageItem  item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
-//                        "", 0,
-//                        str, 1, true, 1,
-//                        0,0,0,0,MessageItem.SYSTEM_MESSAGE);
-//            	list.add(0, item);
-//			}
+        if (list.size() > 0) {  
+        	
+        	Intent intent = getIntent();
         	
             for (MessageItem entity : list) {
             	
@@ -841,6 +860,12 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 msgList.add(entity);
                
             }
+            
+            MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+              		mSpUtil.getNick(), System.currentTimeMillis(),
+                    intent.getStringExtra("CONTENT"), 0, true, 1,
+                      0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+        	msgList.add(item);
         } else {
         	
         	//如果没有数据 就加一个公告
@@ -1434,10 +1459,6 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mRecentDB.saveRecent(recentItem);
     }
     
-    public static void reConnetion() {
-    	new SendMsgAsyncTask(null,null,null)
-        .send();
-    }
     
     public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement,int isSystemMessage,int isPrivateChat) {
 
@@ -1550,6 +1571,17 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
             scrollToBottomListItem();
         }    
+    
+    public void userLaout() {
+    	Intent intent = getIntent();
+    	 MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+           		mSpUtil.getNick(), System.currentTimeMillis(),
+                 laoutContent, 0, true, 1,
+                   0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+    	 adapter.upDateMsg(item);// 更新界面
+         mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
+     	
+    }
     
 
 }

@@ -353,7 +353,7 @@ public class MessageAdapter extends BaseAdapter {
 //	        	// 文字
 //	            holder.msg.insertGif(convertNormalStringToSpannableString(mItem
 //	                    .getMessage() + " "));
-			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains("进入会议室")) {
+			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains("进入")) {
 				//刚进入聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
@@ -366,7 +366,21 @@ public class MessageAdapter extends BaseAdapter {
 				holder.time.setBackgroundResource(R.drawable.chat_time_block);
 				holder.flLayout.setVisibility(View.GONE);
 				holder.time.setPadding(12, 12, 12, 12);
-			}else {
+			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains("退出")) {
+				//刚进入聊天室 发送提醒
+				holder.time.setVisibility(View.VISIBLE);
+				holder.name.setVisibility(View.GONE);
+				holder.time.setText(mItem.getName()+",退出会议室");
+				
+				
+				holder.time.bringToFront();
+				holder.time.setTextSize(12);
+				holder.time.setTextColor(Color.WHITE);
+				holder.time.setBackgroundResource(R.drawable.chat_time_block);
+				holder.flLayout.setVisibility(View.GONE);
+				holder.time.setPadding(12, 12, 12, 12);
+			}
+			else {
 				holder.time.setPadding(12, 5, 12, 5);
 				holder.time.setTextSize(12);
 				holder.time.setTextColor(Color.WHITE);

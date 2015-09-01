@@ -71,8 +71,8 @@ public class MainWebViewActivity extends Activity{
         v = new Vector();
         mSpUtil = PushApplication.getInstance().getSpUtil();
 
-        mSpUtil.setServerIP("ws://192.168.0.228:8484");
-//        mSpUtil.setServerIP("ws://172.17.5.228:7274");
+//        mSpUtil.setServerIP("ws://192.168.0.228:8484");
+        mSpUtil.setServerIP("ws://172.17.5.228:7274");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
         
@@ -170,7 +170,7 @@ public class MainWebViewActivity extends Activity{
         
         
 
-      startChat("");
+//      startChat("");
       
         
     }
@@ -191,8 +191,8 @@ public class MainWebViewActivity extends Activity{
          
     	EnterChatRoom enterRoom = new EnterChatRoom();
         enterRoom.setBaseInfo(new Base_Info());
-//        enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
-        enterRoom.init("enter", "asdasdasd", 11111);
+        enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
+//        enterRoom.init("enter", "asdasdasd", 11111);
         String jsonStr = gson.toJson(enterRoom);
         Log.v("=============", jsonStr);
         

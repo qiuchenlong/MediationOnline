@@ -18,11 +18,12 @@
         android:layout_marginTop="8.0dip"
         android:background="@drawable/chat_time_block"
         android:gravity="center_vertical"
+        android:padding="12dp"
         android:paddingLeft="8.0dip"
         android:paddingRight="8.0dip"
         android:text="11:11"
         android:textColor="@color/chat_time"
-        android:textSize="10.0sp"
+        android:textSize="12.0sp"
         android:visibility="visible" />
 
     <LinearLayout
@@ -61,6 +62,7 @@
                 android:id="@+id/relativeLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:layout_marginRight="0dip"
                 android:background="@drawable/balloon_r_selector"
                 android:clickable="true"

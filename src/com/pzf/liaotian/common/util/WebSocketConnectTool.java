@@ -186,6 +186,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 						        		intent.putExtra("CHAT_ROOM_ID", jsonBean.base_info.room_id);
 						        		intent.putExtra("CONTENT", jsonBean.message_info.content);
 						        		mContext.startActivity(intent);
+						} else if (jsonBean.type.equals("logout")){
+							PublicChatActivity chatActivity = new PublicChatActivity();
+							chatActivity.laoutContent = jsonBean.message_info.content;
+							chatActivity.userLaout();
+							
 						} else if (jsonBean.type.equals("say") && jsonBean.base_info.is_secret == 0 && jsonBean.message_info.msg_type.equals("text") ) {
 							
 							
@@ -232,7 +237,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            UploadUtil.mUserID = String.valueOf(jsonBean.base_info.from_client_id);
 				            UploadUtil.mFileType = jsonBean.message_info.msg_type;
 				            String time = jsonBean.message_info.content;
-				            String newStr = time.substring(0,time.indexOf("秒"));
+				            String newStr = time.substring(0,time.indexOf("\""));
 				            UploadUtil.mVoiceLength = Integer.parseInt(newStr);
 				            UploadUtil.agreement = 0;
 				            UploadUtil.isSystemMessage = 0;
@@ -431,15 +436,17 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	if (filetype.equals(".jpg") || filetype.equals("png")) {
     		send.message_info.msg_type = "image";
     		send.message_info.filename = filename;
+    		send.message_info.extension = ".png";
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 0) {
 			send.message_info.msg_type = "text";
 		} else if (filetype.equals(".mp3")) {
 			send.message_info.msg_type = "audio";
-			send.message_info.filename = mSpUtil.getVoiceTime() + "秒";
-			
+			send.message_info.filename = mSpUtil.getVoiceTime() + "\"";
+			send.message_info.extension = ".mp3";
 		} else if (filetype.equals(".doc")) {
 			send.message_info.msg_type = "file";
 			send.message_info.filename = filename+".doc";
+			send.message_info.extension = ".doc";
 		} else if (filetype.equals(".txt") && mSpUtil.getIsPrivateChat() == 1) { //悄悄话
 			send.base_info.is_secret = 1;
 			send.base_info.to_client_id = String.valueOf(mSpUtil.getAdminID());
