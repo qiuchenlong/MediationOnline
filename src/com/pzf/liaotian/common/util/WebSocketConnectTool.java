@@ -73,6 +73,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 	 public static int mVoiceLength;
 	 public static Boolean isCome;
 	 public static int agreement;
+	 private static boolean isConnect;
 	 
 	 public static int isPrivateChat;
 	
@@ -104,7 +105,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
     	final String wsuri = mSpUtil.getServerIP();
     	final File _file = file;
         if (!SingletonHolder.websocket.isConnected()) {
-			
+        	 
 	    	  try {
 	    		  SingletonHolder.websocket.connect(wsuri, new WebSocketHandler() {
 			        	
@@ -122,7 +123,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}	
+						} else if (_file == null) {
+							 Toast.makeText(mContext, "与服务器连接正常", Toast.LENGTH_SHORT).show();	
 						}
+							
+						isConnect = true;
 			               
 			               //如果不是进入调解咨询页面 则不用发送这句话
 //			               if (!mSpUtil.getIsConsult()) {
@@ -174,8 +179,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 							}
 				              mSpUtil.setUserIDs(userid);
 				       
-//				              			intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
-				              intent.putExtra("USER_NAME", "调解员");
+				              			intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
 						        		intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
 						        		intent.putExtra("IS_PRIVATE_CHAT", 0);
 						        		intent.putExtra("IS_ADMIN", 0);
@@ -282,14 +286,20 @@ public class WebSocketConnectTool extends WebSocketConnection {
 			            @Override
 			            public void onClose(int code, String reason) {
 			               Log.d("chat", "Connection lost.");
-			              Toast.makeText(mContext, "连接断开", Toast.LENGTH_SHORT).show();
-
-//			               if (_file != null) {
-//			            	  PublicChatActivity.sendTextMessage("网络连接错误，消息发送失败",true);
-//						} else {
-//							 PublicChatActivity.sendTextMessage(mSpUtil.getNick()+",退出聊天室",true);	
-//						}
+			 
+			               if (isConnect) {
+			            	   Toast.makeText(mContext, "您已退出聊天室", Toast.LENGTH_SHORT).show();
+			            	   isConnect = false;
+						}
+			               try {
+							handleConnection(null,null,null, mContext);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}         
 			            }
+			            
+			           
 			         });
 			      } catch (WebSocketException e) {
 			 

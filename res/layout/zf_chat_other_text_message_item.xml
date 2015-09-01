@@ -50,9 +50,9 @@
             android:orientation="vertical" >
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="left"
                 android:layout_marginLeft="14dp"
                 android:orientation="vertical" >
 
@@ -60,6 +60,7 @@
                     android:id="@+id/nametitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="left"
                     android:text="TextView"
                     android:textColor="@color/black" />
 

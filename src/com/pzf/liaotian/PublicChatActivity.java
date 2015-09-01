@@ -1434,6 +1434,11 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mRecentDB.saveRecent(recentItem);
     }
     
+    public static void reConnetion() {
+    	new SendMsgAsyncTask(null,null,null)
+        .send();
+    }
+    
     public void receiveMessageFormServer(String userName,String userID,String fileType,String Path,int voiceLength,int agreement,int isSystemMessage,int isPrivateChat) {
 
             MessageItem item = null;
