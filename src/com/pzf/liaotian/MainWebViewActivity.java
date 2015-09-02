@@ -73,7 +73,7 @@ public class MainWebViewActivity extends Activity{
         mSpUtil = PushApplication.getInstance().getSpUtil();
 
 //        mSpUtil.setServerIP("ws://192.168.0.228:8484");
-        mSpUtil.setServerIP("ws://172.17.5.228:7274");
+        mSpUtil.setServerIP("ws://172.17.5.228:7272");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
         
@@ -99,7 +99,7 @@ public class MainWebViewActivity extends Activity{
         myWebView.setWebViewClient(new WebViewClient() {  
             //点击网页中按钮时，让其还在原页面打开  
             public boolean shouldOverrideUrlLoading(WebView view, String url) {  
-                view.loadUrl(url);  
+               
               //调用拨号程序
                 if (url.startsWith("mailto:") || url.startsWith("geo:") ||url.startsWith("tel:")) {
                 	if(hasDigit(url)) {
@@ -110,7 +110,9 @@ public class MainWebViewActivity extends Activity{
     					return false;
     				}
                                       
-                  } 
+                  } else {
+                	  view.loadUrl(url);  
+				}
 
                 return true;  
             }  
@@ -233,15 +235,6 @@ public class MainWebViewActivity extends Activity{
             return false; 
         } 
         
-//        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
-//            if((System.currentTimeMillis()-exitTime) > 2000){  
-//                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();                                
-//                exitTime = System.currentTimeMillis();   
-//            } else {
-//                finish();
-//                System.exit(0);
-//            }
-//        }
         return false; 
     }
     

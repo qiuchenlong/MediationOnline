@@ -181,12 +181,12 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				       
 				              String selfName = mSpUtil.getNick();
 				              //这个条件不行得重新写
-//				              if (!selfName.equals("") && !selfName.equals(jsonBean.base_info.from_username)) {
-//				            	  PublicChatActivity chatActivity = new PublicChatActivity();
-//				            	  String content = jsonBean.message_info.content;
-//									chatActivity.loginContent = content;
-//									chatActivity.userLogin();
-//							} else {
+				              if (!selfName.equals("") && !selfName.equals(jsonBean.base_info.from_username)) {
+				            	  PublicChatActivity chatActivity = new PublicChatActivity();
+				            	  String content = jsonBean.message_info.content;
+									chatActivity.loginContent = content;
+									chatActivity.userLogin();
+							} else {
 								 intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
 							      intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
 							      intent.putExtra("IS_PRIVATE_CHAT", 0);
@@ -195,7 +195,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 							      intent.putExtra("CONTENT", jsonBean.message_info.content);
 							      intent.putExtra("ENTER_ROOM", "enter");
 							      mContext.startActivity(intent);
-//							}
+							}
 				             
 						      
 						} else if (jsonBean.type.equals("logout")){
@@ -275,7 +275,7 @@ public class WebSocketConnectTool extends WebSocketConnection {
 				            PublicChatActivity main = new PublicChatActivity();
 							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, jsonBean.message_info.content, UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 		
-						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("file") && jsonBean.base_info.is_secret == 0){
+						} else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("file") && jsonBean.base_info.is_secret == 0 && jsonBean.message_info.is_agreedoc ==0){
 //							if ( mSpUtil.getRoomID() != jsonBean.base_info.room_id) {
 //								return ;
 //							}
@@ -295,6 +295,11 @@ public class WebSocketConnectTool extends WebSocketConnection {
 							//调解协议书
 							PublicChatActivity main = new PublicChatActivity();
 							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,UploadUtil.mFileType, "http://hcjd.dev.bizcn.com/Home/AdjOl/adjagreement.html?room_id="+mSpUtil.getRoomID(), UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
+						}else if (jsonBean.type.equals("say")&&jsonBean.message_info.msg_type.equals("file") && jsonBean.base_info.is_secret == 0 && jsonBean.message_info.is_agreedoc ==1) {
+							//调解协议书
+							UploadUtil.agreement = 1;
+							PublicChatActivity main = new PublicChatActivity();
+							main.receiveMessageFormServer(UploadUtil.mUserName, UploadUtil.mUserID,"file", "http://hcjd.dev.bizcn.com/Home/AdjOl/adjagreement.html?room_id="+mSpUtil.getRoomID(), UploadUtil.mVoiceLength, UploadUtil.agreement,UploadUtil.isSystemMessage,UploadUtil.isPrivateChat);
 						}
 			              
 			            				            

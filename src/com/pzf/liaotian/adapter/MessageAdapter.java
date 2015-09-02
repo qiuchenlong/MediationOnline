@@ -215,9 +215,6 @@ public class MessageAdapter extends BaseAdapter {
         MessageHolderBase holder = null;
         if (null == convertView && null != mInflater) {
             holder = new MessageHolderBase();
-
-
-
             switch (type) {
                 case MESSAGE_TYPE_MINE_TEXT: {
                     convertView = mInflater.inflate(
@@ -342,7 +339,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.flLayout.setVisibility(View.GONE);
 	           
 	        }
-	        else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getIsAdmin() == 1 && mItem.getAgreement() == 1) {
+	        else if(mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mItem.getAgreement() == 1) {
 	            //如果收到的是调解协议书
 	        	holder.rlMessage.setBackgroundResource(R.drawable.balloon3_l);
 	            holder.msg.insertGif(convertNormalStringToSpannableString("调解协议书-待确认"));
@@ -408,7 +405,7 @@ public class MessageAdapter extends BaseAdapter {
 	            public void onClick(View arg0) {
 	                int filetype = mItem.getMsgType();
 	                //如果是协议书，点击后会跳转到相应的url
-	                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE && mSpUtil.getAdminID() != 0 && mItem.getAgreement() == 1) {
+	                if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_FILE  && mItem.getAgreement() == 1) {
 	                
 	                    Intent intent =new Intent(mContext,WebViewActivity.class);  
 	                    intent.putExtra("URL_PATH", mItem.getMessage());

@@ -1584,7 +1584,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                          content.toString(), 1, true, 1,
                          0,isPrivateChat,isHide,0,MessageItem.SYSTEM_MESSAGE);
             }
-             else if (fileType.contains(".doc") || fileType.contains(".docx") || fileType.contains("file")) {//文档
+             else if ((fileType.contains(".doc") || fileType.contains(".docx") || fileType.contains("file")) && agreement == 0) {//文档
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
@@ -1600,7 +1600,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
 
                  		userName, currentTime,
-                        "待确认-调解协议书", 0, true, 1,
+                        Path, 0, true, 1,
                          voiceLength,isPrivateChat,isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
 
                  recentItem = new RecentItem(
