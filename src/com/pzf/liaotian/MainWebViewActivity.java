@@ -33,6 +33,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,16 +45,17 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
 public class MainWebViewActivity extends Activity{
 
-	private WebView myWebView = null;
+	public static WebView myWebView = null;
 	private Button backButton;
 	private static SharePreferenceUtil mSpUtil;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
@@ -60,7 +63,9 @@ public class MainWebViewActivity extends Activity{
 
 	private Vector v;
 	private int index = 0;
-	
+	private ValueCallback<Uri> mUploadMessage;    
+	 private final static int FILECHOOSER_RESULTCODE=1;
+	 ProgressBar progressBar; 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -86,15 +91,53 @@ public class MainWebViewActivity extends Activity{
         
 //        myWebView.loadUrl("file:///android_asset/demo.html");
 //        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
+//        Intent intent = getIntent();
+//        myWebView.loadUrl(intent.getStringExtra("URL"));
         myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
 //        myWebView.loadUrl(path);
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        
+        myWebView.setWebViewClient(new myWebClient());
+        myWebView.setWebChromeClient(new WebChromeClient()  
+        {  
+               //The undocumented magic method override  
+               //Eclipse will swear at you if you try to put @Override here  
+            // For Android 3.0+
+            public void openFileChooser(ValueCallback<Uri> uploadMsg) {  
+
+                mUploadMessage = uploadMsg;  
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
+                i.addCategory(Intent.CATEGORY_OPENABLE);  
+                i.setType("image/*");  
+                MainWebViewActivity.this.startActivityForResult(Intent.createChooser(i,"File Chooser"), FILECHOOSER_RESULTCODE);  
+
+               }
+
+            // For Android 3.0+
+               public void openFileChooser( ValueCallback uploadMsg, String acceptType ) {
+               mUploadMessage = uploadMsg;
+               Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+               i.addCategory(Intent.CATEGORY_OPENABLE);
+               i.setType("*/*");
+               MainWebViewActivity.this.startActivityForResult(
+               Intent.createChooser(i, "File Browser"),
+               FILECHOOSER_RESULTCODE);
+               }
+
+            //For Android 4.1
+               public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture){
+                   mUploadMessage = uploadMsg;  
+                   Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
+                   i.addCategory(Intent.CATEGORY_OPENABLE);  
+                   i.setType("image/*");  
+                   MainWebViewActivity.this.startActivityForResult( Intent.createChooser( i, "File Chooser" ), MainWebViewActivity.FILECHOOSER_RESULTCODE );
+
+               }
+
+        });  
        
-         myWebView.setWebChromeClient(new WebChromeClient() {
-        	 
-         });
          
         myWebView.setWebViewClient(new WebViewClient() {  
             //点击网页中按钮时，让其还在原页面打开  
@@ -117,6 +160,8 @@ public class MainWebViewActivity extends Activity{
                 return true;  
             }  
             
+           
+            
             public boolean hasDigit(String content) {
 
             	boolean flag = false;
@@ -134,10 +179,11 @@ public class MainWebViewActivity extends Activity{
             	}
             
             public void onPageFinished(WebView view, String url) {
-//                CookieManager cookieManager = CookieManager.getInstance();
-//                String CookieStr = cookieManager.getCookie(url);
-//                Log.e("sunzn", "Cookies = " + CookieStr);
-//                super.onPageFinished(view, url);
+                CookieManager cookieManager = CookieManager.getInstance();
+                String CookieStr = cookieManager.getCookie(url);
+                Log.e("sunzn", "Cookies = " + CookieStr);
+                mSpUtil.setCookie(CookieStr);
+                super.onPageFinished(view, url);
             	
             	 String CurrentUrl = myWebView.getUrl();
              	Log.v("chat", CurrentUrl);
@@ -152,6 +198,19 @@ public class MainWebViewActivity extends Activity{
       
         
     }
+    
+    @Override  
+    protected void onActivityResult(int requestCode, int resultCode,  
+                                       Intent intent) {  
+     if(requestCode==FILECHOOSER_RESULTCODE)  
+     {  
+      if (null == mUploadMessage) return;  
+               Uri result = intent == null || resultCode != RESULT_OK ? null  
+                       : intent.getData();  
+               mUploadMessage.onReceiveValue(result);  
+               mUploadMessage = null;  
+     }
+     }  
     
     @Override  
     protected void onStart() {  
@@ -241,5 +300,55 @@ public class MainWebViewActivity extends Activity{
     public static boolean useList(String[] arr, String targetValue) {
         return Arrays.asList(arr).contains(targetValue);
     }
+    
+    
+    public class myWebClient extends WebViewClient
+    {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // TODO Auto-generated method stub
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // TODO Auto-generated method stub
+
+            view.loadUrl(url);
+            return true;
+
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // TODO Auto-generated method stub
+            super.onPageFinished(view, url);
+
+//            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    //flipscreen not loading again
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){        
+        super.onConfigurationChanged(newConfig);
+    }
+
+    // To handle "Back" key press event for WebView to go back to previous screen.
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) 
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && web.canGoBack()) {
+            web.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
 
 }
+
+
+
+
+
+

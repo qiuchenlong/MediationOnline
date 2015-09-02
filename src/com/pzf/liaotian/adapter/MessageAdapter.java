@@ -39,6 +39,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pzf.liaotian.MainViewActivity;
+import com.pzf.liaotian.MainWebViewActivity;
 import com.pzf.liaotian.WebViewActivity;
 import com.pzf.liaotian.PublicChatActivity;
 import com.pzf.liaotian.R;

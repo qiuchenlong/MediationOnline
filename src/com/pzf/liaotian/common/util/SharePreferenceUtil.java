@@ -25,6 +25,17 @@ public class SharePreferenceUtil {
         editor = sp.edit();
     }
     
+    
+  //cookie
+    public void setCookie(String  cookie) {
+    	editor.putString("cookie", cookie);
+    	editor.commit();
+    }
+    
+    public String getCookie() {
+    	return sp.getString("cookie", "");
+    }
+    
     //其他人的id
     public void setUserIDs(String  user_ids) {
     	editor.putString("userids", user_ids);
