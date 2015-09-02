@@ -179,13 +179,25 @@ public class WebSocketConnectTool extends WebSocketConnection {
 							}
 				              mSpUtil.setUserIDs(userid);
 				       
-				              			intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
-						        		intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
-						        		intent.putExtra("IS_PRIVATE_CHAT", 0);
-						        		intent.putExtra("IS_ADMIN", 0);
-						        		intent.putExtra("CHAT_ROOM_ID", jsonBean.base_info.room_id);
-						        		intent.putExtra("CONTENT", jsonBean.message_info.content);
-						        		mContext.startActivity(intent);
+				              String selfName = mSpUtil.getNick();
+				              //这个条件不行得重新写
+//				              if (!selfName.equals("") && !selfName.equals(jsonBean.base_info.from_username)) {
+//				            	  PublicChatActivity chatActivity = new PublicChatActivity();
+//				            	  String content = jsonBean.message_info.content;
+//									chatActivity.loginContent = content;
+//									chatActivity.userLogin();
+//							} else {
+								 intent.putExtra("USER_NAME",jsonBean.base_info.from_username);
+							      intent.putExtra("USER_ID", jsonBean.base_info.from_client_id);
+							      intent.putExtra("IS_PRIVATE_CHAT", 0);
+							      intent.putExtra("IS_ADMIN", 0);
+							      intent.putExtra("CHAT_ROOM_ID", jsonBean.base_info.room_id);
+							      intent.putExtra("CONTENT", jsonBean.message_info.content);
+							      intent.putExtra("ENTER_ROOM", "enter");
+							      mContext.startActivity(intent);
+//							}
+				             
+						      
 						} else if (jsonBean.type.equals("logout")){
 							PublicChatActivity chatActivity = new PublicChatActivity();
 							chatActivity.laoutContent = jsonBean.message_info.content;

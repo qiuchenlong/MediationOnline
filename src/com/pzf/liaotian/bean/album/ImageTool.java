@@ -3,6 +3,8 @@ package com.pzf.liaotian.bean.album;
 import java.io.File;
 import java.io.IOException;
 
+import net.bither.util.NativeUtil;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -46,6 +48,7 @@ public class ImageTool {
             //
             // } else {
             bitmap = BitmapFactory.decodeFile(filePath, opts);
+            
             // }
         } catch (Exception e) {
             return null;

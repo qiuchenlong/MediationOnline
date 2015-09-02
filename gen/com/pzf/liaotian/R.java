@@ -1056,12 +1056,12 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class id {
         public static final int accordion=0x7f0b0007;
-        public static final int action_back=0x7f0b0099;
-        public static final int action_cancel=0x7f0b009d;
-        public static final int action_copy=0x7f0b009c;
-        public static final int action_move=0x7f0b009b;
-        public static final int action_ok=0x7f0b009e;
-        public static final int action_removefile=0x7f0b009a;
+        public static final int action_back=0x7f0b009a;
+        public static final int action_cancel=0x7f0b009e;
+        public static final int action_copy=0x7f0b009d;
+        public static final int action_move=0x7f0b009c;
+        public static final int action_ok=0x7f0b009f;
+        public static final int action_removefile=0x7f0b009b;
         public static final int all=0x7f0b0025;
         public static final int auto=0x7f0b0017;
         public static final int back_seleted_button=0x7f0b0036;
@@ -1146,9 +1146,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int pb_FileEdit=0x7f0b004f;
         public static final int pb_LargeFile=0x7f0b0050;
         public static final int preview=0x7f0b0029;
-        public static final int private_chat_back_button=0x7f0b0096;
+        public static final int private_chat_back_button=0x7f0b0097;
         public static final int private_chat_quit_button=0x7f0b0077;
-        public static final int private_chat_textview=0x7f0b0095;
+        public static final int private_chat_textview=0x7f0b0096;
         public static final int private_chat_view=0x7f0b0075;
         public static final int progressBar1=0x7f0b0030;
         public static final int protocol_confirm_webview=0x7f0b0054;
@@ -1158,7 +1158,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int pullFromStart=0x7f0b0021;
         public static final int pullUpFromBottom=0x7f0b0022;
         public static final int rcChat_popup=0x7f0b0073;
-        public static final int relativeLayout1=0x7f0b0093;
+        public static final int relativeLayout1=0x7f0b0094;
         public static final int reveal=0x7f0b001c;
         public static final int right=0x7f0b0014;
         public static final int rl_title=0x7f0b005e;
@@ -1172,7 +1172,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int selected_view=0x7f0b0000;
         public static final int send_btn=0x7f0b002d;
         public static final int send_layout=0x7f0b007c;
-        public static final int shensu_button=0x7f0b0097;
+        public static final int shensu_button=0x7f0b0098;
         public static final int speak_to_mediator=0x7f0b0086;
         public static final int stack=0x7f0b000e;
         public static final int standard=0x7f0b000f;
@@ -1182,7 +1182,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int tablet=0x7f0b0010;
         public static final int text=0x7f0b004c;
         public static final int textView1=0x7f0b0076;
-        public static final int textView2=0x7f0b0094;
+        public static final int textView2=0x7f0b0095;
         public static final int time=0x7f0b004b;
         public static final int title=0x7f0b004a;
         public static final int titleBar=0x7f0b0067;
@@ -1193,8 +1193,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int tv_chatmain_affix_album=0x7f0b0084;
         public static final int tv_chatmain_affix_take_picture=0x7f0b0083;
         public static final int tv_chatmain_press_voice=0x7f0b0080;
+        public static final int tv_voice_1time1=0x7f0b008f;
         public static final int tv_voice_rcd_time=0x7f0b0056;
-        public static final int tv_voice_time=0x7f0b008f;
+        public static final int tv_voice_time=0x7f0b0093;
         public static final int upload_file_textview=0x7f0b0085;
         public static final int viewGroup=0x7f0b002e;
         public static final int viewPager=0x7f0b002b;
@@ -1213,7 +1214,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int xlistview_header_time=0x7f0b0070;
         public static final int zoomin=0x7f0b0011;
         public static final int zoomout=0x7f0b0012;
-        public static final int zxtj_home_notice=0x7f0b0098;
+        public static final int zxtj_home_notice=0x7f0b0099;
     }
     public static final class integer {
         public static final int default_circle_indicator_orientation=0x7f090000;

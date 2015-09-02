@@ -23,7 +23,7 @@
         android:paddingRight="8.0dip"
         android:text="11:11"
         android:textColor="@color/chat_time"
-        android:textSize="12.0sp"
+        android:textSize="14sp"
         android:visibility="visible" />
 
     <LinearLayout

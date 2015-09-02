@@ -1,10 +1,16 @@
 package com.pzf.liaotian;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +20,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import net.bither.util.NativeUtil;
 
 import org.json.JSONException;
 
@@ -195,7 +203,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     private int mVioceTime;
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
 	public static String laoutContent;
-	
+	public static String loginContent;
+	private boolean enterRoom = false;
+
     private Runnable mSleepTask = new Runnable() {
         public void run() {
             stopRecord();
@@ -268,7 +278,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         setContentView(R.layout.zf_chat_main);
         mParams = getWindow().getAttributes();
         chatContext = this;
-
+        Intent intent = getIntent();
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mSpUtil = PushApplication.getInstance().getSpUtil();
         Set<String> keySet = PushApplication.getInstance().getFaceMap()
@@ -305,6 +315,9 @@ public class PublicChatActivity extends Activity implements OnClickListener,
        mSpUtil.setIsConsult(false);
 //       mMsgListView.refreshDrawableState();
        mMsgListView.mListViewListener.onRefresh();
+       scrollToBottomListItem();
+       
+  
     } 
 
     /**
@@ -332,11 +345,11 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     
     private void initUserInfo() {
-    	
     	Intent intent = getIntent();
     	
     	int userid = intent.getIntExtra("USER_ID", 0);
-    
+        
+        
     	mSpUtil.setUserId(String.valueOf(userid));
     	
     	mSpUtil.setNick(intent.getStringExtra("USER_NAME"));
@@ -360,15 +373,18 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mMsgListView.setAdapter(adapter);
         mMsgListView.setSelection(adapter.getCount() - 1);
         
-//		MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
-//          		mSpUtil.getNick(), System.currentTimeMillis(),
-//                intent.getStringExtra("CONTENT"), 0, true, 1,
-//                  0,0,0,0,MessageItem.SYSTEM_MESSAGE);
-//		adapter.upDateMsg(item);
-		
-//		 mMsgListView.mListViewListener.onRefresh();
-//		mMsgDB.saveMsg(String.valueOf(userid), item);// 保存数据	
-		 	
+        
+        MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+       		mSpUtil.getNick(), System.currentTimeMillis(),
+             intent.getStringExtra("CONTENT"), 0, true, 1,
+               0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+        adapter.upDateMsg(item);// 更新界面
+        mMsgDB.saveMsg(mSpUtil.getUserId(), item);
+        
+        scrollToBottomListItem();
+        mMsgListView.mListViewListener.onRefresh();
+       
+ 
     }
 
     /**
@@ -860,12 +876,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                 msgList.add(entity);
                
             }
-            
-            MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
-              		mSpUtil.getNick(), System.currentTimeMillis(),
-                    intent.getStringExtra("CONTENT"), 0, true, 1,
-                      0,0,0,0,MessageItem.SYSTEM_MESSAGE);
-        	msgList.add(item);
+           
+           
         } else {
         	
         	//如果没有数据 就加一个公告
@@ -1131,7 +1143,6 @@ public class PublicChatActivity extends Activity implements OnClickListener,
      */
     private void hanlderTakePhotoData(Intent data) {
 
-//    	mHomeNotice.setVisibility(View.INVISIBLE);
         if (data == null) {
             // 新建bitmap
             Bitmap newBitmap = ImageTool
@@ -1145,8 +1156,43 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             }
         }
 
-        long currentTime = System.currentTimeMillis();
-    	int isHide = isHideTimeLabel(currentTime);
+        InputStream inputStream = null;
+        try {
+			   inputStream = new FileInputStream(mTakePhotoFilePath);
+		   } catch (FileNotFoundException e) {
+			   e.printStackTrace();
+		   }  
+		 
+		   Bitmap btp = BitmapFactory.decodeStream(inputStream); 
+		   btp = NativeUtil.compressBitmap(btp, 50,null, true);
+		   ByteArrayOutputStream baos = new ByteArrayOutputStream();    
+		   btp.compress(Bitmap.CompressFormat.JPEG, 40, baos); 
+		   
+		   mTakePhotoFilePath = AlbumHelper.getHelper(PublicChatActivity.this)
+                   .getFileDiskCache()
+                   + File.separator
+                   + System.currentTimeMillis() + ".png";
+		   
+		   DataOutputStream to = null;
+		try {
+			to = new DataOutputStream(new FileOutputStream(mTakePhotoFilePath));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		   try {
+			baos.writeTo(to);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  
+		   
+		  
+    	  
+		   
+		   long currentTime = System.currentTimeMillis();
+		   int isHide = isHideTimeLabel(currentTime);
         // listview展示
         MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_IMG,
                 mSpUtil.getNick(), currentTime,
@@ -1503,8 +1549,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                         System.currentTimeMillis(), voiceLength,isPrivateChat);
              }
              else if ((fileType.equals(".txt") || fileType.equals("text"))  && isSystemMessage == 0 && agreement == 0) {//文本
-            	 
-            	
+            	             	
             	 //直接将文本内容存到数据库
 //            	 String str = ""; 
 //            	 try {  
@@ -1577,6 +1622,23 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	 MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
            		mSpUtil.getNick(), System.currentTimeMillis(),
                  laoutContent, 0, true, 1,
+                   0,0,0,0,MessageItem.SYSTEM_MESSAGE);
+    	 adapter.upDateMsg(item);// 更新界面
+         mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
+     	
+    }
+    
+    public void userLogin() {
+    	Intent intent = getIntent();
+    	String name = null;
+    	if (mSpUtil == null) {
+			name = "";
+		} else {
+			name = mSpUtil.getNick();
+		}
+    	 MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
+           		name, System.currentTimeMillis(),
+           		loginContent, 0, true, 1,
                    0,0,0,0,MessageItem.SYSTEM_MESSAGE);
     	 adapter.upDateMsg(item);// 更新界面
          mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库

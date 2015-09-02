@@ -357,7 +357,7 @@ public class MessageAdapter extends BaseAdapter {
 				//刚进入聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
-				holder.time.setText(mItem.getName()+",进入会议室");
+				holder.time.setText(mItem.getMessage());
 				
 				
 				holder.time.bringToFront();
@@ -370,7 +370,7 @@ public class MessageAdapter extends BaseAdapter {
 				//刚进入聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
-				holder.time.setText(mItem.getName()+",退出会议室");
+				holder.time.setText(mItem.getMessage());
 				
 				
 				holder.time.bringToFront();

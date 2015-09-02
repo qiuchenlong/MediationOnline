@@ -2,6 +2,7 @@ package net.bither.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.w3c.dom.Text;
@@ -102,10 +103,18 @@ public class ImageShower extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		gintama = BitmapFactory.decodeStream(inputStream); 
+		try {
+			inputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		image.setImageBitmap(gintama);
 		image.setImageMatrix(matrix);
-		
+	
 
 
 	}

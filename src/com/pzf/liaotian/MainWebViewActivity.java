@@ -2,6 +2,7 @@ package com.pzf.liaotian;
 
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -90,8 +91,7 @@ public class MainWebViewActivity extends Activity{
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
- 
-        
+       
          myWebView.setWebChromeClient(new WebChromeClient() {
         	 
          });
@@ -137,38 +137,14 @@ public class MainWebViewActivity extends Activity{
 //                Log.e("sunzn", "Cookies = " + CookieStr);
 //                super.onPageFinished(view, url);
             	
-//            	 String CurrentUrl = myWebView.getUrl();
-//             	Log.v("chat", CurrentUrl);
+            	 String CurrentUrl = myWebView.getUrl();
+             	Log.v("chat", CurrentUrl);
 //            	oldUrl[index] = myWebView.getUrl().toString();
             	
             	
             }
            
-        });
-        
-        //进入聊天室，提交到服务端的数据。
-//        String jsonData = "{\"type\":\"enter\",\"base_info\":{\"session_id\":\"PHPSESSID\",\"room_id\":1000}}";
-//        
-//        Gson gson = new Gson();
-//        java.lang.reflect.Type type = new TypeToken<EnterChatRoom>(){}.getType();
-//        EnterChatRoom jsonBean = gson.fromJson(jsonData, type);
-//
-//        System.out.println("name--->" + jsonBean.getType());
-//        System.out.println("name--->" + jsonBean.getBaseInfo());
-//        System.out.println("name--->" + jsonBean.getBaseInfo().getSessionID());
-        
-        //进入聊天室，服务端返回的数据
-        
-        String jsonData = "{\"type\":\"enter\",\"base_info\":{\"session_id\":\"PHPSESSID\",\"room_id\":1000}}";        
-        Gson gson = new Gson();
-        java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
-        JsonMessageStruct jsonBean = gson.fromJson(jsonData, type);
-
-        System.out.println("name--->" + jsonBean.type);
-        System.out.println("name--->" + jsonBean.base_info.session_id);
-//        System.out.println("name--->" + jsonBean.getMessageInfo().avatar);
-        
-        
+        });       
 
 //      startChat("");
       
@@ -228,13 +204,49 @@ public class MainWebViewActivity extends Activity{
         mSpUtil.setUserIDs("");
     } 
     
+    private long exitTime = 0;
     public boolean onKeyDown(int keyCode, KeyEvent event) { 
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) { 
-        	myWebView.goBack();
+        	//首页五个子页面的地址
+        	String urls[] = {
+        			"http://hcjd.cdncache.com/Home/Index/index.html",
+        			"http://hcjd.cdncache.com/Home/index.html",
+        			"http://hcjd.cdncache.com/Home/Art/deptlist.html",
+        			"http://hcjd.cdncache.com/Home/Art/adjlist.html",
+        			"http://hcjd.cdncache.com/Home/Art/index.html",
+        			"http://hcjd.cdncache.com/Home/User/index.html"};
+        	
+        	if (!useList(urls, myWebView.getUrl())) {
+        		myWebView.goBack();
+			} else {
+				if((System.currentTimeMillis()-exitTime) > 2000){  
+		              Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();                                
+		              exitTime = System.currentTimeMillis();   
+		          } else {
+		              finish();
+		              System.exit(0);
+		          }
+			}
+        	
+        	
         	
             return false; 
         } 
+        
+//        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
+//            if((System.currentTimeMillis()-exitTime) > 2000){  
+//                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();                                
+//                exitTime = System.currentTimeMillis();   
+//            } else {
+//                finish();
+//                System.exit(0);
+//            }
+//        }
         return false; 
+    }
+    
+    public static boolean useList(String[] arr, String targetValue) {
+        return Arrays.asList(arr).contains(targetValue);
     }
 
 }
