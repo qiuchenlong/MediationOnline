@@ -28,6 +28,7 @@ import com.zztj.chat.bean.JsonMessageStruct;
 import com.zztj.chat.bean.User;
 
 import android.R.integer;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -53,6 +54,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+@SuppressLint("NewApi")
 public class MainWebViewActivity extends Activity{
 
 	public static WebView myWebView = null;
@@ -78,8 +80,9 @@ public class MainWebViewActivity extends Activity{
         mSpUtil = PushApplication.getInstance().getSpUtil();
 
 //        mSpUtil.setServerIP("ws://192.168.0.228:8484");
-        mSpUtil.setServerIP("ws://172.17.5.228:7272");
-//        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
+//        mSpUtil.setServerIP("ws://218.5.80.211:7272");
+//        mSpUtil.setServerIP("ws://172.17.5.228:7274");
+        mSpUtil.setServerIP("ws://hcjd.cdncache.com:7272");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
         
         // 打开网页
@@ -222,25 +225,36 @@ public class MainWebViewActivity extends Activity{
     	//进入聊天室，向服务器提交信息。
     	//组织要提交的json信息
     	
-    	 Gson gson = new Gson();
-         java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
-         JsonMessageStruct jsonBean = gson.fromJson(json, type);
-         
-    	EnterChatRoom enterRoom = new EnterChatRoom();
-        enterRoom.setBaseInfo(new Base_Info());
-        enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
-//        enterRoom.init("enter", "asdasdasd", 11111);
-        String jsonStr = gson.toJson(enterRoom);
-        Log.v("=============", jsonStr);
-        
-        //向服务器发送信息
-        try {
-			mConnection.handleConnection(null,"enter",jsonStr,mContent);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+    		 Gson gson = new Gson();
+             java.lang.reflect.Type type = new TypeToken<JsonMessageStruct>(){}.getType();
+             JsonMessageStruct jsonBean = gson.fromJson(json, type);
+             
+        	EnterChatRoom enterRoom = new EnterChatRoom();
+            enterRoom.setBaseInfo(new Base_Info());
+            enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
+//            enterRoom.init("enter", "asdasdasd", 11111);
+            
+            String jsonStr = gson.toJson(enterRoom);
+            Log.v("=============", jsonStr);
+            
+            mSpUtil.setRoomName(jsonBean.base_info.room_name);
+            //向服务器发送信息
+            try {
+    			mConnection.handleConnection(null,"enter",jsonStr,mContent);
+    		} catch (JSONException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}   	
+    }
+    
+    private static long lastClickTime;
+    public synchronized static boolean isFastClick() {
+        long time = System.currentTimeMillis();   
+        if ( time - lastClickTime < 500) {   
+            return true;   
+        }   
+        lastClickTime = time;   
+        return false;   
     }
     
     @JavascriptInterface

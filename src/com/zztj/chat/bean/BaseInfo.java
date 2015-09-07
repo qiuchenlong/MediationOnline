@@ -7,6 +7,10 @@ public class BaseInfo {
 	public String session_id;
 	public String to_client_id;
 	public int is_secret;
+	public String room_name;
+	public String to_username;
+	public String to_userid;
+	public String to_realname;
 	
 	public void setToClientID(String to_client_id) {
 		this.to_client_id = to_client_id;

@@ -13,7 +13,6 @@ public class EnterChatRoom {
 		public int  room_id;
 		
 		
-		
 		public String getSessionID() {
 			return session_id;
 		}
@@ -51,6 +50,5 @@ public class EnterChatRoom {
 		this.type = type;
 		this.base_info.setSessionID(session_id);
 		this.base_info.setRoomID(room_id);
-		
 	}
 }

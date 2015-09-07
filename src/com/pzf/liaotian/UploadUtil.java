@@ -141,7 +141,7 @@ public class UploadUtil {
 	            // TODO Auto-generated method stub
 	            super.onPostExecute(result);
 	            mFilePath = saveFile(result);            
-					PublicChatActivity main = new PublicChatActivity();
+					ChatRoomActivity main = new ChatRoomActivity();
 		            main.mApplication = PushApplication.getInstance();
 		            main.mMsgDB = main.mApplication.getMessageDB();// 发送数据库
 		            main.mRecentDB = main.mApplication.getRecentDB();// 接收消息数据库
@@ -178,7 +178,7 @@ public class UploadUtil {
 	     String fileName = "/" + mUserID +System.currentTimeMillis() + mFileType;
 	     String fullPath = null;
 	    
-	     fullPath = PublicChatActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
+	     fullPath = ChatRoomActivity.chatContext.getExternalFilesDir(null).getPath() + subPath;
 		
 	     
 	     File f = new File(fullPath);

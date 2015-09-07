@@ -357,7 +357,7 @@ public class PreviewActivity extends TitleBarActivity implements
 
             // 更新界面
 
-            MessageAdapter messageAdapter = PublicChatActivity.getMessageAdapter();
+            MessageAdapter messageAdapter = ChatRoomActivity.getMessageAdapter();
             if (messageAdapter != null) {
                 messageAdapter.upDateMsgByList(messageItemList);
             }

@@ -192,7 +192,7 @@ public class ImageGridActivity extends TitleBarActivity implements
 
                 // 更新界面
 
-                MessageAdapter messageAdapter = PublicChatActivity
+                MessageAdapter messageAdapter = ChatRoomActivity
                         .getMessageAdapter();
                 if (messageAdapter != null) {
                     messageAdapter.upDateMsgByList(messageItemList);

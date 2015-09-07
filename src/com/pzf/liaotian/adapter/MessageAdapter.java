@@ -41,7 +41,7 @@ import android.widget.TextView;
 import com.pzf.liaotian.MainViewActivity;
 import com.pzf.liaotian.MainWebViewActivity;
 import com.pzf.liaotian.WebViewActivity;
-import com.pzf.liaotian.PublicChatActivity;
+import com.pzf.liaotian.ChatRoomActivity;
 import com.pzf.liaotian.R;
 import com.pzf.liaotian.album.takephoto.BubbleImageHelper;
 import com.pzf.liaotian.album.takephoto.MessageBitmapCache;
@@ -357,7 +357,6 @@ public class MessageAdapter extends BaseAdapter {
 				holder.name.setVisibility(View.GONE);
 				holder.time.setText(mItem.getMessage());
 				
-				
 				holder.time.bringToFront();
 				holder.time.setTextSize(12);
 				holder.time.setTextColor(Color.WHITE);
@@ -365,7 +364,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.flLayout.setVisibility(View.GONE);
 				holder.time.setPadding(12, 12, 12, 12);
 			}else if (mItem.getMsgType() == MessageItem.MESSAGE_TYPE_TEXT && mItem.getIsSystemMessage() == MessageItem.SYSTEM_MESSAGE && mItem.getMessage().contains("退出")) {
-				//刚进入聊天室 发送提醒
+				//退出聊天室 发送提醒
 				holder.time.setVisibility(View.VISIBLE);
 				holder.name.setVisibility(View.GONE);
 				holder.time.setText(mItem.getMessage());
@@ -379,10 +378,12 @@ public class MessageAdapter extends BaseAdapter {
 				holder.time.setPadding(12, 12, 12, 12);
 			}
 			else {
-				holder.time.setPadding(12, 5, 12, 5);
+				
+				holder.time.bringToFront();
 				holder.time.setTextSize(12);
 				holder.time.setTextColor(Color.WHITE);
 				holder.time.setBackgroundResource(R.drawable.chat_time_block);
+				holder.time.setPadding(12, 12, 12, 12);
 	             // 文字
 				 Spanned content=Html.fromHtml(mItem.getMessage());
 	            holder.msg.insertGif(convertNormalStringToSpannableString(content.toString()));
@@ -553,8 +554,12 @@ public class MessageAdapter extends BaseAdapter {
 
 
         holder.time.setText(TimeUtil.getChatTime(mItem.getDate()));
-        holder.time.setTextSize(12);
-        holder.time.setPadding(12, 5, 12, 5);
+        holder.time.bringToFront();
+		holder.time.setTextSize(12);
+		holder.time.setTextColor(Color.WHITE);
+		holder.time.setBackgroundResource(R.drawable.chat_time_block);
+		holder.time.setPadding(12, 12, 12, 12);
+		
         if (mItem.getIsHideTime() == 1) {
 			holder.time.setVisibility(View.GONE);
 		
@@ -580,8 +585,7 @@ public class MessageAdapter extends BaseAdapter {
         holder.head = (ImageView) convertView.findViewById(R.id.icon);
 
         holder.time = (TextView) convertView.findViewById(R.id.datetime);
-        holder.time.setTextSize(12);
-        holder.time.setPadding(12, 5, 12, 5);
+
         
         
         // holder.msg = (GifTextView) convertView.findViewById(R.id.textView2);

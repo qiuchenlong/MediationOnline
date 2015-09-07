@@ -26,6 +26,7 @@ import net.bither.util.NativeUtil;
 import org.json.JSONException;
 
 import android.R.integer;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
@@ -126,7 +127,8 @@ import de.tavendo.autobahn.WebSocketHandler;
  * @qq:1660380990
  * @email:pzfpang451@163.com
  */
-public class PublicChatActivity extends Activity implements OnClickListener,
+@SuppressLint("NewApi")
+public class ChatRoomActivity extends Activity implements OnClickListener,
         PushMessageReceiver.EventHandler, OnTouchListener, IXListViewListener,
         OnHomePressedListener {
 
@@ -267,7 +269,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     private AlbumHelper albumHelper = null;// 相册管理类
     private static List<ImageBucket> albumList = null;// 相册数据list
     private TextView mTvChatTitle;
-    public static PublicChatActivity chatContext;
+    public static ChatRoomActivity chatContext;
     private Boolean recodePermission;
     
     @Override
@@ -361,7 +363,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     	
     	int chatRoomId = intent.getIntExtra("CHAT_ROOM_ID",0);
     	mSpUtil.setRoomID(chatRoomId);
-		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
+//		mTvChatTitle.setText("在线调解会议室"+chatRoomId);
+    	mTvChatTitle.setText(mSpUtil.getRoomName());
 		
 		adapter = new MessageAdapter(this, initMsgData());
         mMsgListView = (MsgListView) findViewById(R.id.msg_listView);
@@ -372,8 +375,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         mMsgListView.setXListViewListener(this);
         mMsgListView.setAdapter(adapter);
         mMsgListView.setSelection(adapter.getCount() - 1);
-        
-        
+             
         MessageItem item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
        		mSpUtil.getNick(), System.currentTimeMillis(),
              intent.getStringExtra("CONTENT"), 0, true, 1,
@@ -383,8 +385,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         
         scrollToBottomListItem();
         mMsgListView.mListViewListener.onRefresh();
-       
- 
+       mMsgListView.invalidate();
+        
     }
 
     /**
@@ -395,7 +397,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         new Thread(new Runnable() {
             @Override
             public void run() {
-                albumHelper = AlbumHelper.getHelper(PublicChatActivity.this);
+                albumHelper = AlbumHelper.getHelper(ChatRoomActivity.this);
                 albumList = albumHelper.getImagesBucketList(false);
             }
         }).start();
@@ -445,7 +447,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 			
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(PublicChatActivity.this,UploadView.class);
+				Intent intent = new Intent(ChatRoomActivity.this,UploadView.class);
 				startActivityForResult(intent, FILE_PATH);
 				
 			}
@@ -533,7 +535,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 			
 			@Override
 			public void onClick(View arg0) {
-				 Intent intent =new Intent(PublicChatActivity.this,WebViewActivity.class);  
+				 Intent intent =new Intent(ChatRoomActivity.this,WebViewActivity.class);  
                  intent.putExtra("URL_PATH", "http://hcjd.cdncache.com/Home/AdjOl/adjpoint/room_id/"+mSpUtil.getRoomID()+".html");
                  startActivity(intent);
 				
@@ -546,14 +548,15 @@ public class PublicChatActivity extends Activity implements OnClickListener,
     /**
      * 按住录音按钮的事件
      */
-    private void mTvVoicePreeListener() {
+    @SuppressLint("NewApi")
+	private void mTvVoicePreeListener() {
         // 按住录音添加touch事件
         mTvVoiceBtn.setOnTouchListener(new OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!Environment.getExternalStorageDirectory().exists()) {
-                    Toast.makeText(PublicChatActivity.this, "No SDCard",
+                    Toast.makeText(ChatRoomActivity.this, "No SDCard",
                             Toast.LENGTH_LONG).show();
                     return false;
                 }
@@ -594,7 +597,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         			 if (event.getAction() == MotionEvent.ACTION_DOWN && flag == 1) {
      					Log.v("chat", "action down");
                          if (!Environment.getExternalStorageDirectory().exists()) {
-                             Toast.makeText(PublicChatActivity.this, "No SDCard",
+                             Toast.makeText(ChatRoomActivity.this, "No SDCard",
                                      Toast.LENGTH_LONG).show();
                              return false;
                          }
@@ -628,7 +631,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
                          try {
                              stopRecord();
                          } catch (IllegalStateException e) {
-                             Toast.makeText(PublicChatActivity.this, "麦克风不可用", 0).show();
+                             Toast.makeText(ChatRoomActivity.this, "麦克风不可用", 0).show();
                              isCancelVoice = true;
                          }
                          mEndRecorderTime = System.currentTimeMillis();
@@ -862,7 +865,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
         	
             for (MessageItem entity : list) {
             	
-                if (entity.getName().equals("")) {
+                if (entity.getName()!=null && entity.getName().equals("")) {
                     entity.setName(mSpUtil.getNick());
                 }
                 if (entity.getHeadImg() < 0) {
@@ -954,7 +957,8 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 
     }
 
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onClick(View v) {
         switch (v.getId()) {
 
@@ -1026,7 +1030,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             case R.id.tv_chatmain_affix_take_picture: {
  
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mTakePhotoFilePath = AlbumHelper.getHelper(PublicChatActivity.this)
+                mTakePhotoFilePath = AlbumHelper.getHelper(ChatRoomActivity.this)
                         .getFileDiskCache()
                         + File.separator
                         + System.currentTimeMillis() + ".jpg";
@@ -1043,16 +1047,16 @@ public class PublicChatActivity extends Activity implements OnClickListener,
             case R.id.tv_chatmain_affix_album: {
                 // 相册
                 if (albumList.size() < 1) {
-                    Toast.makeText(PublicChatActivity.this, "相册中没有图片",
+                    Toast.makeText(ChatRoomActivity.this, "相册中没有图片",
                             Toast.LENGTH_LONG).show();
                     return;
                 }
-                Intent intent = new Intent(PublicChatActivity.this,
+                Intent intent = new Intent(ChatRoomActivity.this,
                         PickPhotoActivity.class);
                 intent.putExtra(ConstantKeys.EXTRA_CHAT_USER_ID,
                         mSpUtil.getUserId());
                 startActivityForResult(intent, ConstantKeys.ALBUM_BACK_DATA);
-                PublicChatActivity.this.overridePendingTransition(
+                ChatRoomActivity.this.overridePendingTransition(
                         R.anim.zf_album_enter, R.anim.zf_stay);
                 mLlAffix.setVisibility(View.GONE);
                 mBtnAffix.setBackgroundResource(R.drawable.zztj_add);
@@ -1168,7 +1172,7 @@ public class PublicChatActivity extends Activity implements OnClickListener,
 		   ByteArrayOutputStream baos = new ByteArrayOutputStream();    
 		   btp.compress(Bitmap.CompressFormat.JPEG, 40, baos); 
 		   
-		   mTakePhotoFilePath = AlbumHelper.getHelper(PublicChatActivity.this)
+		   mTakePhotoFilePath = AlbumHelper.getHelper(ChatRoomActivity.this)
                    .getFileDiskCache()
                    + File.separator
                    + System.currentTimeMillis() + ".png";

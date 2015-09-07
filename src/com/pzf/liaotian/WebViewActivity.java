@@ -1,7 +1,14 @@
 package com.pzf.liaotian;
 
+import org.json.JSONException;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
+import com.zztj.chat.bean.EnterChatRoom;
+import com.zztj.chat.bean.JsonMessageStruct;
+import com.zztj.chat.bean.EnterChatRoom.Base_Info;
 
 import android.R.integer;
 import android.app.Activity;
@@ -17,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -47,9 +55,9 @@ public class WebViewActivity extends Activity{
         myWebView.loadUrl(path);
         
 
-//        WebSettings webSettings = myWebView.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-        
+        WebSettings webSettings = myWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        myWebView.addJavascriptInterface(WebViewActivity.this, "ChatRoom");
         myWebView.setWebViewClient(new WebViewClient() {  
             //点击网页中按钮时，让其还在原页面打开  
             public boolean shouldOverrideUrlLoading(WebView view, String url) {  
@@ -84,10 +92,19 @@ public class WebViewActivity extends Activity{
 
     }
     
+    @JavascriptInterface
+    public void backToRoom(){
+    	finish();
+    }
+    
     public boolean onKeyDown(int keyCode, KeyEvent event) { 
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) { 
     
         	myWebView.goBack();
+        	Intent intent = getIntent();
+        	if (myWebView.getUrl().equals(intent.getStringExtra("URL_PATH"))) {
+				finish();
+			}
         }
         return false;
     }

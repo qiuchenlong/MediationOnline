@@ -8,6 +8,7 @@ public class ClientList {
 	public String realname;
 	public String head_view_pic;
 	public int is_adjuster;
+	public String role_name;
 	
 	public void setUserName(String username) {
 		this.username = username;

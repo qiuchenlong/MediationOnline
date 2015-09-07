@@ -25,6 +25,15 @@ public class SharePreferenceUtil {
         editor = sp.edit();
     }
     
+  //room_name
+    public void setRoomName(String  roomname) {
+    	editor.putString("roomname", roomname);
+    	editor.commit();
+    }
+    
+    public String getRoomName() {
+    	return sp.getString("roomname", "");
+    }
     
   //cookie
     public void setCookie(String  cookie) {
@@ -44,6 +53,35 @@ public class SharePreferenceUtil {
     
     public String getUserIDs() {
     	return sp.getString("userids", "");
+    }
+    
+  //调解员真名
+    public void setAdminRealName(String  adminurealname) {
+    	editor.putString("adminurealname", adminurealname);
+    	editor.commit();
+    }
+    
+    public String getAdminRealName() {
+    	return sp.getString("adminurealname", "");
+    }
+    
+  //调解员client_id
+    public void setAdminClientID(int  clientid) {
+    	editor.putInt("clientid", clientid);
+    	editor.commit();
+    }
+    
+    public int getAdminClientID() {
+    	return sp.getInt("clientid", 0);
+    }
+    //调解员姓名
+    public void setAdminUserName(String  adminusername) {
+    	editor.putString("adminusername", adminusername);
+    	editor.commit();
+    }
+    
+    public String getAdminUserName() {
+    	return sp.getString("adminusername", "");
     }
     
     //调解员id

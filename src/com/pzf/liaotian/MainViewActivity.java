@@ -128,7 +128,7 @@ public class MainViewActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Intent intent =new Intent(MainViewActivity.this,PublicChatActivity.class);
+				Intent intent =new Intent(MainViewActivity.this,ChatRoomActivity.class);
 				intent.putExtra("USER_NAME", edit1.getText());
 				intent.putExtra("USER_ID", edit2.getText());
 				Log.v("chat", edit1.getText().toString());

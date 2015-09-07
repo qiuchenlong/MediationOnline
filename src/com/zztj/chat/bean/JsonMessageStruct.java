@@ -2,7 +2,7 @@ package com.zztj.chat.bean;
 
 import java.util.List;
 
-import com.pzf.liaotian.PublicChatActivity;
+import com.pzf.liaotian.ChatRoomActivity;
 import com.zztj.chat.bean.EnterChatRoomServer.Base_Info;
 import com.zztj.chat.bean.EnterChatRoomServer.Message_Info;
 import com.zztj.chat.bean.EnterChatRoomServer.Message_Info.Client_List;
