@@ -50,6 +50,12 @@
         android:layout_height="wrap_content"
         android:text="调解咨询" />
 
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="前置摄像头" />
+
    >
 
 </LinearLayout>

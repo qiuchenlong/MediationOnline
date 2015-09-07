@@ -288,7 +288,7 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
 
         MSGPAGERNUM = 0;
         mSoundUtil = SoundUtil.getInstance();
-//
+
         initView();
 
         mApplication.getNotificationManager().cancel(
@@ -300,22 +300,12 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
         recodePermission = mSpUtil.getRecordPermission();
 
         initUserInfo();
-//        
-//        try {
-//			mConnection.handleConnection(null,null,null,null);
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-    
     }
     
     @Override  
     protected void onStart() {  
         super.onStart();  
-//        initUserInfo();
        mSpUtil.setIsConsult(false);
-//       mMsgListView.refreshDrawableState();
        mMsgListView.mListViewListener.onRefresh();
        scrollToBottomListItem();
        
@@ -566,9 +556,7 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
                 int[] del_location = new int[2];
                 mLLDelete.getLocationInWindow(del_location);
                 int del_Y = del_location[1];
-                int del_x = del_location[0];
-                
-              
+                int del_x = del_location[0];             
         		
         		if (recodePermission == false) {
         			 String fileName = "/" + mSpUtil.getUserId() +System.currentTimeMillis();
@@ -1451,7 +1439,6 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
     }
     
     public static void sendTextMessage(String message,Boolean isSystemMessage) {
-//    	mHomeNotice.setVisibility(View.INVISIBLE);
     	String msg = message;
 
     	long currentTime = System.currentTimeMillis();
@@ -1490,15 +1477,9 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
         String fileName = item.getDate()+".txt";
         writeTxtToFile(msg, filePath, fileName);
         mSpUtil.setIsCome(false);
-//        if (isSystemMessage) {
-//        	if (mConnection.isConnected()) {
-//        		mConnection.sendTextMessage(msg);
-//			}			
-//		} else {
-        //发送文本
+
 			new SendMsgAsyncTask(mGson.toJson(msgItem), mSpUtil.getUserId(),filePath+fileName)
             .send();
-//		}
         
         // ===保存近期的消息
 
@@ -1535,10 +1516,6 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
                         userName, currentTime,
                         Path,1,true,0,0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
-                recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_IMG,
-                        userID, 1, userName,
-                        Path, 0,
-                        System.currentTimeMillis(), 0,isPrivateChat);
             }
             else if (fileType.equals(".amr") || fileType.equals(".mp3") || fileType.equals("audio")) {//语音
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_RECORD,
@@ -1547,40 +1524,15 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
                 		Path, 1, true, 0,
                         voiceLength,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
-                recentItem = new RecentItem(
-                        MessageItem.MESSAGE_TYPE_RECORD, userID, 1,
-                       userName, Path, 0,
-                        System.currentTimeMillis(), voiceLength,isPrivateChat);
              }
-             else if ((fileType.equals(".txt") || fileType.equals("text"))  && isSystemMessage == 0 && agreement == 0) {//文本
-            	             	
-            	 //直接将文本内容存到数据库
-//            	 String str = ""; 
-//            	 try {  
-//                     File urlFile = new File(Path);  
-//                     InputStreamReader isr = new InputStreamReader(new FileInputStream(urlFile), "gbk");  
-//                     BufferedReader br = new BufferedReader(isr);    
-//                         
-//                     String mimeTypeLine = null ;  
-//                     while ((mimeTypeLine = br.readLine()) != null) {  
-//                       str = str+mimeTypeLine;  
-//                   }  
-//                     br.close();
-//                     isr.close();
-//            	 } catch (Exception e) {  
-//            		 e.printStackTrace();  
-//            	 }  
+             else if ((fileType.equals(".txt") || fileType.equals("text"))  && isSystemMessage == 0 && agreement == 0) {//文本            	        
             	          	 
                 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
                         userName, currentTime,
                         content.toString(), 1, true, 1,
                         0,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                recentItem = new RecentItem(MessageItem.MESSAGE_TYPE_TEXT,
-                        userID, 1, userName,
-                        content.toString(), 0,
-                        System.currentTimeMillis(), 0,isPrivateChat);
+         
             } else if ((fileType.equals(".txt") || fileType.equals("text")) && isSystemMessage == 1) {
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_TEXT,
 
@@ -1595,10 +1547,6 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
                  		Path, 0, true, 0,
                          voiceLength,isPrivateChat,isHide,0,MessageItem.NOT_SYSTEM_MESSAGE);
 
-                 recentItem = new RecentItem(
-                         MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,isPrivateChat);
             }
              else if (agreement == 1) {//待确认-调解协议书
             	 item = new MessageItem(MessageItem.MESSAGE_TYPE_FILE,
@@ -1606,17 +1554,10 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
                  		userName, currentTime,
                         Path, 0, true, 1,
                          voiceLength,isPrivateChat,isHide,agreement,MessageItem.NOT_SYSTEM_MESSAGE);
-
-                 recentItem = new RecentItem(
-                         MessageItem.MESSAGE_TYPE_FILE, userID, 0,
-                        userName, Path, 0,
-                         System.currentTimeMillis(), voiceLength,isPrivateChat);
             }
             
-//
             adapter.upDateMsg(item);// 更新界面
             mMsgDB.saveMsg(userID, item);// 保存数据库
-//            mRecentDB.saveRecent(recentItem);
 
             scrollToBottomListItem();
         }    
@@ -1648,6 +1589,4 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
          mMsgDB.saveMsg(mSpUtil.getUserId(), item);// 保存数据库
      	
     }
-    
-
 }

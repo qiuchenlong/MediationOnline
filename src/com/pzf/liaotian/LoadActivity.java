@@ -50,14 +50,11 @@ public class LoadActivity extends Activity {
             editor.putString("device_id",finalID);
             editor.commit();
 		}
-        
- 
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 /* Create an Intent that will start the Main WordPress Activity. */
                 Intent mainIntent = new Intent(LoadActivity.this, MainWebViewActivity.class);
-//                mainIntent.putExtra("URL", "http://hcjd.cdncache.com/Home/index.html");
                 LoadActivity.this.startActivity(mainIntent);
                 LoadActivity.this.finish();
             }

@@ -145,47 +145,47 @@ public class PushApplication extends Application {
      */
     @SuppressWarnings("deprecation")
     public void showNotification() {
-        if (!mSpUtil.getMsgNotify())// 如果用户设置不显示挂机图标，直接返回
-            return;
-
-        int icon = R.drawable.notify_general;
-        CharSequence tickerText = getResources().getString(
-                R.string.app_is_run_background);
-        long when = System.currentTimeMillis();
-        mNotification = new Notification(icon, tickerText, when);
-
-        // 放置在"正在运行"栏目中
-        mNotification.flags = Notification.FLAG_ONGOING_EVENT;
-
-        RemoteViews contentView = new RemoteViews(getPackageName(),
-                R.layout.notify_status_bar_latest_event_view);
-        contentView.setImageViewResource(R.id.icon,
-                heads[mSpUtil.getHeadIcon()]);
-        contentView.setTextViewText(R.id.title, mSpUtil.getNick());
-        contentView.setTextViewText(R.id.text, tickerText);
-        contentView.setLong(R.id.time, "setTime", when);
-        // 指定个性化视图
-        mNotification.contentView = contentView;
-
-        Intent intent = new Intent(this, MainViewActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // 指定内容意图
-        mNotification.contentIntent = contentIntent;
-        // 下面是4.0notify
-        // Bitmap icon = BitmapFactory.decodeResource(getResources(),
-        // heads[mSpUtil.getHeadIcon()]);
-        // Notification.Builder notificationBuilder = new Notification.Builder(
-        // this).setContentTitle(mSpUtil.getNick())
-        // .setContentText(tickerText)
-        // .setSmallIcon(R.drawable.notify_general)
-        // .setWhen(System.currentTimeMillis())
-        // .setContentIntent(contentIntent).setLargeIcon(icon);
-        // Notification n = notificationBuilder.getNotification();
-        // n.flags |= Notification.FLAG_NO_CLEAR;
-
-        mNotificationManager.notify(PushMessageReceiver.NOTIFY_ID,
-                mNotification);
+//        if (!mSpUtil.getMsgNotify())// 如果用户设置不显示挂机图标，直接返回
+//            return;
+//
+//        int icon = R.drawable.notify_general;
+//        CharSequence tickerText = getResources().getString(
+//                R.string.app_is_run_background);
+//        long when = System.currentTimeMillis();
+//        mNotification = new Notification(icon, tickerText, when);
+//
+//        // 放置在"正在运行"栏目中
+//        mNotification.flags = Notification.FLAG_ONGOING_EVENT;
+//
+//        RemoteViews contentView = new RemoteViews(getPackageName(),
+//                R.layout.notify_status_bar_latest_event_view);
+//        contentView.setImageViewResource(R.id.icon,
+//                heads[mSpUtil.getHeadIcon()]);
+//        contentView.setTextViewText(R.id.title, mSpUtil.getNick());
+//        contentView.setTextViewText(R.id.text, tickerText);
+//        contentView.setLong(R.id.time, "setTime", when);
+//        // 指定个性化视图
+//        mNotification.contentView = contentView;
+//
+//        Intent intent = new Intent(this, MainViewActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+//                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        // 指定内容意图
+//        mNotification.contentIntent = contentIntent;
+//        // 下面是4.0notify
+//        // Bitmap icon = BitmapFactory.decodeResource(getResources(),
+//        // heads[mSpUtil.getHeadIcon()]);
+//        // Notification.Builder notificationBuilder = new Notification.Builder(
+//        // this).setContentTitle(mSpUtil.getNick())
+//        // .setContentText(tickerText)
+//        // .setSmallIcon(R.drawable.notify_general)
+//        // .setWhen(System.currentTimeMillis())
+//        // .setContentIntent(contentIntent).setLargeIcon(icon);
+//        // Notification n = notificationBuilder.getNotification();
+//        // n.flags |= Notification.FLAG_NO_CLEAR;
+//
+//        mNotificationManager.notify(PushMessageReceiver.NOTIFY_ID,
+//                mNotification);
     }
 
     private void initFaceMap() {
