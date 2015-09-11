@@ -257,8 +257,8 @@ public class AudioRecorder2Mp3Util {
 			Log.d("rawPath", rawPath);
 			Log.d("mp3Path", mp3Path);
 
-//			runCommand("chmod 777 " + rawPath);
-//			runCommand("chmod 777 " + mp3Path);
+			runCommand("chmod 777 " + rawPath);
+			runCommand("chmod 777 " + mp3Path);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

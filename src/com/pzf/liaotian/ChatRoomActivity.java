@@ -298,7 +298,14 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
         mUserDB = mApplication.getUserDB();
         
         recodePermission = mSpUtil.getRecordPermission();
-
+        if (recodePermission == false) {
+        	PackageManager pm = getPackageManager(); 
+        	boolean permission = (PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.RECORD_AUDIO", "packageName")); 
+        	if (!permission) { 
+        		recodePermission = true;
+        	}
+		}
+        
         initUserInfo();
     }
     

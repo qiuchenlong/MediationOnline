@@ -36,12 +36,14 @@ import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.bean.Message;
 import com.pzf.liaotian.bean.MessageItem;
 import com.pzf.liaotian.bean.RecentItem;
+import com.pzf.liaotian.bean.album.ImageBucket;
 import com.pzf.liaotian.bean.album.ImageTool;
 import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.pzf.liaotian.common.util.SendMsgAsyncTask;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
 import com.pzf.liaotian.common.util.TimeUtil;
 import com.pzf.liaotian.common.util.WebSocketConnectTool;
+import com.pzf.liaotian.config.ConstantKeys;
 import com.zztj.chat.bean.AudioStruct;
 import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
@@ -53,9 +55,11 @@ import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -100,7 +104,8 @@ public class MainWebViewActivity extends Activity{
 
 	private Vector v;
 	private int index = 0;
-	private static final int CAMERA_WITH_DATA = 10;
+	private static final int CAMERA_WITH_FRONT = 10;
+	private static final int CAMERA_WITH_BACK = 11;
 	private static final int POLL_INTERVAL = 300;
 	
 	private ValueCallback<Uri> mUploadMessage;    
@@ -138,6 +143,10 @@ public class MainWebViewActivity extends Activity{
     private long mAudioStartTime;
     
     private static long lastClickTime;
+    
+    private AlbumHelper albumHelper = null;// 相册管理类
+    private static List<ImageBucket> albumList = null;// 相册数据list
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -149,9 +158,18 @@ public class MainWebViewActivity extends Activity{
         //配置录音
         initRecorderView();
         recodePermission = mSpUtil.getRecordPermission();
+        if (recodePermission == false) {
+        	PackageManager pm = getPackageManager(); 
+        	boolean permission = (PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.RECORD_AUDIO", "packageName")); 
+        	if (!permission) { 
+        		recodePermission = true;
+        	}
+		}
         
         String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
         runCommand("chmod 777 " + fullPath);
+        
+        initAlbumData();
         
         mContent = this;
         v = new Vector();
@@ -172,8 +190,8 @@ public class MainWebViewActivity extends Activity{
 //        myWebView.loadUrl("file:///android_asset/demo.html");
 //        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
 //        Intent intent = getIntent();
-        myWebView.loadUrl("http://hcjd.cdncache.com/Home/Ask/test.html");
-//        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
+//        myWebView.loadUrl("http://hcjd.cdncache.com/Home/Ask/test.html");
+        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
 //        myWebView.loadUrl(path);
 
         WebSettings webSettings = myWebView.getSettings();
@@ -191,23 +209,36 @@ public class MainWebViewActivity extends Activity{
         myWebView.setWebViewClient(new myWebClient());
         myWebView.setWebChromeClient(new WebChromeClient()  
         {  
+        	
+            public void onReceivedTitle(WebView view, String title) {  
+                super.onReceivedTitle(view, title);  
+                Log.d("ANDROID_LAB", "TITLE=" + title);  
+            } 
+            
         	//用户注册时候上传照片
-            // For Android 3.0+
+            // For Android 3.0-
             public void openFileChooser(ValueCallback<Uri> uploadMsg) {  
                 mUploadMessage = uploadMsg;  
-                takePicture();
+                Log.v("3.0+", "uploadMsg="+uploadMsg);
+                takePicturesWithFront();
                }
 
             // For Android 3.0+
-               public void openFileChooser( ValueCallback uploadMsg, String acceptType ) {
+               public void openFileChooser( ValueCallback uploadMsg, String accept ) {
                mUploadMessage = uploadMsg;
-               takePicture();
+               takePicturesWithFront();
+               Log.v("3.0+2", "uploadMsg="+uploadMsg);
+               Log.v("3.0+2", "acceptType="+accept);
                }
 
             //For Android 4.1
-               public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture){
+               public void openFileChooser(ValueCallback<Uri> uploadMsg, String accept, String capture){
                    mUploadMessage = uploadMsg;  
-                   takePicture();
+                  
+                   Log.v("4.1", "uploadMsg="+uploadMsg);
+                   Log.v("4.1", "acceptType="+accept);
+                   Log.v("4.1", "capture="+capture);
+                   takePicturesWithFront();
                }
 
         });  
@@ -269,7 +300,14 @@ public class MainWebViewActivity extends Activity{
     }
     
     
-    /**
+    @Override
+	public ComponentName getComponentName() {
+		// TODO Auto-generated method stub
+		return super.getComponentName();
+	}
+
+
+	/**
      * 录音功能
      * 
      * @param data
@@ -321,8 +359,7 @@ public class MainWebViewActivity extends Activity{
 		    recodePermission = true;
 		    mSpUtil.setRecordPermission(true);
 	     } else {
-	    	 	
-	    	 
+	    	 	 
 	    	 stopRecord();
 	    	 mStartRecorderTime = System.currentTimeMillis();
 	    	                 
@@ -339,6 +376,7 @@ public class MainWebViewActivity extends Activity{
                   {
                       public void run()
                       {
+                    	  Log.v("==11======", "startRecord");
                     	  startRecord();
                       }
                   }.start();          
@@ -370,7 +408,7 @@ public class MainWebViewActivity extends Activity{
             } catch (IllegalStateException e) {
                 Toast.makeText(MainWebViewActivity.this, "麦克风不可用", 0).show();
                 isCancelVoice = true;
-                return "{ status : 1,info : \"麦克风不可用\"}";
+                return "{ status : 0,info : \"麦克风不可用\"}";
             }
             mEndRecorderTime = System.currentTimeMillis();
             int mVoiceTime = (int) ((mEndRecorderTime - mStartRecorderTime) / 1000);
@@ -386,10 +424,14 @@ public class MainWebViewActivity extends Activity{
             }
             
             String json = sendJsonToServer();
+            if (json == null) {
+            	Toast.makeText(MainWebViewActivity.this, "录音失败，请重新录一次", 0).show();
+            	return "{ status : 0,info : \"录音失败\"}";
+			}
             Log.v("=============", json);
             return json;
 		} else {
-			return "{ status : 1,info : \"录音间隔太短\"}";
+			return "{ status : 0,info : \"录音间隔太短\"}";
 		}
         
     }
@@ -408,6 +450,9 @@ public class MainWebViewActivity extends Activity{
      byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
      int rc = 0; 
      
+     if (inputStream == null) {
+		return null;
+	}
      try {
 			while ((rc = inputStream.read(buff, 0, 100)) > 0) { 
 			   swapStream.write(buff, 0, rc); 
@@ -446,7 +491,6 @@ public class MainWebViewActivity extends Activity{
 	     if (!f.exists()) {
 	      f.mkdirs();
 	     } 
-	     
  
 			util = new AudioRecorder2Mp3Util(null,
 						fullPath+fileName+".raw",
@@ -598,9 +642,12 @@ public class MainWebViewActivity extends Activity{
     @Override  
     protected void onActivityResult(int requestCode, int resultCode,  
                                        Intent intent) {  
-     
+    	if (intent == null) {
+			return;
+		}
+    	
      	switch (requestCode) {
-     		case CAMERA_WITH_DATA:
+     		case CAMERA_WITH_FRONT:
      			hanlderTakePhotoData(intent);
      			if (null == mUploadMessage) return;  
                 Uri result = intent == null || resultCode != RESULT_OK ? null  
@@ -611,6 +658,31 @@ public class MainWebViewActivity extends Activity{
                 mUploadMessage.onReceiveValue(fileUri);  
                 mUploadMessage = null;  
      			break;
+     		case CAMERA_WITH_BACK:
+     		{
+     			InputStream inputStream = null;
+     			   
+     			try {
+     				inputStream = new FileInputStream(mTakePhotoFilePath);
+     			} catch (FileNotFoundException e) {
+     				e.printStackTrace();
+     			}  
+     			
+     			ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+     			byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
+     			int rc = 0; 
+              
+     			try {
+     				while ((rc = inputStream.read(buff, 0, 100)) > 0) { 
+     				   swapStream.write(buff, 0, rc); 
+     				}
+     			} catch (IOException e) {
+     				e.printStackTrace();
+     			} 
+              
+     			byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+     			String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
+     		}
      	}
      } 
     
@@ -650,11 +722,11 @@ public class MainWebViewActivity extends Activity{
 		  
     }
     
-    
-    private void takePicture() {
+    //调用前置摄像头
+    private void takePicturesWithFront() {
     	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);  
         
-    	intent.putExtra("camerasensortype", 2); // 调用前置摄像头  
+    	intent.putExtra("android.intent.extras.CAMERA_FACING", 1); // 调用前置摄像头
     	intent.putExtra("autofocus", true); // 自动对焦  
     	intent.putExtra("fullScreen", false); // 全屏  
     	intent.putExtra("showActionIcons", false);  
@@ -666,8 +738,55 @@ public class MainWebViewActivity extends Activity{
          // .currentTimeMillis()) + ".jpg");
          intent.putExtra(MediaStore.EXTRA_OUTPUT,
                  Uri.fromFile(new File(mTakePhotoFilePath)));
-         startActivityForResult(intent, CAMERA_WITH_DATA);
+         startActivityForResult(intent, CAMERA_WITH_FRONT);
 	}
+    
+    //调用后置摄像头
+    @JavascriptInterface
+    private void takePictures() {
+    	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);  
+        
+    	intent.putExtra("autofocus", true); // 自动对焦  
+    	intent.putExtra("fullScreen", false); // 全屏  
+    	intent.putExtra("showActionIcons", false);  
+    	 mTakePhotoFilePath = AlbumHelper.getHelper(MainWebViewActivity.this)
+                 .getFileDiskCache()
+                 + File.separator
+                 + System.currentTimeMillis() + ".jpg";
+         // mTakePhotoFilePath = getImageSavePath(String.valueOf(System
+         // .currentTimeMillis()) + ".jpg");
+         intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                 Uri.fromFile(new File(mTakePhotoFilePath)));
+         startActivityForResult(intent, CAMERA_WITH_BACK);
+         
+	}
+    
+    //选择照片
+    @JavascriptInterface
+    private void selectePhotos() {
+    	// 相册
+        if (albumList.size() < 1) {
+            Toast.makeText(MainWebViewActivity.this, "相册中没有图片",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(MainWebViewActivity.this,
+                PickPhotoActivity.class);
+        intent.putExtra(ConstantKeys.EXTRA_CHAT_USER_ID,
+                mSpUtil.getUserId());
+        startActivityForResult(intent, ConstantKeys.ALBUM_BACK_DATA);
+        MainWebViewActivity.this.overridePendingTransition(
+                R.anim.zf_album_enter, R.anim.zf_stay);
+        
+	}
+    
+    //上传文件
+    @JavascriptInterface
+    private void uploadFile() {
+    	
+	}
+    
+    
     
     @Override  
     protected void onStart() {  
@@ -705,7 +824,7 @@ public class MainWebViewActivity extends Activity{
     
     public synchronized static boolean isFastClick() {
         long time = System.currentTimeMillis();   
-        if ( time - lastClickTime < 3000) {   
+        if ( time - lastClickTime < 2000) {   
             return true;   
         }   
         lastClickTime = time;   
@@ -870,6 +989,20 @@ public class MainWebViewActivity extends Activity{
 		}
 		return ret;
 	}
+	
+	/**
+     * @Description 初始化相册数据
+     */
+    
+    private void initAlbumData() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                albumHelper = AlbumHelper.getHelper(MainWebViewActivity.this);
+                albumList = albumHelper.getImagesBucketList(false);
+            }
+        }).start();
+    }
 
 }
 
