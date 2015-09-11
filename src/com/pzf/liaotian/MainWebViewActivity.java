@@ -17,6 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,9 +37,12 @@ import com.pzf.liaotian.bean.Message;
 import com.pzf.liaotian.bean.MessageItem;
 import com.pzf.liaotian.bean.RecentItem;
 import com.pzf.liaotian.bean.album.ImageTool;
+import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.pzf.liaotian.common.util.SendMsgAsyncTask;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
+import com.pzf.liaotian.common.util.TimeUtil;
 import com.pzf.liaotian.common.util.WebSocketConnectTool;
+import com.zztj.chat.bean.AudioStruct;
 import com.zztj.chat.bean.EnterChatRoom;
 import com.zztj.chat.bean.EnterChatRoom.Base_Info;
 import com.zztj.chat.bean.EnterChatRoomServer;
@@ -53,15 +59,21 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
@@ -71,7 +83,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 @SuppressLint("NewApi")
 public class MainWebViewActivity extends Activity{
@@ -85,88 +101,118 @@ public class MainWebViewActivity extends Activity{
 	private Vector v;
 	private int index = 0;
 	private static final int CAMERA_WITH_DATA = 10;
+	private static final int POLL_INTERVAL = 300;
+	
 	private ValueCallback<Uri> mUploadMessage;    
 	private final static int FILECHOOSER_RESULTCODE=1;
 	ProgressBar progressBar; 
 	private String mTakePhotoFilePath;
-
+	AudioRecorder2Mp3Util util = null;
+	//录音层
+	private View mChatUIWindow;
+	
+	private Handler mHandler = new Handler();
+	private ImageView volume;
+	// 录制的时间
+	private TextView mTvVoiceRecorderTime;
+    private Boolean recodePermission;
+    // 录制时间过短
+    private LinearLayout mLlVoiceShort;
+    private boolean isShosrt = false;
+    private LinearLayout mLlVoiceRcding;
+    private String mRecordTime;
+    private int mRcdStartTime = 0;// 录制的开始时间
+    private int mRcdVoiceDelayTime = 1000;
+    private int mRcdVoiceStartDelayTime = 300;
+    private boolean isCancelVoice;// 不显示语音
+    private LinearLayout mLlVoiceLoading;// 加载录制loading
+    private ImageView mIvDelete;// 语音弹出框的差号按钮
+    private LinearLayout mLLDelete;
+    private ImageView mIvBigDeleteIcon;
+    private VoiceRcdTimeTask mVoiceRcdTimeTask;
+    private ScheduledExecutorService mExecutor;// 录制计时器
+    private int mVioceTime;
+    private long mStartRecorderTime;
+    private long mEndRecorderTime;
+    private long mAudioStopTime;
+    private long mAudioStartTime;
+    
+    private static long lastClickTime;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_webview);
+        mSpUtil = PushApplication.getInstance().getSpUtil();
+
+        //配置录音
+        initRecorderView();
+        recodePermission = mSpUtil.getRecordPermission();
+        
+        String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
+        runCommand("chmod 777 " + fullPath);
         
         mContent = this;
         v = new Vector();
-        mSpUtil = PushApplication.getInstance().getSpUtil();
-
-//        mSpUtil.setServerIP("ws://192.168.0.228:8484");
+        
+        mSpUtil.setServerIP("ws://192.168.0.43:8484");
 //        mSpUtil.setServerIP("ws://218.5.80.211:7272");
 //        mSpUtil.setServerIP("ws://172.17.5.228:7274");
-        mSpUtil.setServerIP("ws://hcjd.cdncache.com:7272");
+//        mSpUtil.setServerIP("ws://hcjd.cdncache.com:7272");
 //        mSpUtil.setServerIP("ws://weixin.bizcn.com:7272");
         
         // 打开网页
         myWebView = (WebView) findViewById(R.id.main_webview);
         myWebView.addJavascriptInterface(MainWebViewActivity.this, "ChatRoom");
-        
+//        myWebView.addJavascriptInterface(MainWebViewActivity.this, "AskRoom");
         String path = "http://www.baidu.com";
 //        myWebView.loadUrl(path);// 百度链接
         
 //        myWebView.loadUrl("file:///android_asset/demo.html");
 //        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
 //        Intent intent = getIntent();
-//        myWebView.loadUrl(intent.getStringExtra("URL"));
-        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
+        myWebView.loadUrl("http://hcjd.cdncache.com/Home/Ask/test.html");
+//        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
 //        myWebView.loadUrl(path);
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         
+//        myWebView.setOnLongClickListener(new OnLongClickListener() {
+//			
+//			public boolean onLongClick(View arg0) {
+//				// TODO Auto-generated method stub
+//				return true;
+//			}
+//		});
+        
+        
         myWebView.setWebViewClient(new myWebClient());
         myWebView.setWebChromeClient(new WebChromeClient()  
         {  
-               //The undocumented magic method override  
-               //Eclipse will swear at you if you try to put @Override here  
+        	//用户注册时候上传照片
             // For Android 3.0+
             public void openFileChooser(ValueCallback<Uri> uploadMsg) {  
-
                 mUploadMessage = uploadMsg;  
                 takePicture();
-//                Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
-//                i.addCategory(Intent.CATEGORY_OPENABLE);  
-//                i.setType("image/*");  
-//                MainWebViewActivity.this.startActivityForResult(Intent.createChooser(i,"File Chooser"), FILECHOOSER_RESULTCODE);  
-
                }
 
             // For Android 3.0+
                public void openFileChooser( ValueCallback uploadMsg, String acceptType ) {
                mUploadMessage = uploadMsg;
                takePicture();
-//               Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-//               i.addCategory(Intent.CATEGORY_OPENABLE);
-//               i.setType("*/*");
-//               MainWebViewActivity.this.startActivityForResult(
-//               Intent.createChooser(i, "File Browser"),
-//               FILECHOOSER_RESULTCODE);
                }
 
             //For Android 4.1
                public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture){
                    mUploadMessage = uploadMsg;  
                    takePicture();
-//                   Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
-//                   i.addCategory(Intent.CATEGORY_OPENABLE);  
-//                   i.setType("image/*");  
-//                   MainWebViewActivity.this.startActivityForResult( Intent.createChooser( i, "File Chooser" ), MainWebViewActivity.FILECHOOSER_RESULTCODE );
-
                }
 
         });  
-       
-         
+        
+                
         myWebView.setWebViewClient(new WebViewClient() {  
             //点击网页中按钮时，让其还在原页面打开  
             public boolean shouldOverrideUrlLoading(WebView view, String url) {  
@@ -187,9 +233,7 @@ public class MainWebViewActivity extends Activity{
 
                 return true;  
             }  
-            
-           
-            
+                      
             public boolean hasDigit(String content) {
 
             	boolean flag = false;
@@ -214,30 +258,346 @@ public class MainWebViewActivity extends Activity{
                 super.onPageFinished(view, url);
             	
             	 String CurrentUrl = myWebView.getUrl();
-             	Log.v("chat", CurrentUrl);
-//            	oldUrl[index] = myWebView.getUrl().toString();
-            	
+             	Log.v("chat", CurrentUrl);            	
             	
             }
            
         });       
 
 //      startChat("");
-      
         
+    }
+    
+    
+    /**
+     * 录音功能
+     * 
+     * @param data
+     */
+    @JavascriptInterface
+    public String audioStart() {
+    	
+        isShosrt = false;
+
+    	if (isFastClick()) {
+    		if (util!=null && util.isRecording) {
+    			util.stopRecording();
+				util.close();
+				util = null;
+			}
+            isShosrt = true;
+    		Toast.makeText(MainWebViewActivity.this, "发送语音间隔时间太短",
+                     Toast.LENGTH_SHORT).show();
+    		return "{ status : 1,info : \"间隔时间太短\"}";
+		}
+    	
+    	 if (!Environment.getExternalStorageDirectory().exists()) {
+             Toast.makeText(MainWebViewActivity.this, "No SDCard",
+                     Toast.LENGTH_LONG).show();
+             return "{ status : 1,info : \"没有SD卡\"}";
+         }
+    	     	
+    	 String fileName = "/" + mSpUtil.getUserId() +System.currentTimeMillis();
+	     String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
+	     File f = new File(fullPath);
+	     if (!f.exists()) {
+	      f.mkdirs();
+	     } 
+	     
+	     if (util != null) {
+			util.close();
+			util = null;
+		}
+		util = new AudioRecorder2Mp3Util(null,
+						fullPath+fileName+".raw",
+						fullPath+fileName+".mp3");
+	     
+	     //判断是否有录音权限
+	     if (recodePermission == false) {
+	        util.startRecording(); 
+	        util.stopRecording();
+	        util.cleanFile(AudioRecorder2Mp3Util.RAW);
+	        util.cleanFile(AudioRecorder2Mp3Util.MP3);
+		    recodePermission = true;
+		    mSpUtil.setRecordPermission(true);
+	     } else {
+	    	 	
+	    	 
+	    	 stopRecord();
+	    	 mStartRecorderTime = System.currentTimeMillis();
+	    	                 
+                  mHandler.postDelayed(new Runnable() {
+                      public void run() {
+                    	  mLlVoiceLoading.setVisibility(View.GONE);
+                          mLlVoiceRcding.setVisibility(View.VISIBLE);
+                          mLlVoiceShort.setVisibility(View.GONE);
+                          mChatUIWindow.setVisibility(View.VISIBLE); 
+                          mLLDelete.setVisibility(View.GONE);
+                      }
+                  }, 0);
+                  new Thread()
+                  {
+                      public void run()
+                      {
+                    	  startRecord();
+                      }
+                  }.start();          
+                
+		}
+	     return "{ status : 1,info : \"录音器启动成功\"}";
+    }
+    
+    @JavascriptInterface
+    public String audioStop() {
+       
+    	Log.v("=======", "audioStop");
+      mHandler.postDelayed(new Runnable() {
+      public void run() {
+     	 mLlVoiceRcding.setVisibility(View.GONE); 
+     	 isShosrt = true;
+//          mLlVoiceLoading.setVisibility(View.GONE);
+          mLlVoiceRcding.setVisibility(View.GONE);
+//          mLlVoiceShort.setVisibility(View.VISIBLE);
+          mChatUIWindow.setVisibility(View.GONE);
+      	}
+      }, 0);
+    	
+      	mAudioStopTime = System.currentTimeMillis();
+      	
+      	if (!isShosrt) {
+      		try {
+            	stopRecordAndConvertFile();
+            } catch (IllegalStateException e) {
+                Toast.makeText(MainWebViewActivity.this, "麦克风不可用", 0).show();
+                isCancelVoice = true;
+                return "{ status : 1,info : \"麦克风不可用\"}";
+            }
+            mEndRecorderTime = System.currentTimeMillis();
+            int mVoiceTime = (int) ((mEndRecorderTime - mStartRecorderTime) / 1000);
+            if (mVoiceTime < 1) {
+            
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        mLlVoiceShort.setVisibility(View.GONE);
+                       
+                    }
+                }, 500);
+           	 
+            }
+            
+            String json = sendJsonToServer();
+            Log.v("=============", json);
+            return json;
+		} else {
+			return "{ status : 1,info : \"录音间隔太短\"}";
+		}
+        
+    }
+    
+    private String sendJsonToServer() {
+    	
+    	InputStream inputStream = null;
+		   
+		try {
+			inputStream = new FileInputStream(new File(util.getFilePath(util.MP3)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}  
+		
+     ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+     byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
+     int rc = 0; 
+     
+     try {
+			while ((rc = inputStream.read(buff, 0, 100)) > 0) { 
+			   swapStream.write(buff, 0, rc); 
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+     
+     byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+     String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
+     AudioStruct audioStruct = new AudioStruct();
+     String time = mVioceTime + "秒";
+     if (mVioceTime < 1) {
+    	 audioStruct.status = 0;
+	} else {
+		 audioStruct.status = 1;
+	}
+    
+     audioStruct.seconds = time;
+     audioStruct.base64Content = encodeString;
+     
+     Gson gson = new Gson();
+     String jsonStr = gson.toJson(audioStruct);
+     
+     return jsonStr;
+    }
+    
+    /**
+     * 开始录音
+     */
+    private void startRecord() {
+
+    	 String fileName = "/" + mSpUtil.getUserId() +System.currentTimeMillis();
+	     String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
+	     File f = new File(fullPath);
+	     if (!f.exists()) {
+	      f.mkdirs();
+	     } 
+	     
+ 
+			util = new AudioRecorder2Mp3Util(null,
+						fullPath+fileName+".raw",
+						fullPath+fileName+".mp3");
+			
+            util.startRecording();
+            
+			util.cleanFile(AudioRecorder2Mp3Util.RAW);
+            
+            mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+            volume.setVisibility(View.VISIBLE);
+            mVoiceRcdTimeTask = new VoiceRcdTimeTask(mRcdStartTime);
+            if (mExecutor == null) {
+                mExecutor = Executors.newSingleThreadScheduledExecutor();
+                mExecutor.scheduleAtFixedRate(mVoiceRcdTimeTask,
+                        mRcdVoiceStartDelayTime, mRcdVoiceDelayTime,
+                        TimeUnit.MILLISECONDS);
+            }
+    }
+    
+    private void stopRecord() {
+    	util.stopRecording();
+
+    	 mHandler.removeCallbacks(mSleepTask);
+         mHandler.removeCallbacks(mPollTask);
+ 
+         mHandler.postDelayed(new Runnable() {
+             public void run() {
+             	 volume.setImageResource(R.drawable.amp1);
+             }
+         }, 0);
+        
+         if (mExecutor != null && !mExecutor.isShutdown()) {
+             mExecutor.shutdown();
+             mExecutor = null;
+         }
+    }
+    
+    /**
+     * 结束录音
+     */
+    private void stopRecordAndConvertFile() throws IllegalStateException {
+    	
+    	if (util != null) {
+    		util.stopRecordingAndConvertFile();
+////		Toast.makeText(this, "ok", 0).show();
+		util.cleanFile(AudioRecorder2Mp3Util.RAW);
+		}
+    	
+//		// 如果要关闭可以
+//		util.close();
+//		util = null;
+		
+        mHandler.removeCallbacks(mSleepTask);
+        mHandler.removeCallbacks(mPollTask);
+//
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+            	 volume.setImageResource(R.drawable.amp1);
+            }
+        }, 0);
+       
+        if (mExecutor != null && !mExecutor.isShutdown()) {
+            mExecutor.shutdown();
+            mExecutor = null;
+        }
+
+    }
+    
+    private Runnable mSleepTask = new Runnable() {
+        public void run() {
+        	stopRecordAndConvertFile();
+        }
+    };
+    
+
+    
+    private Runnable mPollTask = new Runnable() {
+        public void run() {
+        	double amp = (double)(Math.random() * 11) ;
+//            Log.e("fff", "音量:" + amp);
+            updateDisplay(amp);
+            mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+        }
+    };
+    
+    /**
+     * 初始化语音布局
+     */
+    private void initRecorderView() {
+
+        // include包含的布局语音模块
+        mIvDelete = (ImageView) this.findViewById(R.id.img1);
+        mLLDelete = (LinearLayout) this.findViewById(R.id.del_re);
+        mIvBigDeleteIcon = (ImageView) this.findViewById(R.id.sc_img1);
+        mChatUIWindow = this.findViewById(R.id.window_chat);
+        mChatUIWindow.setVisibility(View.GONE);
+        mChatUIWindow.bringToFront();
+        mLlVoiceRcding = (LinearLayout) this
+                .findViewById(R.id.voice_rcd_hint_rcding);
+        mLlVoiceLoading = (LinearLayout) this
+                .findViewById(R.id.voice_rcd_hint_loading);
+        mLlVoiceShort = (LinearLayout) this
+                .findViewById(R.id.voice_rcd_hint_tooshort);
+        volume = (ImageView) this.findViewById(R.id.volume);
+        mTvVoiceRecorderTime = (TextView) this
+                .findViewById(R.id.tv_voice_rcd_time);
+    }
+    
+    /**
+     * 变换语音量的图片
+     * 
+     * @param signalEMA
+     */
+    private void updateDisplay(double signalEMA) {
+
+        switch ((int) signalEMA) {
+            case 0:
+            case 1:
+                volume.setImageResource(R.drawable.amp1);
+                break;
+            case 2:
+            case 3:
+                volume.setImageResource(R.drawable.amp2);
+
+                break;
+            case 4:
+            case 5:
+                volume.setImageResource(R.drawable.amp3);
+                break;
+            case 6:
+            case 7:
+                volume.setImageResource(R.drawable.amp4);
+                break;
+            case 8:
+            case 9:
+                volume.setImageResource(R.drawable.amp5);
+                break;
+            case 10:
+            case 11:
+                volume.setImageResource(R.drawable.amp6);
+                break;
+            default:
+                volume.setImageResource(R.drawable.amp7);
+                break;
+        }
     }
     
     @Override  
     protected void onActivityResult(int requestCode, int resultCode,  
                                        Intent intent) {  
-//     if(requestCode==FILECHOOSER_RESULTCODE)  
-//     {  
-//      if (null == mUploadMessage) return;  
-//               Uri result = intent == null || resultCode != RESULT_OK ? null  
-//                       : intent.getData();  
-//               mUploadMessage.onReceiveValue(result);  
-//               mUploadMessage = null;  
-//     	}
      
      	switch (requestCode) {
      		case CAMERA_WITH_DATA:
@@ -325,13 +685,14 @@ public class MainWebViewActivity extends Activity{
              
         	EnterChatRoom enterRoom = new EnterChatRoom();
             enterRoom.setBaseInfo(new Base_Info());
-            enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
-//            enterRoom.init("enter", "asdasdasd", 11111);
+//            enterRoom.init("enter", jsonBean.base_info.session_id, jsonBean.base_info.room_id);
+            enterRoom.init("enter", "asdasdasd", 11111);
             
             String jsonStr = gson.toJson(enterRoom);
             Log.v("=============", jsonStr);
             
-            mSpUtil.setRoomName(jsonBean.base_info.room_name);
+//            mSpUtil.setRoomName(jsonBean.base_info.room_name);
+            mSpUtil.setRoomName("房间");
             //向服务器发送信息
             try {
     			mConnection.handleConnection(null,"enter",jsonStr,mContent);
@@ -341,10 +702,10 @@ public class MainWebViewActivity extends Activity{
     		}   	
     }
     
-    private static long lastClickTime;
+    
     public synchronized static boolean isFastClick() {
         long time = System.currentTimeMillis();   
-        if ( time - lastClickTime < 500) {   
+        if ( time - lastClickTime < 3000) {   
             return true;   
         }   
         lastClickTime = time;   
@@ -358,6 +719,48 @@ public class MainWebViewActivity extends Activity{
 		sendIntent.putExtra(Intent.EXTRA_TEXT, "有纠纷怎么办？去哪找调解机构？找哪家合适？人家什么时候上班？…别再纠结啦！下载海沧在线调解APP，在家就能调解，还能了解最新调解动态，在线咨询，让调解更简单。点击下载http://xxxxxx.com");
 		sendIntent.setType("text/plain");
 		startActivity(sendIntent);
+    }
+    
+    /**
+     * 录制语音计时器
+     * 
+     * @desc:
+     * @author: pangzf
+     * @date: 2014年11月10日 下午3:46:46
+     */
+    private class VoiceRcdTimeTask implements Runnable {
+        int time = 0;
+        
+        public VoiceRcdTimeTask(int startTime) {
+            time = startTime;
+        }
+
+        @Override
+        public void run() {
+            time++;
+
+            updateTimes(time);
+        }
+    }
+    
+    /**
+     * 更新文本内容
+     * 
+     * @param time
+     */
+    public void updateTimes(final int time) {
+    	mSpUtil.setVoiceTime(time);
+//        Log.e("fff", "时间:" + time);
+        mVioceTime = time;
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                mTvVoiceRecorderTime.setText(TimeUtil
+                        .getVoiceRecorderTime(time));
+            }
+        });
+
     }
     
     @JavascriptInterface
@@ -442,16 +845,31 @@ public class MainWebViewActivity extends Activity{
         super.onConfigurationChanged(newConfig);
     }
 
-    // To handle "Back" key press event for WebView to go back to previous screen.
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) 
-    {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && web.canGoBack()) {
-            web.goBack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
+    /**
+	 * 执行cmd命令，并等待结果
+	 * 
+	 * @param command
+	 *            命令
+	 * @return 是否成功执行
+	 */
+	private boolean runCommand(String command) {
+		boolean ret = false;
+		Process process = null;
+		try {
+			process = Runtime.getRuntime().exec(command);
+			process.waitFor();
+			ret = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				process.destroy();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return ret;
+	}
 
 }
 

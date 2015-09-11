@@ -60,6 +60,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -89,6 +90,7 @@ import com.pzf.liaotian.bean.album.ImageBucket;
 import com.pzf.liaotian.bean.album.ImageTool;
 import com.pzf.liaotian.common.util.HomeWatcher;
 import com.pzf.liaotian.common.util.HomeWatcher.OnHomePressedListener;
+import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.pzf.liaotian.common.util.L;
 import com.pzf.liaotian.common.util.SendMsgAsyncTask;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
@@ -128,6 +130,7 @@ public class MainViewActivity extends Activity {
 	Button button3;
 	Button button4;
 	Button button5;
+	Button button6;
 	
 	EditText edit1;
 	EditText edit2;
@@ -135,6 +138,7 @@ public class MainViewActivity extends Activity {
 	public static WebSocketConnectTool mConnection = WebSocketConnectTool.getInstance();
 	private static final int CAMERA_WITH_DATA = 10;
 	private String mTakePhotoFilePath;
+	AudioRecorder2Mp3Util util = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -226,12 +230,50 @@ public class MainViewActivity extends Activity {
 			}
 		});
 		 
-		 
+		button6 = (Button)findViewById(R.id.button6);
+		button6.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View arg0, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					audioStart();
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					audioStop();
+				}
+				return false;
+			}
+		});
 		
 		 
 	}
 	
-	
+	 /**
+     * 录音功能
+     * 
+     * @param data
+     */
+    @JavascriptInterface
+    public void audioStart() {
+    	
+    	 String fileName = "/" + mSpUtil.getUserId() +System.currentTimeMillis();
+	     String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
+	     File f = new File(fullPath);
+	     if (!f.exists()) {
+	      f.mkdirs();
+	     } 
+    	 if (util == null) {
+				util = new AudioRecorder2Mp3Util(null,
+						fullPath+fileName+".raw",
+						fullPath+fileName+".mp3");
+			}
+          util.startRecording(); 
+    }
+    
+    @JavascriptInterface
+    public void audioStop() {
+    	util.stopRecordingAndConvertFile();
+    	util.cleanFile(AudioRecorder2Mp3Util.RAW);
+    }
 	
 	
 	  
@@ -264,7 +306,7 @@ public class MainViewActivity extends Activity {
 	     } 
 	    
 	
-	   /**
+	 /**
      * 处理拍完照的data数据
      * 
      * @param data
@@ -321,6 +363,7 @@ public class MainViewActivity extends Activity {
         new SendMsgAsyncTask(null, mSpUtil.getUserId(),filePath).send();
         
     }
+    
     public void startChat(String json){
     	//进入聊天室，向服务器提交信息。
     	//组织要提交的json信息

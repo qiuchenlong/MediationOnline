@@ -68,7 +68,7 @@ public class AudioRecorder2Mp3Util {
 	/**
 	 * 录音状态
 	 */
-	private boolean isRecording = false;
+	public boolean isRecording = false;
 	/**
 	 * 是否转换ok
 	 */
@@ -130,6 +130,23 @@ public class AudioRecorder2Mp3Util {
 
 		return isRecording ^ convertOk;// convertOk==true,return true
 	}
+	
+	/**
+	 * 停止录音<br/>
+	 * 
+	 * 
+	 * @return
+	 */
+	public void stopRecording() {
+		if (!isRecording) {
+			return ;
+		}
+
+		// 停止
+		mRecorder.stop();
+		isRecording = false;
+	}
+	
 
 	/**
 	 * 获取文件的路径
@@ -240,8 +257,8 @@ public class AudioRecorder2Mp3Util {
 			Log.d("rawPath", rawPath);
 			Log.d("mp3Path", mp3Path);
 
-			runCommand("chmod 777 " + rawPath);
-			runCommand("chmod 777 " + mp3Path);
+//			runCommand("chmod 777 " + rawPath);
+//			runCommand("chmod 777 " + mp3Path);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

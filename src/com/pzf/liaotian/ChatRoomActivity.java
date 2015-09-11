@@ -188,7 +188,7 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
     private int mRcdVoiceStartDelayTime = 300;
     private boolean isCancelVoice;// 不显示语音
     
-    private Button backButton;//返回按钮
+    private ImageButton backButton;//返回按钮
     private TextView titleTextView;//标题
 //    public static TextView mHomeNotice;//公告
     private int is_admin;//是否是管理员
@@ -473,7 +473,7 @@ public class ChatRoomActivity extends Activity implements OnClickListener,
 		});
         
         //返回按钮
-        backButton = (Button)findViewById(R.id.private_chat_back_button);
+        backButton = (ImageButton)findViewById(R.id.private_chat_back_button);
         backButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
