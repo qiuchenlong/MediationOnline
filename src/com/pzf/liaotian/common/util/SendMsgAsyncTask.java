@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.pzf.liaotian.R;
-import com.pzf.liaotian.UploadUtil;
+import com.pzf.liaotian.activity.UploadUtil;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.baidupush.server.BaiduPush;
 

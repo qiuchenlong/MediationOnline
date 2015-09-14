@@ -8,7 +8,7 @@ import java.io.InputStream;
 import org.w3c.dom.Text;
 
 import com.pzf.liaotian.R;
-import com.pzf.liaotian.TouchImageView;
+import com.pzf.liaotian.activity.TouchImageView;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -1,8 +1,10 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import android.view.View;
 
 import com.baidu.android.activity.BaseActivity;
+import com.pzf.liaotian.R;
+import com.pzf.liaotian.R.id;
 import com.pzf.liaotian.view.TitleBar;
 
 /**

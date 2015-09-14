@@ -76,6 +76,7 @@ import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pzf.liaotian.activity.ConsultActivity;
 import com.pzf.liaotian.adapter.FaceAdapter;
 import com.pzf.liaotian.adapter.FacePageAdeapter;
 import com.pzf.liaotian.adapter.MessageAdapter;

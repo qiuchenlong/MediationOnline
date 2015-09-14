@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +35,7 @@ import org.apache.http.util.EncodingUtils;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
+import com.pzf.liaotian.ChatRoomActivity;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
 import com.pzf.liaotian.common.util.WebSocketConnectTool;

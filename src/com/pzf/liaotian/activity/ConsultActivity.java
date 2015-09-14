@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -63,9 +63,14 @@ import android.widget.Toast;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.pzf.liaotian.R;
 import com.pzf.liaotian.common.util.AudioRecorder2Mp3Util;
 import com.google.gson.Gson;
 import com.huneng.fileexplorer.UploadView;
+import com.pzf.liaotian.R.drawable;
+import com.pzf.liaotian.R.id;
+import com.pzf.liaotian.R.layout;
+import com.pzf.liaotian.R.style;
 import com.pzf.liaotian.adapter.ConsultMessageAdapter;
 import com.pzf.liaotian.adapter.FaceAdapter;
 import com.pzf.liaotian.adapter.FacePageAdeapter;

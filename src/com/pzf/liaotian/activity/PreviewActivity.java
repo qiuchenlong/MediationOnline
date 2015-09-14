@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.pzf.liaotian.ChatRoomActivity;
+import com.pzf.liaotian.R;
+import com.pzf.liaotian.R.color;
+import com.pzf.liaotian.R.dimen;
+import com.pzf.liaotian.R.drawable;
+import com.pzf.liaotian.R.id;
+import com.pzf.liaotian.R.layout;
+import com.pzf.liaotian.R.string;
 import com.pzf.liaotian.adapter.MessageAdapter;
 import com.pzf.liaotian.album.DisplayBitmapCache;
 import com.pzf.liaotian.app.PushApplication;

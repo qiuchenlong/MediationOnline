@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -17,6 +18,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pzf.liaotian.MainWebViewActivity;
+import com.pzf.liaotian.R;
+import com.pzf.liaotian.R.color;
+import com.pzf.liaotian.R.dimen;
+import com.pzf.liaotian.R.drawable;
+import com.pzf.liaotian.R.id;
+import com.pzf.liaotian.R.layout;
+import com.pzf.liaotian.R.string;
 import com.pzf.liaotian.adapter.ImageBucketAdapter;
 import com.pzf.liaotian.album.AlbumHelper;
 import com.pzf.liaotian.bean.album.ImageBucket;
@@ -46,6 +55,12 @@ public class PickPhotoActivity extends TitleBarActivity implements
         TextView mBack = new TextView(this);
         mBack.setBackgroundResource(R.drawable.ic_back);
         setTitleLeft(mBack);
+        mBack.setOnClickListener(new OnClickListener() {		
+			@Override
+			public void onClick(View arg0) {
+				finish();
+			}
+		});
 
         TextView tvTitle = new TextView(this);
         tvTitle.setText(R.string.album);
@@ -73,6 +88,13 @@ public class PickPhotoActivity extends TitleBarActivity implements
         }
 
         if (requestCode == ConstantKeys.ALBUM_PREVIEW_BACK) {
+        	String phtos_path = data.getExtras().getString(ImageGridActivity.PHOTOS_PATH);
+        	if (!phtos_path.equals("")) {
+				Intent backIntent = new Intent();
+				backIntent.putExtra(ImageGridActivity.PHOTOS_PATH, phtos_path);
+				setResult(ConstantKeys.ALBUM_BACK_DATA, backIntent);
+			}
+        	
             boolean finishActivity = data.getExtras().getBoolean("finish");
             if (finishActivity) {
                 finish();
@@ -136,6 +158,10 @@ public class PickPhotoActivity extends TitleBarActivity implements
                 (Serializable) mDataList.get(position).imageList);
         intent.putExtra(ConstantKeys.EXTRA_ALBUM_NAME,
                 mDataList.get(position).bucketName);
+        
+        Intent getIntent = getIntent();
+        boolean main_web_selecte_photos = getIntent.getBooleanExtra(MainWebViewActivity.MAIN_WEB_SELECTE_PHOTOS, false);
+        intent.putExtra(MainWebViewActivity.MAIN_WEB_SELECTE_PHOTOS, main_web_selecte_photos);
         startActivityForResult(intent, ConstantKeys.ALBUM_PREVIEW_BACK);
         // setResult(Activity.RESULT_OK, null);
         // finish();

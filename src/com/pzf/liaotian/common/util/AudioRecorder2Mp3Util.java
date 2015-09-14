@@ -101,8 +101,23 @@ public class AudioRecorder2Mp3Util {
 		}
 
 		getFilePath();
-		mRecorder.startRecording();
-		startBufferedWrite(new File(rawPath));
+		new Thread()
+		{
+		    public void run()
+		    {
+		    	mRecorder.startRecording();
+		    	new Thread()
+		    	{
+		    	    public void run()
+		    	    {
+		    	    	startBufferedWrite(new File(rawPath));
+		    	    }
+		    	}.start();
+		    	
+		    }
+		}.start();
+		
+		
 
 		isRecording = true;
 		return isRecording;
@@ -257,8 +272,8 @@ public class AudioRecorder2Mp3Util {
 			Log.d("rawPath", rawPath);
 			Log.d("mp3Path", mp3Path);
 
-			runCommand("chmod 777 " + rawPath);
-			runCommand("chmod 777 " + mp3Path);
+//			runCommand("chmod 777 " + rawPath);
+//			runCommand("chmod 777 " + mp3Path);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -296,9 +311,7 @@ public class AudioRecorder2Mp3Util {
 	 * @param file
 	 */
 	private void startBufferedWrite(final File file) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+
 				DataOutputStream output = null;
 				try {
 					output = new DataOutputStream(new BufferedOutputStream(
@@ -328,8 +341,8 @@ public class AudioRecorder2Mp3Util {
 						}
 					}
 				}
-			}
-		}).start();
+			
+		
 	}
 
 	/**

@@ -64,18 +64,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.pzf.liaotian.PickPhotoActivity"></activity>
-        <activity android:name="com.pzf.liaotian.PreviewActivity"></activity>
-        <activity android:name="com.pzf.liaotian.ImageGridActivity"></activity>
+        <activity android:name="com.pzf.liaotian.activity.PickPhotoActivity"></activity>
+        <activity android:name="com.pzf.liaotian.activity.PreviewActivity"></activity>
+        <activity android:name="com.pzf.liaotian.activity.ImageGridActivity"></activity>
 		<activity android:name="net.bither.util.ImageShower"></activity>
 		<activity android:name="com.pzf.liaotian.test" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
 		<activity android:name="com.pzf.liaotian.ChatRoomActivity" android:screenOrientation="portrait"/>
 		<activity android:name="com.huneng.fileexplorer.UploadView" android:screenOrientation="portrait"/>
-		<activity android:name="com.pzf.liaotian.WebViewActivity" android:screenOrientation="portrait"/>
+		<activity android:name="com.pzf.liaotian.activity.WebViewActivity" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.common.util.AudioRecorder2Mp3Util" android:screenOrientation="portrait"/>
-		<activity android:name="com.pzf.liaotian.TouchImageView" android:screenOrientation="portrait"/>
+		<activity android:name="com.pzf.liaotian.activity.TouchImageView" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.MainWebViewActivity" android:screenOrientation="portrait"/>
-		<activity android:name="com.pzf.liaotian.ConsultActivity" android:screenOrientation="portrait"/>
+		<activity android:name="com.pzf.liaotian.activity.ConsultActivity" android:screenOrientation="portrait"/>
 		<activity android:name="com.pzf.liaotian.MainViewActivity" android:screenOrientation="portrait"/>
 				
         <!-- 消息预处理的intenService -->

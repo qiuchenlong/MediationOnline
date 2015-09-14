@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +32,9 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.huneng.fileexplorer.UploadView;
+import com.pzf.liaotian.activity.ImageGridActivity;
+import com.pzf.liaotian.activity.PickPhotoActivity;
 import com.pzf.liaotian.album.AlbumHelper;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.bean.Message;
@@ -50,6 +54,7 @@ import com.zztj.chat.bean.EnterChatRoom.Base_Info;
 import com.zztj.chat.bean.EnterChatRoomServer;
 import com.zztj.chat.bean.JsonMessageStruct;
 import com.zztj.chat.bean.User;
+import com.zztj.chat.bean.WebMessage;
 
 import android.R.integer;
 import android.annotation.SuppressLint;
@@ -106,6 +111,7 @@ public class MainWebViewActivity extends Activity{
 	private int index = 0;
 	private static final int CAMERA_WITH_FRONT = 10;
 	private static final int CAMERA_WITH_BACK = 11;
+	private static final int MAIN_WEB_FILE_PATH = 12;
 	private static final int POLL_INTERVAL = 300;
 	
 	private ValueCallback<Uri> mUploadMessage;    
@@ -147,6 +153,9 @@ public class MainWebViewActivity extends Activity{
     private AlbumHelper albumHelper = null;// 相册管理类
     private static List<ImageBucket> albumList = null;// 相册数据list
     
+    public static String MAIN_WEB_SELECTE_PHOTOS = "MAIN_WEB_SELECTE_PHOTOS";
+    
+    private Intent resultIntent;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -183,16 +192,13 @@ public class MainWebViewActivity extends Activity{
         // 打开网页
         myWebView = (WebView) findViewById(R.id.main_webview);
         myWebView.addJavascriptInterface(MainWebViewActivity.this, "ChatRoom");
-//        myWebView.addJavascriptInterface(MainWebViewActivity.this, "AskRoom");
-        String path = "http://www.baidu.com";
-//        myWebView.loadUrl(path);// 百度链接
+
         
 //        myWebView.loadUrl("file:///android_asset/demo.html");
 //        myWebView.loadUrl("http://hcjd.dev.bizcn.com/Home/index.html");
 //        Intent intent = getIntent();
-//        myWebView.loadUrl("http://hcjd.cdncache.com/Home/Ask/test.html");
-        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
-//        myWebView.loadUrl(path);
+        myWebView.loadUrl("http://hcjd.cdncache.com/Home/Ask/test.html");
+//        myWebView.loadUrl("http://hcjd.cdncache.com/Home/index.html");
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -295,7 +301,7 @@ public class MainWebViewActivity extends Activity{
            
         });       
 
-//      startChat("");
+      startChat("");
         
     }
     
@@ -308,15 +314,15 @@ public class MainWebViewActivity extends Activity{
 
 
 	/**
-     * 录音功能
-     * 
-     * @param data
+     * js调用本地录音功能
      */
     @JavascriptInterface
     public String audioStart() {
     	
         isShosrt = false;
-
+        mVioceTime = 1;
+        
+        //连续两次点击的间隔是否太快
     	if (isFastClick()) {
     		if (util!=null && util.isRecording) {
     			util.stopRecording();
@@ -343,14 +349,16 @@ public class MainWebViewActivity extends Activity{
 	     } 
 	     
 	     if (util != null) {
+	    	stopRecord();
 			util.close();
 			util = null;
 		}
+	     
 		util = new AudioRecorder2Mp3Util(null,
 						fullPath+fileName+".raw",
 						fullPath+fileName+".mp3");
 	     
-	     //判断是否有录音权限
+	     //如果是第一次启动，请求录音权限
 	     if (recodePermission == false) {
 	        util.startRecording(); 
 	        util.stopRecording();
@@ -358,48 +366,71 @@ public class MainWebViewActivity extends Activity{
 	        util.cleanFile(AudioRecorder2Mp3Util.MP3);
 		    recodePermission = true;
 		    mSpUtil.setRecordPermission(true);
+		    
+		    mHandler.postDelayed(new Runnable() {
+		        public void run() {
+		       	 mLlVoiceRcding.setVisibility(View.GONE); 
+		       	 isShosrt = true;
+		            mLlVoiceRcding.setVisibility(View.GONE);
+		            mChatUIWindow.setVisibility(View.GONE);
+		        	}
+		        }, 0);
+		    
 	     } else {
 	    	 	 
-	    	 stopRecord();
+	    	 
 	    	 mStartRecorderTime = System.currentTimeMillis();
-	    	                 
-                  mHandler.postDelayed(new Runnable() {
-                      public void run() {
-                    	  mLlVoiceLoading.setVisibility(View.GONE);
-                          mLlVoiceRcding.setVisibility(View.VISIBLE);
-                          mLlVoiceShort.setVisibility(View.GONE);
-                          mChatUIWindow.setVisibility(View.VISIBLE); 
-                          mLLDelete.setVisibility(View.GONE);
-                      }
-                  }, 0);
-                  new Thread()
-                  {
-                      public void run()
-                      {
-                    	  Log.v("==11======", "startRecord");
-                    	  startRecord();
-                      }
-                  }.start();          
-                
+                  
+                  mHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						 mLlVoiceLoading.setVisibility(View.GONE);
+                         mLlVoiceRcding.setVisibility(View.VISIBLE);
+                         mLlVoiceShort.setVisibility(View.GONE);
+                         mChatUIWindow.setVisibility(View.VISIBLE); 
+                         mLLDelete.setVisibility(View.GONE);
+					}
+				});
+                  
+                  
+                  mHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+					Log.v("==11======", "startRecord");
+                  	  startRecord();
+					}
+				});
+               
 		}
 	     return "{ status : 1,info : \"录音器启动成功\"}";
     }
     
+    //js调用，用来停止本地录音
     @JavascriptInterface
     public String audioStop() {
        
-    	Log.v("=======", "audioStop");
+      Log.v("=======", "audioStop");
+      
       mHandler.postDelayed(new Runnable() {
       public void run() {
      	 mLlVoiceRcding.setVisibility(View.GONE); 
      	 isShosrt = true;
-//          mLlVoiceLoading.setVisibility(View.GONE);
           mLlVoiceRcding.setVisibility(View.GONE);
-//          mLlVoiceShort.setVisibility(View.VISIBLE);
           mChatUIWindow.setVisibility(View.GONE);
       	}
       }, 0);
-    	
+//      return "{ status : 0,info : \"录音结束\"}";
+//    	
+      if (mVioceTime <=1) {
+    	  Toast.makeText(MainWebViewActivity.this, "录音时间太短", 0).show();
+    	  if (util != null) {
+    		  util.stopRecording();
+		}
+    	  return "{ status : 0,info : \"录音时间太短\"}";
+	}
+      mVioceTime = 1;
       	mAudioStopTime = System.currentTimeMillis();
       	
       	if (!isShosrt) {
@@ -411,24 +442,13 @@ public class MainWebViewActivity extends Activity{
                 return "{ status : 0,info : \"麦克风不可用\"}";
             }
             mEndRecorderTime = System.currentTimeMillis();
-            int mVoiceTime = (int) ((mEndRecorderTime - mStartRecorderTime) / 1000);
-            if (mVoiceTime < 1) {
-            
-                mHandler.postDelayed(new Runnable() {
-                    public void run() {
-                        mLlVoiceShort.setVisibility(View.GONE);
-                       
-                    }
-                }, 500);
-           	 
-            }
-            
-            String json = sendJsonToServer();
+             
+            String json = getJsonMessage(util.getFilePath(util.MP3), "audio", ".mp3", getFileName(util.getFilePath(util.MP3)));
             if (json == null) {
             	Toast.makeText(MainWebViewActivity.this, "录音失败，请重新录一次", 0).show();
             	return "{ status : 0,info : \"录音失败\"}";
 			}
-            Log.v("=============", json);
+            Log.v("=============", "json发送成功");
             return json;
 		} else {
 			return "{ status : 0,info : \"录音间隔太短\"}";
@@ -483,19 +503,7 @@ public class MainWebViewActivity extends Activity{
     /**
      * 开始录音
      */
-    private void startRecord() {
-
-    	 String fileName = "/" + mSpUtil.getUserId() +System.currentTimeMillis();
-	     String fullPath = this.getExternalFilesDir(null).toString() + "/voice";
-	     File f = new File(fullPath);
-	     if (!f.exists()) {
-	      f.mkdirs();
-	     } 
- 
-			util = new AudioRecorder2Mp3Util(null,
-						fullPath+fileName+".raw",
-						fullPath+fileName+".mp3");
-			
+    private void startRecord() {			
             util.startRecording();
             
 			util.cleanFile(AudioRecorder2Mp3Util.RAW);
@@ -511,6 +519,7 @@ public class MainWebViewActivity extends Activity{
             }
     }
     
+    //结束录音，但不需要将音频文件转化成mp3
     private void stopRecord() {
     	util.stopRecording();
 
@@ -530,13 +539,12 @@ public class MainWebViewActivity extends Activity{
     }
     
     /**
-     * 结束录音
+     * 结束录音，并且将音频文件转换为mp3
      */
     private void stopRecordAndConvertFile() throws IllegalStateException {
     	
     	if (util != null) {
     		util.stopRecordingAndConvertFile();
-////		Toast.makeText(this, "ok", 0).show();
 		util.cleanFile(AudioRecorder2Mp3Util.RAW);
 		}
     	
@@ -546,7 +554,7 @@ public class MainWebViewActivity extends Activity{
 		
         mHandler.removeCallbacks(mSleepTask);
         mHandler.removeCallbacks(mPollTask);
-//
+
         mHandler.postDelayed(new Runnable() {
             public void run() {
             	 volume.setImageResource(R.drawable.amp1);
@@ -642,49 +650,178 @@ public class MainWebViewActivity extends Activity{
     @Override  
     protected void onActivityResult(int requestCode, int resultCode,  
                                        Intent intent) {  
-    	if (intent == null) {
-			return;
-		}
-    	
+ 	
+    	resultIntent = intent;
      	switch (requestCode) {
+     		//前置摄像头
      		case CAMERA_WITH_FRONT:
      			hanlderTakePhotoData(intent);
      			if (null == mUploadMessage) return;  
-                Uri result = intent == null || resultCode != RESULT_OK ? null  
-                        : intent.getData();  
-                
                 File file = new File(mTakePhotoFilePath);  
                 Uri fileUri = Uri.fromFile(file); 
                 mUploadMessage.onReceiveValue(fileUri);  
                 mUploadMessage = null;  
      			break;
+     		//后置摄像头
      		case CAMERA_WITH_BACK:
      		{
-     			InputStream inputStream = null;
-     			   
-     			try {
-     				inputStream = new FileInputStream(mTakePhotoFilePath);
-     			} catch (FileNotFoundException e) {
-     				e.printStackTrace();
-     			}  
+     			if (resultIntent == null) {
+					return;
+				}
      			
-     			ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
-     			byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
-     			int rc = 0; 
-              
-     			try {
-     				while ((rc = inputStream.read(buff, 0, 100)) > 0) { 
-     				   swapStream.write(buff, 0, rc); 
-     				}
-     			} catch (IOException e) {
-     				e.printStackTrace();
-     			} 
-              
-     			byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
-     			String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
+     			new Thread()
+     			{
+     			    public void run()
+     			    {     		
+     			    	hanlderTakePhotoData(resultIntent);
+     	     			String json = getJsonMessage(mTakePhotoFilePath, "image", ".jpg", getFileName(mTakePhotoFilePath));
+     	     			Log.v("json", json);
+     	     			Log.v("filepath", json);
+     	     			
+     	     			myWebView.loadUrl("javascript:askAttachCallback('" + json + "')");
+     			    }
+     			}.start();
+     			
+     			break;
+     		}
+     		//相册
+     		case ConstantKeys.ALBUM_BACK_DATA:
+     		{
+     			if (resultIntent == null) {
+					return;
+				}
+     			
+     			new Thread()
+     			{
+     			    public void run()
+     			    {
+     			    	String photoPath = resultIntent.getStringExtra(ImageGridActivity.PHOTOS_PATH);
+     	     			Log.v("photoPaht", "photoPaht="+photoPath);
+     	     			Log.v("photoname", "photoname="+getFileName(photoPath));
+     	     			String json = getJsonMessage(photoPath, "image", ".jpg", getFileName(photoPath));
+     	     			myWebView.loadUrl("javascript:askAttachCallback('" + json + "')");	
+     			    }
+     			}.start();
+     			
+     			break;
+     		}
+     		//文件
+     		case MAIN_WEB_FILE_PATH:
+     		{
+     			if (resultIntent == null) {
+					return;
+				}
+     			
+     			String filePath = intent.getStringExtra("FilePath");
+            	Log.v("filePath", filePath);
+            	String fileName = getFileName(filePath);
+            	Log.v("fileName", fileName);
+            	if (!filePath.contains(".doc")) {
+            		Toast.makeText(this, "只能发送.doc文件", Toast.LENGTH_SHORT).show();
+            		return;
+				}
+            	
+            	String json = getJsonMessage(filePath, "file", ".doc", fileName);
+     			myWebView.loadUrl("javascript:askAttachCallback('" + json + "')");	
+     			break;
      		}
      	}
      } 
+    
+    //组合出要传送的json信息
+    private String getJsonMessage(String filePath,String msgType,String extension,String fileName) {
+    		String pictureEncodeContent = getEncodingContent(new File(filePath));
+    		
+    		//如果发送的是图片，需要进行压缩
+    		InputStream inputStream = null;	   
+			if (extension.toString().contains(".jpg") || extension.toString().contains(".png")) {
+				   //发送图片 	   
+				   try {
+					   inputStream = new FileInputStream(new File(filePath));
+				   } catch (FileNotFoundException e) {
+					   e.printStackTrace();
+				   }  
+				 
+				Bitmap btp = BitmapFactory.decodeStream(inputStream); 
+	            btp = NativeUtil.compressBitmap(btp, 50,null, true);
+	            ByteArrayOutputStream baos = new ByteArrayOutputStream();    
+	            btp.compress(Bitmap.CompressFormat.JPEG, 40, baos); 
+	                           
+	            pictureEncodeContent = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+			 }
+    		
+			WebMessage webMessage = new WebMessage();
+			webMessage.status = 1;
+			webMessage.base64Content = pictureEncodeContent;
+			webMessage.extension = extension;
+			webMessage.msgType = msgType;
+			webMessage.fileName = fileName;
+			
+			//如果发送的是语音，文件名为语音的时间
+			if (msgType.equals("audio")) {
+				String time = mVioceTime + "秒";
+			     if (mVioceTime < 1) {
+			    	 webMessage.status = 0;
+				} else {
+					webMessage.status = 1;
+				}
+			    webMessage.fileName = time;
+			}
+			
+			Gson gson = new Gson();
+	        String jsonStr = gson.toJson(webMessage);
+	        
+	        return jsonStr;
+    }
+    
+    //从路径提取文件名
+    public String getFileName(String pathandname){  
+        
+        int start=pathandname.lastIndexOf("/");  
+        int end=pathandname.lastIndexOf(".");  
+        if(start!=-1 && end!=-1){  
+            return pathandname.substring(start+1,end);    
+        }else{  
+            return null;  
+        }  
+          
+    } 
+    
+    private String getEncodingContent(File file) {
+    	InputStream inputStream = null;
+		   
+			try {
+				inputStream = new FileInputStream(file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}  
+			
+			if (inputStream == null) {
+				return null;
+			}
+			
+			ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+			byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
+			int rc = 0; 
+      
+			try {
+				while ((rc = inputStream.read(buff, 0, 100)) > 0) { 
+				   swapStream.write(buff, 0, rc); 
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+      
+			byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+			String encodeString = Base64.encodeToString(in_b, Base64.NO_WRAP);
+			
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return encodeString;
+    }
     
     /**
      * 处理拍完照的data数据
@@ -743,7 +880,7 @@ public class MainWebViewActivity extends Activity{
     
     //调用后置摄像头
     @JavascriptInterface
-    private void takePictures() {
+    public void takePictures() {
     	Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);  
         
     	intent.putExtra("autofocus", true); // 自动对焦  
@@ -753,8 +890,6 @@ public class MainWebViewActivity extends Activity{
                  .getFileDiskCache()
                  + File.separator
                  + System.currentTimeMillis() + ".jpg";
-         // mTakePhotoFilePath = getImageSavePath(String.valueOf(System
-         // .currentTimeMillis()) + ".jpg");
          intent.putExtra(MediaStore.EXTRA_OUTPUT,
                  Uri.fromFile(new File(mTakePhotoFilePath)));
          startActivityForResult(intent, CAMERA_WITH_BACK);
@@ -763,7 +898,7 @@ public class MainWebViewActivity extends Activity{
     
     //选择照片
     @JavascriptInterface
-    private void selectePhotos() {
+    public void selectePhotos() {
     	// 相册
         if (albumList.size() < 1) {
             Toast.makeText(MainWebViewActivity.this, "相册中没有图片",
@@ -772,8 +907,8 @@ public class MainWebViewActivity extends Activity{
         }
         Intent intent = new Intent(MainWebViewActivity.this,
                 PickPhotoActivity.class);
-        intent.putExtra(ConstantKeys.EXTRA_CHAT_USER_ID,
-                mSpUtil.getUserId());
+        intent.putExtra(MAIN_WEB_SELECTE_PHOTOS,
+                true);
         startActivityForResult(intent, ConstantKeys.ALBUM_BACK_DATA);
         MainWebViewActivity.this.overridePendingTransition(
                 R.anim.zf_album_enter, R.anim.zf_stay);
@@ -782,8 +917,9 @@ public class MainWebViewActivity extends Activity{
     
     //上传文件
     @JavascriptInterface
-    private void uploadFile() {
-    	
+    public void uploadFile() {
+    	Intent intent = new Intent(MainWebViewActivity.this,UploadView.class);
+		startActivityForResult(intent,MAIN_WEB_FILE_PATH);
 	}
     
     

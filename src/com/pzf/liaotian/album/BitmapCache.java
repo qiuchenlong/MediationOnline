@@ -17,7 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.pzf.liaotian.PickPhotoActivity;
+import com.pzf.liaotian.activity.PickPhotoActivity;
 
 /**
  * @desc:相册图片缓存

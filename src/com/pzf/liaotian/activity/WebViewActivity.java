@@ -1,9 +1,12 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import org.json.JSONException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pzf.liaotian.R;
+import com.pzf.liaotian.R.id;
+import com.pzf.liaotian.R.layout;
 import com.pzf.liaotian.app.PushApplication;
 import com.pzf.liaotian.common.util.SharePreferenceUtil;
 import com.zztj.chat.bean.EnterChatRoom;

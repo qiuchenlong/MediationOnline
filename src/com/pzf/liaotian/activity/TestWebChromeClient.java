@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import android.graphics.Bitmap;
 import android.net.Uri;

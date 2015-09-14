@@ -1,4 +1,4 @@
-package com.pzf.liaotian;
+package com.pzf.liaotian.activity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import android.R.bool;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -28,6 +29,15 @@ import android.widget.Toast;
 
 import com.baidu.android.utils.Util;
 import com.google.gson.Gson;
+import com.pzf.liaotian.ChatRoomActivity;
+import com.pzf.liaotian.MainWebViewActivity;
+import com.pzf.liaotian.R;
+import com.pzf.liaotian.R.color;
+import com.pzf.liaotian.R.dimen;
+import com.pzf.liaotian.R.drawable;
+import com.pzf.liaotian.R.id;
+import com.pzf.liaotian.R.layout;
+import com.pzf.liaotian.R.string;
 import com.pzf.liaotian.adapter.ImageGridAdapter;
 import com.pzf.liaotian.adapter.MessageAdapter;
 import com.pzf.liaotian.app.PushApplication;
@@ -69,6 +79,8 @@ public class ImageGridActivity extends TitleBarActivity implements
     private RecentDB mRecentDB;
     private Gson mGson;
     private String imgPath;
+    
+    public static String PHOTOS_PATH = "PHOTOS_PATH";
     
     private Handler mHandler = new Handler() {
         @Override
@@ -198,17 +210,21 @@ public class ImageGridActivity extends TitleBarActivity implements
                     messageAdapter.upDateMsgByList(messageItemList);
                 }
                 
-//                if ("".equals(mSpUtil.getUserId())) {
-//                    Log.e("fff", "用户id为空2");
-//                    T.show(ImageGridActivity.this, "用户id为空", 1);
-//                    return;
-//                }
-                // 发送push
-                new SendMsgAsyncTask(null, mSpUtil.getUserId(),imgPath)
-                        .send();
-
                 // finish();
                 Intent data = new Intent();
+                
+                Intent getIntent = getIntent();
+                boolean main_web_selecte_photos = getIntent.getBooleanExtra(MainWebViewActivity.MAIN_WEB_SELECTE_PHOTOS, false);
+                if (main_web_selecte_photos) {
+					data.putExtra(PHOTOS_PATH, imgPath);
+				} else {
+					data.putExtra(PHOTOS_PATH, "");
+					// 发送push
+	                new SendMsgAsyncTask(null, mSpUtil.getUserId(),imgPath)
+	                        .send();
+				}
+                
+                
                 data.putExtra("finish", true);
                 setResult(RESULT_OK, data);
                 ImageGridActivity.this.finish();

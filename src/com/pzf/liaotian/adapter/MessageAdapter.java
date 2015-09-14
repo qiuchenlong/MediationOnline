@@ -40,9 +40,9 @@ import android.widget.TextView;
 
 import com.pzf.liaotian.MainViewActivity;
 import com.pzf.liaotian.MainWebViewActivity;
-import com.pzf.liaotian.WebViewActivity;
 import com.pzf.liaotian.ChatRoomActivity;
 import com.pzf.liaotian.R;
+import com.pzf.liaotian.activity.WebViewActivity;
 import com.pzf.liaotian.album.takephoto.BubbleImageHelper;
 import com.pzf.liaotian.album.takephoto.MessageBitmapCache;
 import com.pzf.liaotian.app.PushApplication;
